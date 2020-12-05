@@ -1,7 +1,7 @@
 import 'models.dart';
 
 class Group {
-  List<User> friendsList;
+  List<UserData> friendsList;
   List<Event> eventList;
   List<Post> posts;
   List get getFriendsList => friendsList;

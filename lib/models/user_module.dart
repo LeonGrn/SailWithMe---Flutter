@@ -1,26 +1,32 @@
 import 'models.dart';
 
-class User {
-  String _firstName;
+class UserData {
+  String _id;
   String _lastName;
+  String _firstName;
   String _email;
   int _phoneNumber;
   String _imei;
   String _imageUrl;
-  List<User> friendsList;
+  bool _isOnline;
   List<Trip> tripList;
   List<Group> groupList;
   List<Event> eventList;
   List<Post> posts;
   List<Chat> chats;
+  List<UserData> friends;
 
-  String get firstName => _firstName;
+  String get id => _id;
 
-  set firstName(String value) => _firstName = value;
+  set id(String value) => _id = value;
 
   String get lastName => _lastName;
 
   set lastName(String value) => _lastName = value;
+
+  String get firstName => _firstName;
+
+  set firstName(String value) => _firstName = value;
 
   String get email => _email;
 
@@ -38,40 +44,10 @@ class User {
 
   set imageUrl(String value) => _imageUrl = value;
 
-  List get getFriendsList => friendsList;
+  bool get isOnline => _isOnline;
 
-  set setFriendsList(List friendsList) => this.friendsList = friendsList;
+  set isOnline(bool value) => _isOnline = value;
 
-  List get getTripList => tripList;
-
-  set setTripList(List tripList) => this.tripList = tripList;
-
-  List get getGroupList => groupList;
-
-  set setGroupList(List groupList) => this.groupList = groupList;
-
-  List get getEventList => eventList;
-
-  set setEventList(List eventList) => this.eventList = eventList;
-
-  List get getPosts => posts;
-
-  set setPosts(List posts) => this.posts = posts;
-
-  List get getChats => chats;
-
-  set setChats(List chats) => this.chats = chats;
-
-  User(this._firstName, this._lastName, this._email, this._phoneNumber,
+  UserData(this._firstName, this._lastName, this._email, this._phoneNumber,
       this._imei, this._imageUrl);
-
-  Map<String, dynamic> get map {
-    return {
-      "firstName": _firstName,
-      "lastName": _lastName,
-      "email": _email,
-      "phoneNumber": _phoneNumber,
-      "imei": _imei,
-    };
-  }
 }

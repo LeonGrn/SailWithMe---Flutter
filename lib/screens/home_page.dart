@@ -10,6 +10,8 @@ import 'dart:convert';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:SailWithMe/date.dart';
 import 'package:SailWithMe/models/models.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:SailWithMe/main.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -19,7 +21,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  User user1 = new User("Leon", "G", "g.com", 0544, "123",
+  UserData user1 = new UserData("Leon", "G", "g.com", 0544, "123",
       "https://images.unsplash.com/photo-1525253086316-d0c936c814f8");
 
   var temp;
@@ -207,7 +209,7 @@ class HomePageDrawer extends StatelessWidget {
     @required this.user1,
   }) : super(key: key);
 
-  final User user1;
+  final UserData user1;
 
   @override
   Widget build(BuildContext context) {
@@ -318,7 +320,18 @@ class HomePageDrawer extends StatelessWidget {
           new ListTile(
             leading: Icon(Icons.exit_to_app),
             title: new Text("Log Out"),
-            onTap: () {},
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
+              //Navigator.pop(context);
+              // Navigator.push(
+              //     context,
+              //     new MaterialPageRoute(
+              //         builder: (context) => new LandingPage()));
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => new LandingPage()),
+                  (e) => false);
+            },
           ),
         ],
       ),

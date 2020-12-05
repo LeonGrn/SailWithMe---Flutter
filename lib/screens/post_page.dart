@@ -17,7 +17,7 @@ class _PostPageState extends State<PostPage> {
   File _image;
   //final picker = ImagePicker();
 
-  User user1 = new User("Leon", "G", "g.com", 0544, "123",
+  UserData user1 = new UserData("Leon", "G", "g.com", 0544, "123",
       "https://images.unsplash.com/photo-1525253086316-d0c936c814f8");
 
   Future getImage() async {
@@ -71,7 +71,7 @@ class _PostPageState extends State<PostPage> {
                             fontSize: 25.0, fontWeight: FontWeight.bold)),
                   ],
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 40),
                 Expanded(
                   flex: 1,
                   child: TextField(
@@ -90,15 +90,19 @@ class _PostPageState extends State<PostPage> {
                         : Image.file(_image, fit: BoxFit.contain),
                   ),
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 40),
               ],
             ),
           ),
+          //Container(
+          // child:
           Positioned(
             bottom: 0,
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   IconButton(
                       icon: Icon(Icons.photo_library),
@@ -117,18 +121,19 @@ class _PostPageState extends State<PostPage> {
                     textColor: Colors.black,
                     padding: const EdgeInsets.all(10.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         SvgPicture.asset(
                           'assets/yacht.svg',
-                          width: 20,
-                          height: 20,
+                          width: 15,
+                          height: 15,
                           color: Colors.black,
                         ),
                         Text(
                           'Invite to join',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 15,
                             fontWeight: FontWeight.w700,
                             color: Colors.black,
                           ),
@@ -141,18 +146,19 @@ class _PostPageState extends State<PostPage> {
                     textColor: Colors.black,
                     padding: const EdgeInsets.all(10.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         SvgPicture.asset(
                           'assets/suitcase.svg',
-                          width: 20,
-                          height: 20,
+                          width: 15,
+                          height: 15,
                           color: Colors.black,
                         ),
                         Text(
                           'Job offer',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 15,
                             fontWeight: FontWeight.w700,
                             color: Colors.black,
                           ),

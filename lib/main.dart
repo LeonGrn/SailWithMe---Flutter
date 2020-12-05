@@ -1,93 +1,86 @@
+import 'package:SailWithMe/screens/navigation_screens.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:SailWithMe/login/welcome_screen.dart';
+import 'package:splashscreen/splashscreen.dart';
 
-void main() => runApp(
-    MaterialApp(debugShowCheckedModeBanner: false, home: BottomNavBar()));
+void main() => runApp(MyApp());
 
-class BottomNavBar extends StatefulWidget {
-  @override
-  _BottomNavBarState createState() => _BottomNavBarState();
+class MyApp extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SpashScreen(),
+    );
+  }
 }
 
-class _BottomNavBarState extends State<BottomNavBar> {
-  GlobalKey _bottomNavigationKey = GlobalKey();
+class SpashScreen extends StatefulWidget {
+  @override
+  _MyAppState createState() => new _MyAppState();
+}
 
-  final HomePage _homePage = HomePage();
-  final EmergencyPage _emergencyPage = EmergencyPage();
-  final MapPage _mapPage = MapPage();
-  final PostPage _postPage = PostPage();
-  final MessagesPage _messagesPage = MessagesPage();
-
-  Widget _showPage = new HomePage();
-  int lastIndex = 0;
-  Widget lastPage = HomePage();
-
-  Widget _pageChooser(int page) {
-    switch (page) {
-      case 0:
-        return _homePage;
-        break;
-      case 1:
-        return _mapPage;
-        break;
-      case 2:
-        Navigator.of(context).push(new MaterialPageRoute<Null>(
-            builder: (BuildContext context) {
-              return _postPage;
-            },
-            fullscreenDialog: true));
-        return lastPage;
-        break;
-      case 3:
-        return _messagesPage;
-        break;
-      case 4:
-        return _emergencyPage;
-        break;
-      default:
-        return new Container(
-          child: Text("NO Page found"),
-        );
-    }
-  }
-
+class _MyAppState extends State<SpashScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        bottomNavigationBar: CurvedNavigationBar(
-          key: _bottomNavigationKey,
-          index: lastIndex,
-          height: 50.0,
-          items: <Widget>[
-            Icon(Icons.home, size: 30),
-            Icon(Icons.map, size: 30),
-            Icon(Icons.add_circle_outline, size: 30),
-            Icon(Icons.sms, size: 30),
-            Icon(Icons.error_outline, size: 30),
-          ],
-          color: Colors.white,
-          buttonBackgroundColor: Colors.white,
-          backgroundColor: Colors.blueAccent,
-          animationCurve: Curves.easeInOut,
-          animationDuration: Duration(milliseconds: 600),
-          onTap: (int tappedIndex) {
-            _bottomNavigationKey = GlobalKey();
-            if (tappedIndex == 2) {
-              setState(() {
-                _showPage = _pageChooser(tappedIndex);
-              });
-            } else {
-              setState(() {
-                _showPage = _pageChooser(tappedIndex);
-                lastIndex = tappedIndex;
-                lastPage = _showPage;
-              });
-            }
-          },
+    return new SplashScreen(
+        seconds: 8,
+        navigateAfterSeconds: new LandingPage(),
+        title: new Text(
+          'Welcome to Sail With ME',
+          style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
         ),
-        body: Container(
-          color: Colors.blueAccent,
-          child: Center(
-            child: _showPage,
+        image: new Image.asset('assets/sailing.png'),
+        backgroundColor: Colors.white,
+        styleTextUnderTheLoader: new TextStyle(),
+        photoSize: 100.0,
+        onClick: () => print("Flutter Israel"),
+        loaderColor: Colors.blueAccent);
+  }
+}
+
+class LandingPage extends StatelessWidget {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _initialization,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(
+              child: Text("Error : ${snapshot.error}"),
+            ),
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          return StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.active) {
+                User user = snapshot.data;
+
+                if (user == null) {
+                  return WelcomeScreen();
+                } else {
+                  return BottomNavBar();
+                }
+              }
+              return Scaffold(
+                body: Center(
+                  child: Text("Checking Authintication"), // loading
+                ),
+              );
+            },
+          );
+        }
+        return Scaffold(
+          body: Center(
+            child: Text("Connection to the app"), // loading
           ),
-        ));
+        );
+      },
+    );
   }
 }

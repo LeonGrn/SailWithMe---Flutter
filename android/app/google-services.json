@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1005828308686",
+    "firebase_url": "https://sailwithme.firebaseio.com",
+    "project_id": "sailwithme",
+    "storage_bucket": "sailwithme.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005828308686:android:e0a953d02339ce9af19a9f",
+        "android_client_info": {
+          "package_name": "com.finalproject.SailWithMe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1005828308686-t2hp8kii3c0mdgea6cb1mv4o3rkjt1f0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeSzz1hOJe7ZpPaVc5eAS7-QCrZ-YlJvM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005828308686-t2hp8kii3c0mdgea6cb1mv4o3rkjt1f0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
