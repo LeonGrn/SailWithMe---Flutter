@@ -1,10 +1,3 @@
-import 'package:SailWithMe/screens/emergency_page.dart';
-import 'package:SailWithMe/screens/home_page.dart';
-import 'package:SailWithMe/screens/map_page.dart';
-import 'package:SailWithMe/screens/messages_page.dart';
-import 'package:SailWithMe/screens/post_page.dart';
-import 'package:flutter/material.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 void main() => runApp(
     MaterialApp(debugShowCheckedModeBanner: false, home: BottomNavBar()));
