@@ -6,6 +6,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:SailWithMe/models/models.dart';
 import 'package:SailWithMe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PostPage extends StatefulWidget {
   @override
@@ -16,9 +19,50 @@ class _PostPageState extends State<PostPage> {
   final textController = new TextEditingController();
   File _image;
   //final picker = ImagePicker();
+  final databaseReference = FirebaseDatabase.instance.reference();
 
-  UserData user1 = new UserData("Leon", "G", "g.com", 0544, "123",
-      "https://images.unsplash.com/photo-1525253086316-d0c936c814f8");
+  UserData user1 =
+      new UserData.fromUserData("Leon", "g.com", "0544", "123", null);
+
+  Post myPost;
+  UserData myUser;
+
+  Future _getData() async {
+    final fb = FirebaseDatabase.instance;
+    final ref = fb.reference();
+    var userId = FirebaseAuth.instance.currentUser.uid;
+    await ref.child(userId).once().then((DataSnapshot data) {
+      myUser = UserData.fromJson(data);
+      // print(data.value);
+      // print(data.key);
+      // myUser = UserData.fromJson(data);
+      // print(myUser.age +
+      //     myUser.email +
+      //     myUser.fullName +
+      //     myUser.yearsOfExperience +
+      //     myUser.imei +
+      //     myUser.gender);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this._getData();
+  }
+
+  // Future getImage() async {
+  //   final pickedFile =
+  //       await ImagePicker().getImage(source: ImageSource.gallery);
+
+  //   setState(() {
+  //     if (pickedFile != null) {
+  //       _image = File(pickedFile.path);
+  //     } else {
+  //       print('No image selected.');
+  //     }
+  //   });
+  // }
 
   Future getImage() async {
     final pickedFile =
@@ -27,14 +71,58 @@ class _PostPageState extends State<PostPage> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
+        //myChoosenImage = _image;
+        uploadPic();
       } else {
         print('No image selected.');
       }
     });
   }
 
+  Future uploadPic() async {
+    // firebase_storage.FirebaseStorage storage =
+    //     firebase_storage.FirebaseStorage.instance;
+    try {
+      await firebase_storage.FirebaseStorage.instance
+          .ref('profile/blabla.png')
+          .putFile(_image);
+    } on firebase_storage.FirebaseException catch (e) {
+      // e.g, e.code == 'canceled'
+      print(e);
+    }
+  }
+
+  Future<void> _pushUser() async {
+    String userId = FirebaseAuth.instance.currentUser.uid;
+    print(userId);
+
+    var newPostKey = databaseReference.child('posts').push().key;
+    var updates = {};
+
+    updates['/posts/' + newPostKey] = myPost.toJson();
+    updates['/user-posts/' + userId + '/' + newPostKey] = myPost.toJson();
+    databaseReference.update(updates);
+    //databaseReference.child(userId).set(myPost.toJson());
+
+    // Navigator.pushAndRemoveUntil(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => new BottomNavBar()),
+    //     (e) => false);
+    // } on FirebaseAuthException catch (e) {
+    //   // if (e.code == 'weak-password') {
+    //   //   print('The password provided is too weak.');
+    //   // } else if (e.code == 'email-already-in-use') {
+    //   //   print('The account already exists for that email.');
+    //   // }
+    // } catch (e) {
+    //   print(e);
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
+    TextEditingController captionController = new TextEditingController();
+    DateTime now = DateTime.now();
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -45,6 +133,13 @@ class _PostPageState extends State<PostPage> {
               color: Colors.cyan[400],
               onPressed: () {
                 /*...*/
+
+                myPost = new Post();
+                myPost.setImage(_image);
+                myPost.setCaption(captionController.text);
+                myPost.setTime(now);
+                //myUser.setPosts(myPost);
+                _pushUser();
               },
               child: Text(
                 "Post",
@@ -64,9 +159,11 @@ class _PostPageState extends State<PostPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ProfileAvatar(imageUrl: user1.imageUrl, radius: 30),
+                    //ProfileAvatar(imageUrl: null, radius: 30),
+                    ProfileAvatar(imageFile: _image, width: 30, height: 30),
+
                     SizedBox(width: 30), // give it width
-                    Text(user1.firstName + " " + user1.lastName,
+                    Text(user1.fullName,
                         style: TextStyle(
                             fontSize: 25.0, fontWeight: FontWeight.bold)),
                   ],
@@ -75,6 +172,7 @@ class _PostPageState extends State<PostPage> {
                 Expanded(
                   flex: 1,
                   child: TextField(
+                    controller: captionController,
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
                     decoration: InputDecoration.collapsed(
@@ -83,11 +181,13 @@ class _PostPageState extends State<PostPage> {
                 ),
                 Expanded(
                   flex: 2,
-                  child: FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: _image == null
-                        ? Text('No image selected.')
-                        : Image.file(_image, fit: BoxFit.contain),
+                  child: SizedBox.expand(
+                    child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: _image == null
+                          ? Text('No image selected.')
+                          : Image.file(_image, fit: BoxFit.fitWidth),
+                    ),
                   ),
                 ),
                 SizedBox(height: 40),

@@ -49,7 +49,8 @@ dev_dependencies:
   rflutter_alert: ^1.1.0
   flutter_cupertino_date_picker: ^0.8.0
   firebase_database: "^4.3.0"
-
+  imei_plugin: ^1.2.0
+  firebase_storage: ^5.2.0
 
   
 flutter:

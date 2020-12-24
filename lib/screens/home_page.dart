@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:SailWithMe/config/palette.dart';
 import 'package:SailWithMe/widgets/circle_button.dart';
 import 'package:SailWithMe/widgets/widgets.dart';
@@ -9,9 +11,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:SailWithMe/date.dart';
-import 'package:SailWithMe/models/models.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:SailWithMe/main.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:path_provider/path_provider.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -21,8 +25,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  UserData user1 = new UserData("Leon", "G", "g.com", 0544, "123",
-      "https://images.unsplash.com/photo-1525253086316-d0c936c814f8");
+  UserData myUser;
+  UserData user1 =
+      new UserData.fromUserData("Leon", "g.com", '0544', "123", null);
 
   var temp;
   //var location;
@@ -36,12 +41,48 @@ class _HomePageState extends State<HomePage> {
     http.Response response = await http.get(
         "http://api.openweathermap.org/data/2.5/weather?q=Netanya&appid=a43c41d2c4008b88f98a49068edebbf1");
     var results = jsonDecode(response.body);
-    setState(() {
-      this.temp = results['main']['temp'];
-      this.temp = this.temp - 273.15;
-      this.windSpeed = results['wind']['speed'];
-      this.main = results['weather'][0]['main'];
+    if (mounted) {
+      setState(() {
+        this.temp = results['main']['temp'];
+        this.temp = this.temp - 273.15;
+        this.windSpeed = results['wind']['speed'];
+        this.main = results['weather'][0]['main'];
+      });
+    }
+  }
+
+  Future _getData() async {
+    final fb = FirebaseDatabase.instance;
+    final ref = fb.reference();
+    var userId = FirebaseAuth.instance.currentUser.uid;
+    await ref.child(userId).once().then((DataSnapshot data) {
+      print(data.value);
+      print(data.key);
+      myUser = UserData.fromJson(data);
+      print(myUser.age +
+          myUser.email +
+          myUser.fullName +
+          myUser.yearsOfExperience +
+          myUser.imei +
+          myUser.gender);
     });
+  }
+
+  Future<void> downloadFileFromFirebaseStorage() async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+
+    File downloadToFile = File('${appDocDir.path}/download-logo.png');
+
+    try {
+      await firebase_storage.FirebaseStorage.instance
+          .ref('profile/myProfile.png')
+          .writeToFile(downloadToFile);
+      myUser.setImage(downloadToFile);
+    } on FirebaseException catch (e) {
+      // e.g, e.code == 'canceled'
+      print(e);
+      print("my life fail");
+    }
   }
 
   // Future<void> initPlatformState() async {
@@ -65,6 +106,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     this.getWeather();
+    this._getData();
+    this.downloadFileFromFirebaseStorage();
     // this.initPlatformState();
   }
 
@@ -187,18 +230,18 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: posts.length,
-              itemBuilder: (context, index) {
-                Post post = posts[index];
-                return PostContainer(post: post);
-              },
-            ),
-          ),
+          // Expanded(
+          //   child: ListView.builder(
+          //     itemCount: posts.length,
+          //     itemBuilder: (context, index) {
+          //       Post post = posts[index];
+          //       return PostContainer(post: post);
+          //     },
+          //   ),
+          // ),
         ],
       ),
-      drawer: HomePageDrawer(user1: user1),
+      drawer: HomePageDrawer(myUser: myUser),
     );
   }
 }
@@ -206,10 +249,10 @@ class _HomePageState extends State<HomePage> {
 class HomePageDrawer extends StatelessWidget {
   const HomePageDrawer({
     Key key,
-    @required this.user1,
+    @required this.myUser,
   }) : super(key: key);
 
-  final UserData user1;
+  final UserData myUser;
 
   @override
   Widget build(BuildContext context) {
@@ -224,10 +267,11 @@ class HomePageDrawer extends StatelessWidget {
               SizedBox(
                 height: 120.0,
                 child: new DrawerHeader(
-                  child: ProfileAvatar(imageUrl: user1.imageUrl, radius: 40),
+                  child: ProfileAvatar(
+                      imageFile: myUser.getImage(), width: 120, height: 120),
                 ),
               ),
-              Text(user1.firstName + " " + user1.lastName,
+              Text(myUser.fullName,
                   style:
                       TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
               SizedBox(height: 4),

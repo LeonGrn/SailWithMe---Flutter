@@ -73,7 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       child: CircleAvatar(
                         radius: 15,
-                        backgroundImage: AssetImage(message.sender.imageUrl),
+                        backgroundImage: AssetImage(null),
                       ),
                     ),
                   ],
@@ -129,7 +129,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       child: CircleAvatar(
                         radius: 15,
-                        backgroundImage: AssetImage(message.sender.imageUrl),
+                        backgroundImage: AssetImage(null),
                       ),
                     ),
                     SizedBox(
@@ -197,7 +197,7 @@ class _ChatScreenState extends State<ChatScreen> {
           text: TextSpan(
             children: [
               TextSpan(
-                  text: widget.user.firstName,
+                  text: widget.user.fullName,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,

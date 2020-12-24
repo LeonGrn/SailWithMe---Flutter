@@ -36,18 +36,18 @@ class PostContainer extends StatelessWidget {
                   _PostHeader(post: post),
                   const SizedBox(height: 4.0),
                   Text(post.caption),
-                  post.imageUrl != null
-                      ? const SizedBox.shrink()
-                      : const SizedBox(height: 6.0),
+                  // post.imageUrl != null
+                  //     ? const SizedBox.shrink()
+                  //     : const SizedBox(height: 6.0),
                 ],
               ),
             ),
-            post.imageUrl != null
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: CachedNetworkImage(imageUrl: post.imageUrl),
-                  )
-                : const SizedBox.shrink(),
+            // post.imageUrl != null
+            //     ? Padding(
+            //         padding: const EdgeInsets.symmetric(vertical: 8.0),
+            //         child: CachedNetworkImage(imageUrl: post.imageUrl),
+            //       )
+            //     : const SizedBox.shrink(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: _PostStats(post: post),
@@ -71,7 +71,9 @@ class _PostHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        ProfileAvatar(imageUrl: post.imageUrl , radius : 20),
+        //ProfileAvatar(imageUrl: post.imageUrl , radius : 20),
+        ProfileAvatar(imageFile: null, width: 20, height: 20),
+
         const SizedBox(width: 8.0),
         Expanded(
           child: Column(

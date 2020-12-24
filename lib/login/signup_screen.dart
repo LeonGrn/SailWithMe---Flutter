@@ -1,13 +1,18 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:SailWithMe/models/models.dart';
 import 'package:SailWithMe/screens/navigation_screens.dart';
+import 'package:SailWithMe/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:imei_plugin/imei_plugin.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -15,7 +20,8 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _MyAppState extends State<SignUpScreen> {
-  DatabaseReference _dbRef;
+  //DatabaseReference _dbRef;
+  final databaseReference = FirebaseDatabase.instance.reference();
 
   bool _passwordVisible;
   String birthDate = "";
@@ -23,26 +29,89 @@ class _MyAppState extends State<SignUpScreen> {
 
   String _email = "";
   String _password = "";
+  String _fullName = "";
+  String gender = "";
+  String _yearsOfExperience = "";
+  File _image;
+
+  String _platformImei = 'Unknown';
+  String uniqueId = "Unknown";
 
   TextEditingController nameController = TextEditingController();
   int _radioValue = 0;
+  AssetImage myChoosenImage = new AssetImage('assets/user.png');
 
   @override
   void initState() {
     _passwordVisible = false;
-    _dbRef = FirebaseDatabase.instance.reference().child('myUsers');
-
+    //_dbRef = FirebaseDatabase.instance.reference().child('myUsers');
     super.initState();
+    initPlatformState();
+  }
+
+  Future<void> initPlatformState() async {
+    String platformImei;
+    String idunique;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      platformImei =
+          await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
+      List<String> multiImei = await ImeiPlugin.getImeiMulti();
+      print(multiImei);
+      idunique = await ImeiPlugin.getId();
+    } on PlatformException {
+      platformImei = 'Failed to get platform version.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _platformImei = platformImei;
+      uniqueId = idunique;
+    });
+  }
+
+  Future getImage() async {
+    final pickedFile =
+        await ImagePicker().getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        //myChoosenImage = _image;
+        uploadPic();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future uploadPic() async {
+    // firebase_storage.FirebaseStorage storage =
+    //     firebase_storage.FirebaseStorage.instance;
+    try {
+      await firebase_storage.FirebaseStorage.instance
+          .ref('profile/myProfile.png')
+          .putFile(_image);
+    } on FirebaseException catch (e) {
+      // e.g, e.code == 'canceled'
+      print(e);
+    }
   }
 
   Future<void> _createUser() async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: _email, password: _password);
+      UserData createdUser = UserData(_fullName, _email, age.toString(), gender,
+          _yearsOfExperience, uniqueId, _image);
+      String userId = FirebaseAuth.instance.currentUser.uid;
 
-      _dbRef.child(userCredential.user.uid).set({
-        'Email': _email,
-      });
+      databaseReference.child(userId).set(createdUser.toJson());
+
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => new BottomNavBar()),
@@ -64,8 +133,10 @@ class _MyAppState extends State<SignUpScreen> {
 
       switch (_radioValue) {
         case 0:
+          gender = "Male";
           break;
         case 1:
+          gender = "Female";
           break;
       }
     });
@@ -124,7 +195,6 @@ class _MyAppState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-    AssetImage myChoosenImage = new AssetImage('assets/user.png');
 
     TextStyle valueTextStyle = TextStyle(
       fontWeight: FontWeight.bold,
@@ -146,16 +216,28 @@ class _MyAppState extends State<SignUpScreen> {
                 SizedBox(
                   height: 15.0,
                 ),
-                Container(
-                  width: 120.0,
-                  height: 120.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.black, width: 2),
-                    image: DecorationImage(
-                        fit: BoxFit.cover, image: myChoosenImage),
-                    color: Colors.white,
-                  ),
+                GestureDetector(
+                  onTap: () {
+                    getImage();
+                  },
+                  // child: Container(
+                  //   width: 120.0,
+                  //   height: 120.0,
+                  //   decoration: BoxDecoration(
+                  //     image: _image == null
+                  //         ? DecorationImage(
+                  //             fit: BoxFit.cover, image: myChoosenImage)
+                  //         : DecorationImage(
+                  //             image: FileImage(_image),
+                  //             fit: BoxFit.cover,
+                  //           ),
+                  //     color: Colors.white,
+                  //     shape: BoxShape.circle,
+                  //     border: Border.all(color: Colors.black, width: 2),
+                  //   ),
+                  // ),
+                  child:
+                      ProfileAvatar(imageFile: _image, width: 120, height: 120),
                 ),
                 SizedBox(
                   height: 20.0,
@@ -171,6 +253,9 @@ class _MyAppState extends State<SignUpScreen> {
                   height: 15.0,
                 ),
                 TextField(
+                  onChanged: (value) {
+                    _fullName = value;
+                  },
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(50),
@@ -327,6 +412,9 @@ class _MyAppState extends State<SignUpScreen> {
                   height: 10.0,
                 ),
                 TextField(
+                  onChanged: (value) {
+                    _yearsOfExperience = value;
+                  },
                   keyboardType: TextInputType.number,
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly

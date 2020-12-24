@@ -9,16 +9,7 @@ import 'package:flutter/widgets.dart';
 
 class MessagesPage extends StatelessWidget {
   final List<UserData> users = [
-    new UserData("Leon", "G", "g.com", 0544, "123",
-        "https://images.unsplash.com/photo-1525253086316-d0c936c814f8"),
-    new UserData("Ofer", "G", "g.com", 0544, "123",
-        "https://images.unsplash.com/photo-1525253086316-d0c936c814f8"),
-    new UserData("Hani", "G", "g.com", 0544, "123",
-        "https://images.unsplash.com/photo-1525253086316-d0c936c814f8"),
-    new UserData("New York", "G", "g.com", 0544, "123",
-        "https://images.unsplash.com/photo-1525253086316-d0c936c814f8"),
-    new UserData("ssss", "G", "g.com", 0544, "123",
-        "https://images.unsplash.com/photo-1525253086316-d0c936c814f8"),
+    new UserData.fromUserData("Leon", "g.com", "0544", "123", null),
   ];
   @override
   Widget build(BuildContext context) {
@@ -53,10 +44,11 @@ class MessagesPage extends StatelessWidget {
               ),
             ),
           ),
-          leading: ProfileAvatar(imageUrl: users[index].imageUrl, radius: 20),
+          leading: //ProfileAvatar(imageUrl: null, radius: 20),
+              ProfileAvatar(imageFile: null, width: 20, height: 20),
           title: RichText(
               text: TextSpan(
-            text: users[index].firstName + " " + users[index].lastName,
+            text: 'users[index].fullName',
             style: TextStyle(
                 color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
           )),
@@ -69,21 +61,12 @@ class MessagesPage extends StatelessWidget {
 
 class SearchData extends SearchDelegate<UserData> {
   final List<UserData> users = [
-    new UserData("Leon", "G", "g.com", 0544, "123",
-        "https://images.unsplash.com/photo-1525253086316-d0c936c814f8"),
-    new UserData("Ofer", "G", "g.com", 0544, "123",
-        "https://images.unsplash.com/photo-1525253086316-d0c936c814f8"),
-    new UserData("Hani", "G", "g.com", 0544, "123",
-        "https://images.unsplash.com/photo-1525253086316-d0c936c814f8"),
-    new UserData("New York", "G", "g.com", 0544, "123",
-        "https://images.unsplash.com/photo-1525253086316-d0c936c814f8"),
-    new UserData("ssss", "G", "g.com", 0544, "123",
-        "https://images.unsplash.com/photo-1525253086316-d0c936c814f8"),
+    new UserData.fromUserData("Leon", "g.com", "0544", "123", null),
   ];
-
+// UserData(this._fullName, this._email, this._age, this._gender,
+//       this._yearsOfExperience, this._imei, this._imageUrl);
   final recentUser = [
-    new UserData("Leon", "G", "g.com", 0544, "123",
-        "https://images.unsplash.com/photo-1525253086316-d0c936c814f8")
+    new UserData.fromUserData("Leon", "g.com", "0544", "123", null)
   ];
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -121,24 +104,24 @@ class SearchData extends SearchDelegate<UserData> {
   Widget buildSuggestions(BuildContext context) {
     final suggestionList = query.isEmpty
         ? recentUser
-        : users.where((p) => p.firstName.startsWith(query)).toList();
+        : users.where((p) => p.fullName.startsWith(query)).toList();
     return ListView.builder(
       itemBuilder: (context, index) => ListTile(
         onTap: () {
           showResults(context);
         },
-        leading: ProfileAvatar(imageUrl: users[index].imageUrl, radius: 20),
+        leading: //ProfileAvatar(imageUrl: null, radius: 20),
+            ProfileAvatar(imageFile: null, width: 20, height: 20),
         title: RichText(
             text: TextSpan(
-                text:
-                    suggestionList[index].firstName.substring(0, query.length),
+                text: suggestionList[index].fullName.substring(0, query.length),
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 17),
                 children: [
               TextSpan(
-                  text: suggestionList[index].firstName.substring(query.length),
+                  text: suggestionList[index].fullName.substring(query.length),
                   style: TextStyle(color: Colors.grey, fontSize: 17))
             ])),
       ),
