@@ -4,101 +4,102 @@ import 'package:firebase_database/firebase_database.dart';
 import 'models.dart';
 
 class UserData {
-  String _id;
-  String _fullName;
-  String _email;
-  String _gender;
-  String _age;
-  String _yearsOfExperience;
-  int _phoneNumber;
-  String _imei;
-  File _imageUrl;
+  String id;
+  String fullName = "";
+  String email = "";
+  String gender = "";
+  String age = "";
+  String yearsOfExperience = "";
+  int phoneNumber;
+  String imei = "";
+  String imageRef = "";
   bool _isOnline;
   List<Trip> tripList;
   List<Group> groupList;
   //List<Event> eventList;
-  List<Post> posts;
+  List<Post> posts = [];
 
-  List get getPosts => posts;
-
-  void setPosts(Post myPost) {
-    posts.add(myPost);
+  List get getPosts {
+    return posts;
   }
 
-  List<Chat> chats;
-
-  List<UserData> friends;
-
-  String get gender => _gender;
-
-  set gender(String value) => _gender = value;
-
-  String get age => _age;
-
-  set age(String value) => _age = value;
-
-  String get yearsOfExperience => _yearsOfExperience;
-
-  set yearsOfExperience(String value) => _yearsOfExperience = value;
-
-  String get id => _id;
-
-  set id(String value) => _id = value;
-
-  String get fullName => _fullName;
-
-  String setFullName(String value) {
-    return _fullName = value;
+  void setPosts(Post post) {
+    this.posts.add(post);
   }
 
-  String get email => _email;
+  String get getId => id;
 
-  void setEmail(String value) {
-    _email = value;
+  set setId(String id) => this.id = id;
+
+  String get getFullName => fullName;
+
+  set setFullName(String fullName) => this.fullName = fullName;
+
+  String get getEmail => email;
+
+  set setEmail(String email) => this.email = email;
+
+  String get getGender => gender;
+
+  set setGender(String gender) => this.gender = gender;
+
+  String get getAge => age;
+
+  set setAge(String age) => this.age = age;
+
+  String get getYearsOfExperience => yearsOfExperience;
+
+  set setYearsOfExperience(String yearsOfExperience) =>
+      this.yearsOfExperience = yearsOfExperience;
+
+  int get getPhoneNumber => phoneNumber;
+
+  set setPhoneNumber(int phoneNumber) => this.phoneNumber = phoneNumber;
+
+  String get getImei => imei;
+
+  set setImei(String imei) => this.imei = imei;
+
+  String get getImageRef => imageRef;
+
+  set setImageRef(String imageRef) => this.imageRef = imageRef;
+
+  UserData(
+      {this.fullName,
+      this.email,
+      this.age,
+      this.gender,
+      this.yearsOfExperience,
+      this.imei,
+      this.imageRef,
+      this.posts});
+  //: this.posts = [];
+
+  UserData.fromUserData(this.fullName, this.email, this.id,
+      this.yearsOfExperience, this.imageRef);
+
+  Map<String, dynamic> toJson() {
+    List<Map> posts =
+        this.posts != null ? this.posts.map((i) => i.toJson()).toList() : null;
+
+    return {
+      'FullName': fullName,
+      'Email': email,
+      'Age': age,
+      'Gender': gender,
+      'YearsOfExperience': yearsOfExperience,
+      'IMEI': imei,
+      'ImageRef': imageRef,
+      'Posts': posts,
+    };
   }
-
-  void setImage(File value) {
-    _imageUrl = value;
-  }
-
-  File getImage() {
-    return _imageUrl;
-  }
-
-  int get phoneNumber => _phoneNumber;
-
-  set phoneNumber(int value) => _phoneNumber = value;
-
-  String get imei => _imei;
-
-  set imei(String value) => _imei = value;
-
-  bool get isOnline => _isOnline;
-
-  set isOnline(bool value) => _isOnline = value;
-
-  UserData(this._fullName, this._email, this._age, this._gender,
-      this._yearsOfExperience, this._imei, this._imageUrl);
-
-  UserData.fromUserData(this._fullName, this._email, this._id,
-      this._yearsOfExperience, this._imageUrl);
-
-  Map<String, dynamic> toJson() => {
-        'FullName': _fullName,
-        'Email': _email,
-        'Age': _age,
-        'Gender': _gender,
-        'YearsOfExperience': _yearsOfExperience,
-        'IMEI': _imei,
-        'ImageUrl': _imageUrl,
-      };
 
   UserData.fromJson(DataSnapshot snapshot)
-      : _fullName = snapshot.value['FullName'],
-        _email = snapshot.value['Email'],
-        _age = snapshot.value['Age'],
-        _gender = snapshot.value['Gender'],
-        _yearsOfExperience = snapshot.value['YearsOfExperience'],
-        _imei = snapshot.value['IMEI'],
-        _imageUrl = snapshot.value['ImageUrl'];
+      : fullName = snapshot.value['FullName'],
+        email = snapshot.value['Email'],
+        age = snapshot.value['Age'],
+        gender = snapshot.value['Gender'],
+        yearsOfExperience = snapshot.value['YearsOfExperience'],
+        imei = snapshot.value['IMEI'],
+        imageRef = snapshot.value['ImageRef'];
 }

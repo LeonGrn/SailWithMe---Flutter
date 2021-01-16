@@ -1,4 +1,6 @@
+import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:SailWithMe/config/palette.dart';
 import 'package:SailWithMe/widgets/circle_button.dart';
@@ -16,6 +18,7 @@ import 'package:SailWithMe/main.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path_provider/path_provider.dart';
+import 'package:firebase_image/firebase_image.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -36,6 +39,7 @@ class _HomePageState extends State<HomePage> {
   String _timezone = 'Unknown';
   String assetName = 'assets/sun.svg';
   bool isSearching = false;
+  File imageUrl;
 
   Future getWeather() async {
     http.Response response = await http.get(
@@ -59,25 +63,47 @@ class _HomePageState extends State<HomePage> {
       print(data.value);
       print(data.key);
       myUser = UserData.fromJson(data);
+      inspect(myUser);
       print(myUser.age +
           myUser.email +
           myUser.fullName +
           myUser.yearsOfExperience +
           myUser.imei +
           myUser.gender);
+
+      print(myUser.getImageRef);
     });
   }
 
   Future<void> downloadFileFromFirebaseStorage() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
+    // Directory appDocDir = await getApplicationDocumentsDirectory();
 
-    File downloadToFile = File('${appDocDir.path}/download-logo.png');
+    // File downloadToFile = File('${appDocDir.path}/download-logo.png');
+    // final firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage(
+    //       app: Firestore.instance.app,
+    //       storageBucket: 'gs://my-project.appspot.com');
+
+    //   Uint8List imageBytes;
+    //   String errImage m;
+    // await FireStorageService.loadImage(context, image).then((downloadUrl) {
+    //   m = Image.network(
+    //     downloadUrl.toString(),
+    //     fit: BoxFit.scaleDown,
+    //   );
+    // }orMsg;
 
     try {
-      await firebase_storage.FirebaseStorage.instance
-          .ref('profile/myProfile.png')
-          .writeToFile(downloadToFile);
-      myUser.setImage(downloadToFile);
+      final ref = firebase_storage.FirebaseStorage.instance
+          .ref()
+          .child(myUser.getImageRef);
+// no need of the file extension, the name will do fine.
+      var url = await ref.getDownloadURL();
+      print(url);
+      // await firebase_storage.FirebaseStorage.instance
+      //     .ref(myUser.getImageRef)
+      //     .writeToFile(downloadToFile);
+      // //myUser.setImage(downloadToFile);
+      // imageUrl = downloadToFile;
     } on FirebaseException catch (e) {
       // e.g, e.code == 'canceled'
       print(e);
@@ -107,7 +133,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     this.getWeather();
     this._getData();
-    this.downloadFileFromFirebaseStorage();
+    //this.downloadFileFromFirebaseStorage();
     // this.initPlatformState();
   }
 
@@ -230,15 +256,17 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          // Expanded(
-          //   child: ListView.builder(
-          //     itemCount: posts.length,
-          //     itemBuilder: (context, index) {
-          //       Post post = posts[index];
-          //       return PostContainer(post: post);
-          //     },
-          //   ),
-          // ),
+          Expanded(
+            child: myUser.getPosts.isNotEmpty
+                ? ListView.builder(
+                    itemCount: myUser.getPosts.length,
+                    itemBuilder: (context, index) {
+                      Post post = myUser.getPosts[index];
+                      return PostContainer(post: post);
+                    },
+                  )
+                : Text("No Posts"),
+          ),
         ],
       ),
       drawer: HomePageDrawer(myUser: myUser),
@@ -265,13 +293,26 @@ class HomePageDrawer extends StatelessWidget {
           Column(
             children: [
               SizedBox(
-                height: 120.0,
-                child: new DrawerHeader(
-                  child: ProfileAvatar(
-                      imageFile: myUser.getImage(), width: 120, height: 120),
-                ),
-              ),
-              Text(myUser.fullName,
+                  height: 120.0,
+                  child: new DrawerHeader(
+                    child: CircleAvatar(
+                      radius: 80.0,
+                      backgroundImage: myUser.getImageRef != ""
+                          ? FirebaseImage(
+                              'gs://sailwithme.appspot.com/' +
+                                  myUser.getImageRef,
+                              shouldCache:
+                                  true, // The image should be cached (default: True)
+                              // maxSizeBytes:
+                              //     3000 * 1000, // 3MB max file size (default: 2.5MB)
+                              // cacheRefreshStrategy: CacheRefreshStrategy
+                              //     .NEVER // Switch off update checking
+                            ) //??
+                          : AssetImage('assets/user.png'),
+                      backgroundColor: Colors.white,
+                    ),
+                  )),
+              Text(myUser.getFullName,
                   style:
                       TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
               SizedBox(height: 4),

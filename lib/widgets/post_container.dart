@@ -2,8 +2,6 @@ import 'dart:ui';
 import 'package:SailWithMe/models/models.dart';
 import 'package:flutter/material.dart';
 import 'widgets.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:SailWithMe/date.dart';
 import 'package:SailWithMe/config/palette.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -35,10 +33,7 @@ class PostContainer extends StatelessWidget {
                 children: [
                   _PostHeader(post: post),
                   const SizedBox(height: 4.0),
-                  Text(post.caption),
-                  // post.imageUrl != null
-                  //     ? const SizedBox.shrink()
-                  //     : const SizedBox(height: 6.0),
+                  Text(post.title),
                 ],
               ),
             ),

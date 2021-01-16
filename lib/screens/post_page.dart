@@ -1,5 +1,7 @@
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:SailWithMe/models/post_models/created_by.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -9,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 
 class PostPage extends StatefulWidget {
   @override
@@ -18,6 +21,7 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   final textController = new TextEditingController();
   File _image;
+  String imageRef = "";
   //final picker = ImagePicker();
   final databaseReference = FirebaseDatabase.instance.reference();
 
@@ -26,16 +30,26 @@ class _PostPageState extends State<PostPage> {
 
   Post myPost;
   UserData myUser;
+  CreatedBy createdBy = CreatedBy();
+  String userId = FirebaseAuth.instance.currentUser.uid;
 
-  Future _getData() async {
+  Future<void> _getData() async {
+    print("userId");
+
     final fb = FirebaseDatabase.instance;
     final ref = fb.reference();
     var userId = FirebaseAuth.instance.currentUser.uid;
-    await ref.child(userId).once().then((DataSnapshot data) {
+    print(userId);
+    ref.child(userId).once().then((DataSnapshot data) {
       myUser = UserData.fromJson(data);
+      createdBy.setFullName = myUser.getFullName;
+      createdBy.setEmail = myUser.getEmail;
+      createdBy.setImageRef = myUser.getImageRef ?? "";
+
       // print(data.value);
       // print(data.key);
-      // myUser = UserData.fromJson(data);
+      // inspect(myUser);
+      // // myUser = UserData.fromJson(data);
       // print(myUser.age +
       //     myUser.email +
       //     myUser.fullName +
@@ -72,7 +86,6 @@ class _PostPageState extends State<PostPage> {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
         //myChoosenImage = _image;
-        uploadPic();
       } else {
         print('No image selected.');
       }
@@ -80,28 +93,36 @@ class _PostPageState extends State<PostPage> {
   }
 
   Future uploadPic() async {
-    // firebase_storage.FirebaseStorage storage =
-    //     firebase_storage.FirebaseStorage.instance;
+    var uuid = Uuid().v4();
+
     try {
       await firebase_storage.FirebaseStorage.instance
-          .ref('profile/blabla.png')
+          .ref('${myUser.email}/$uuid.png')
           .putFile(_image);
+
+      imageRef = '$uuid.png';
     } on firebase_storage.FirebaseException catch (e) {
       // e.g, e.code == 'canceled'
       print(e);
     }
   }
 
-  Future<void> _pushUser() async {
+  Future<void> _createPost() async {
     String userId = FirebaseAuth.instance.currentUser.uid;
     print(userId);
+    uploadPic();
 
-    var newPostKey = databaseReference.child('posts').push().key;
-    var updates = {};
-
-    updates['/posts/' + newPostKey] = myPost.toJson();
-    updates['/user-posts/' + userId + '/' + newPostKey] = myPost.toJson();
-    databaseReference.update(updates);
+    //var newPostKey = databaseReference.push().key;
+    //print(newPostKey);
+    databaseReference.child(userId).update(myUser.toJson());
+    //myUser
+    // databaseReference
+    //     .child(userId)
+    //     .child("posts")
+    //     .update({newPostKey: myPost.toJson()});
+    // updates['/posts/' + newPostKey] = myPost.toJson();
+    // updates['/user-posts/' + userId + '/' + newPostKey] = myPost.toJson();
+    // databaseReference.update(updates);
     //databaseReference.child(userId).set(myPost.toJson());
 
     // Navigator.pushAndRemoveUntil(
@@ -134,12 +155,22 @@ class _PostPageState extends State<PostPage> {
               onPressed: () {
                 /*...*/
 
-                myPost = new Post();
-                myPost.setImage(_image);
-                myPost.setCaption(captionController.text);
-                myPost.setTime(now);
+                myPost = new Post(
+                    createdBy: createdBy,
+                    title: captionController.text,
+                    description: "",
+                    timeAgo: now.toString(),
+                    imageUrl: imageRef);
+                // myPost.setImage(_image);
+                // myPost.setCaption(captionController.text);
+                // myPost.setTime(now);
                 //myUser.setPosts(myPost);
-                _pushUser();
+                //this._getData();
+
+                inspect(myPost);
+
+                myUser.setPosts(myPost);
+                _createPost();
               },
               child: Text(
                 "Post",

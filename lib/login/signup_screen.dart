@@ -13,6 +13,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:imei_plugin/imei_plugin.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:uuid/uuid.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -36,7 +37,7 @@ class _MyAppState extends State<SignUpScreen> {
 
   String _platformImei = 'Unknown';
   String uniqueId = "Unknown";
-
+  String imageRef = "";
   TextEditingController nameController = TextEditingController();
   int _radioValue = 0;
   AssetImage myChoosenImage = new AssetImage('assets/user.png');
@@ -82,7 +83,7 @@ class _MyAppState extends State<SignUpScreen> {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
         //myChoosenImage = _image;
-        uploadPic();
+        //uploadPic();
       } else {
         print('No image selected.');
       }
@@ -90,12 +91,17 @@ class _MyAppState extends State<SignUpScreen> {
   }
 
   Future uploadPic() async {
-    // firebase_storage.FirebaseStorage storage =
-    //     firebase_storage.FirebaseStorage.instance;
+    var uuid = Uuid().v4();
+
     try {
-      await firebase_storage.FirebaseStorage.instance
-          .ref('profile/myProfile.png')
-          .putFile(_image);
+      if (_image != null) {
+        await firebase_storage.FirebaseStorage.instance
+            .ref('$_email/$uuid.png')
+            .putFile(_image);
+        imageRef = '$_email/$uuid.png';
+      }
+
+      print(imageRef);
     } on FirebaseException catch (e) {
       // e.g, e.code == 'canceled'
       print(e);
@@ -104,14 +110,23 @@ class _MyAppState extends State<SignUpScreen> {
 
   Future<void> _createUser() async {
     try {
+      uploadPic();
+
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: _email, password: _password);
-      UserData createdUser = UserData(_fullName, _email, age.toString(), gender,
-          _yearsOfExperience, uniqueId, _image);
+
       String userId = FirebaseAuth.instance.currentUser.uid;
 
-      databaseReference.child(userId).set(createdUser.toJson());
+      UserData createdUser = UserData(
+          fullName: _fullName,
+          email: _email,
+          age: age.toString(),
+          gender: gender,
+          yearsOfExperience: _yearsOfExperience,
+          imei: uniqueId,
+          imageRef: imageRef);
 
+      databaseReference.child(userId).set(createdUser.toJson());
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => new BottomNavBar()),
