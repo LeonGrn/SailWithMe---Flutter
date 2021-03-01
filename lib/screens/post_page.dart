@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:SailWithMe/models/post_models/created_by.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -31,7 +30,6 @@ class _PostPageState extends State<PostPage> {
 
   Post myPost;
   UserData myUser;
-  CreatedBy createdBy = CreatedBy();
   String userId = FirebaseAuth.instance.currentUser.uid;
   List<Post> posts = List<Post>();
 
@@ -45,11 +43,6 @@ class _PostPageState extends State<PostPage> {
     ref.child(userId).once().then((DataSnapshot data) {
       //myUser = UserData.fromJson(jsonDecode(data.value));
       myUser = UserData.fromJson(data);
-
-      createdBy.setFullName = myUser.getFullName;
-      createdBy.setEmail = myUser.getEmail;
-      createdBy.setImageRef = myUser.getImageRef ?? "";
-
       // print(data.value);
       // print(data.key);
       // inspect(myUser);
@@ -160,7 +153,6 @@ class _PostPageState extends State<PostPage> {
                 /*...*/
 
                 myPost = new Post(
-                    createdBy: createdBy,
                     title: captionController.text,
                     description: "",
                     timeAgo: now.toString(),
