@@ -62,7 +62,9 @@ class _HomePageState extends State<HomePage> {
     await ref.child(userId).once().then((DataSnapshot data) {
       print(data.value);
       print(data.key);
+
       myUser = UserData.fromJson(data);
+
       inspect(myUser);
       print(myUser.age +
           myUser.email +
@@ -71,7 +73,7 @@ class _HomePageState extends State<HomePage> {
           myUser.imei +
           myUser.gender);
 
-      print(myUser.getImageRef);
+      //print(myUser.getImageRef);
     });
   }
 
@@ -132,7 +134,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     this.getWeather();
-    this._getData();
+    //this._getData();
     //this.downloadFileFromFirebaseStorage();
     // this.initPlatformState();
   }
@@ -257,15 +259,39 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
-            child: myUser.getPosts.isNotEmpty
-                ? ListView.builder(
-                    itemCount: myUser.getPosts.length,
-                    itemBuilder: (context, index) {
-                      Post post = myUser.getPosts[index];
-                      return PostContainer(post: post);
-                    },
-                  )
-                : Text("No Posts"),
+            child: FutureBuilder(
+              future: _getData(), // async work
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    return new Text('Press button to start');
+                  case ConnectionState.waiting:
+                    return new Text('Loading....');
+                  default:
+                    if (snapshot.hasError)
+                      return new Text('Error: ${snapshot.error}');
+
+                    if (myUser.getPosts == null)
+                      return Center(child: Text("Empty"));
+                    else
+                      return ListView.builder(
+                          itemCount: myUser.getPosts.length,
+                          itemBuilder: (context, index) {
+                            Post post = myUser.getPosts[index];
+                            return PostContainer(post: post);
+                          });
+                }
+              },
+            ),
+            //   child:
+            //       ? ListView.builder(
+            //           itemCount: myUser.getPosts.length,
+            //           itemBuilder: (context, index) {
+            //             Post post = myUser.getPosts[index];
+            //             return PostContainer(post: post);
+            //           },
+            //         )
+            //       : Text("No Posts"),
           ),
         ],
       ),

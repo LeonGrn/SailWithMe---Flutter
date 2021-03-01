@@ -118,13 +118,14 @@ class _MyAppState extends State<SignUpScreen> {
       String userId = FirebaseAuth.instance.currentUser.uid;
 
       UserData createdUser = UserData(
-          fullName: _fullName,
-          email: _email,
-          age: age.toString(),
-          gender: gender,
-          yearsOfExperience: _yearsOfExperience,
-          imei: uniqueId,
-          imageRef: imageRef);
+        fullName: _fullName,
+        email: _email,
+        age: age.toString(),
+        gender: gender,
+        yearsOfExperience: _yearsOfExperience,
+        imei: uniqueId,
+        imageRef: imageRef,
+      );
 
       databaseReference.child(userId).set(createdUser.toJson());
       Navigator.pushAndRemoveUntil(

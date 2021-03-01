@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -32,6 +33,7 @@ class _PostPageState extends State<PostPage> {
   UserData myUser;
   CreatedBy createdBy = CreatedBy();
   String userId = FirebaseAuth.instance.currentUser.uid;
+  List<Post> posts = List<Post>();
 
   Future<void> _getData() async {
     print("userId");
@@ -41,7 +43,9 @@ class _PostPageState extends State<PostPage> {
     var userId = FirebaseAuth.instance.currentUser.uid;
     print(userId);
     ref.child(userId).once().then((DataSnapshot data) {
+      //myUser = UserData.fromJson(jsonDecode(data.value));
       myUser = UserData.fromJson(data);
+
       createdBy.setFullName = myUser.getFullName;
       createdBy.setEmail = myUser.getEmail;
       createdBy.setImageRef = myUser.getImageRef ?? "";
@@ -100,7 +104,7 @@ class _PostPageState extends State<PostPage> {
           .ref('${myUser.email}/$uuid.png')
           .putFile(_image);
 
-      imageRef = '$uuid.png';
+      imageRef = '${myUser.email}/$uuid.png';
     } on firebase_storage.FirebaseException catch (e) {
       // e.g, e.code == 'canceled'
       print(e);
@@ -168,8 +172,8 @@ class _PostPageState extends State<PostPage> {
                 //this._getData();
 
                 inspect(myPost);
-
-                myUser.setPosts(myPost);
+                posts.add(myPost);
+                myUser.posts = posts;
                 _createPost();
               },
               child: Text(
