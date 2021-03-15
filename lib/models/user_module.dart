@@ -20,6 +20,7 @@ class UserData {
   List<Group> groupList;
   //List<Event> eventList;
   List<Post> posts = [];
+  // Map<String, Post> postss = [];
 
   List get getPosts {
     return posts;
@@ -98,12 +99,6 @@ class UserData {
 
   factory UserData.fromJson(DataSnapshot snapshot) {
     if (snapshot.value['Posts'] != null) {
-      //var tagObjsJson = json['Posts'] as List;
-
-      // List<Post> _posts =
-      //     tagObjsJson.map((tagJson) => Post.fromJson(tagJson)).toList();
-      // var genreIdsFromJson = snapshot.value['genre_ids'];
-      // List<Post> genreIdsList = new List<Post>.from(genreIdsFromJson);
       inspect(snapshot);
       return UserData(
           fullName: snapshot.value['FullName'],
@@ -113,10 +108,6 @@ class UserData {
           yearsOfExperience: snapshot.value['YearsOfExperience'],
           imei: snapshot.value['IMEI'],
           imageRef: snapshot.value['ImageRef']);
-      // posts: snapshot.value[0]['Posts'] //.values
-
-      //     .map((e_post) => Post.fromJson(e_post))
-      //     .toList());
     } else {
       return UserData(
           fullName: snapshot.value['FullName'],
@@ -127,9 +118,5 @@ class UserData {
           imei: snapshot.value['IMEI'],
           imageRef: snapshot.value['ImageRef']);
     }
-
-    //posts: json['Posts'],
-    //UserId.fromJson(parsedJson['userId']),
-    //);
   }
 }

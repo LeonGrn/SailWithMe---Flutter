@@ -1,8 +1,9 @@
 import 'dart:developer';
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/config/palette.dart';
+import 'package:SailWithMe/screens/profile_screen.dart';
 import 'package:SailWithMe/widgets/circle_button.dart';
 import 'package:SailWithMe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -196,7 +197,13 @@ class _HomePageState extends State<HomePage> {
               icon: Icons.add_alert,
               iconSize: 25.0,
               onPressed: () {
-                setState(() {});
+                setState(() {
+                  Navigator.of(context).push(new MaterialPageRoute<Null>(
+                      builder: (BuildContext context) {
+                        return ProfileScreen();
+                      },
+                      fullscreenDialog: true));
+                });
               }),
         ],
       ),
@@ -260,19 +267,16 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: FutureBuilder(
-              future: _getData(), // async work
+              future: ApiCalls.getListOfPost(), // async work
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.none:
-                    return new Text('Press button to start');
+                    return new Text('No posts exist');
                   case ConnectionState.waiting:
                     return new Text('Loading....');
                   default:
                     if (snapshot.hasError)
                       return new Text('Error: ${snapshot.error}');
-
-                    if (myUser.getPosts == null)
-                      return Center(child: Text("Empty"));
                     else
                       return ListView.builder(
                           itemCount: myUser.getPosts.length,
@@ -283,15 +287,6 @@ class _HomePageState extends State<HomePage> {
                 }
               },
             ),
-            //   child:
-            //       ? ListView.builder(
-            //           itemCount: myUser.getPosts.length,
-            //           itemBuilder: (context, index) {
-            //             Post post = myUser.getPosts[index];
-            //             return PostContainer(post: post);
-            //           },
-            //         )
-            //       : Text("No Posts"),
           ),
         ],
       ),

@@ -12,6 +12,7 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
+import 'package:SailWithMe/config/ApiCalls.dart';
 
 class PostPage extends StatefulWidget {
   @override
@@ -62,19 +63,6 @@ class _PostPageState extends State<PostPage> {
     this._getData();
   }
 
-  // Future getImage() async {
-  //   final pickedFile =
-  //       await ImagePicker().getImage(source: ImageSource.gallery);
-
-  //   setState(() {
-  //     if (pickedFile != null) {
-  //       _image = File(pickedFile.path);
-  //     } else {
-  //       print('No image selected.');
-  //     }
-  //   });
-  // }
-
   Future getImage() async {
     final pickedFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
@@ -90,51 +78,22 @@ class _PostPageState extends State<PostPage> {
   }
 
   Future uploadPic() async {
+    if (_image == null) {
+      imageRef = "";
+      return;
+    }
     var uuid = Uuid().v4();
 
     try {
       await firebase_storage.FirebaseStorage.instance
-          .ref('${myUser.email}/$uuid.png')
+          .ref('${myUser.email}/posts/$uuid.png')
           .putFile(_image);
 
-      imageRef = '${myUser.email}/$uuid.png';
+      imageRef = '${myUser.email}/posts/$uuid.png';
     } on firebase_storage.FirebaseException catch (e) {
-      // e.g, e.code == 'canceled'
+      imageRef = "";
       print(e);
     }
-  }
-
-  Future<void> _createPost() async {
-    String userId = FirebaseAuth.instance.currentUser.uid;
-    print(userId);
-    uploadPic();
-
-    //var newPostKey = databaseReference.push().key;
-    //print(newPostKey);
-    databaseReference.child(userId).update(myUser.toJson());
-    //myUser
-    // databaseReference
-    //     .child(userId)
-    //     .child("posts")
-    //     .update({newPostKey: myPost.toJson()});
-    // updates['/posts/' + newPostKey] = myPost.toJson();
-    // updates['/user-posts/' + userId + '/' + newPostKey] = myPost.toJson();
-    // databaseReference.update(updates);
-    //databaseReference.child(userId).set(myPost.toJson());
-
-    // Navigator.pushAndRemoveUntil(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => new BottomNavBar()),
-    //     (e) => false);
-    // } on FirebaseAuthException catch (e) {
-    //   // if (e.code == 'weak-password') {
-    //   //   print('The password provided is too weak.');
-    //   // } else if (e.code == 'email-already-in-use') {
-    //   //   print('The account already exists for that email.');
-    //   // }
-    // } catch (e) {
-    //   print(e);
-    // }
   }
 
   @override
@@ -149,24 +108,15 @@ class _PostPageState extends State<PostPage> {
             Text("Create post"),
             RaisedButton(
               color: Colors.cyan[400],
-              onPressed: () {
-                /*...*/
-
+              onPressed: () async {
+                await uploadPic();
                 myPost = new Post(
                     title: captionController.text,
-                    description: "",
-                    timeAgo: now.toString(),
+                    description: "rterter",
+                    timeAgo: "time ago",
                     imageUrl: imageRef);
-                // myPost.setImage(_image);
-                // myPost.setCaption(captionController.text);
-                // myPost.setTime(now);
-                //myUser.setPosts(myPost);
-                //this._getData();
 
-                inspect(myPost);
-                posts.add(myPost);
-                myUser.posts = posts;
-                _createPost();
+                ApiCalls.createPost(myPost);
               },
               child: Text(
                 "Post",
