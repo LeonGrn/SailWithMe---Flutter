@@ -30,8 +30,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   UserData myUser;
-  UserData user1 =
-      new UserData.fromUserData("Leon", "g.com", '0544', "123", null);
 
   var temp;
   //var location;
@@ -142,6 +140,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: ApiCalls.getData(),
+      builder: (context, snapshot) => snapshot.hasData
+          ? buildScaffold(snapshot.data)
+          : const SizedBox(
+              child: Text("Error"),
+            ),
+    );
+  }
+
+  Scaffold buildScaffold(UserData myUser) {
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
     return Scaffold(
@@ -267,7 +276,7 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: FutureBuilder(
-              future: ApiCalls.getListOfPost(), // async work
+              future: ApiCalls.getData(), // async work
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.none:
@@ -317,21 +326,30 @@ class HomePageDrawer extends StatelessWidget {
                   height: 120.0,
                   child: new DrawerHeader(
                     child: CircleAvatar(
-                      radius: 80.0,
-                      backgroundImage: myUser.getImageRef != ""
-                          ? FirebaseImage(
-                              'gs://sailwithme.appspot.com/' +
-                                  myUser.getImageRef,
-                              shouldCache:
-                                  true, // The image should be cached (default: True)
-                              // maxSizeBytes:
-                              //     3000 * 1000, // 3MB max file size (default: 2.5MB)
-                              // cacheRefreshStrategy: CacheRefreshStrategy
-                              //     .NEVER // Switch off update checking
-                            ) //??
-                          : AssetImage('assets/user.png'),
-                      backgroundColor: Colors.white,
-                    ),
+                        radius: 80.0,
+                        backgroundImage: FirebaseImage(
+                          'gs://sailwithme.appspot.com/' + myUser.getImageRef,
+                          shouldCache:
+                              true, // The image should be cached (default: True)
+                          //             // maxSizeBytes:
+                          //             //     3000 * 1000, // 3MB max file size (default: 2.5MB)
+                          //             // cacheRefreshStrategy: CacheRefreshStrategy
+                          //             //     .NEVER // Switch off update checking
+                        ) //??
+                        //     backgroundImage: myUser.getImageRef != ""
+                        //         ? FirebaseImage(
+                        //             'gs://sailwithme.appspot.com/' +
+                        //                 myUser.getImageRef,
+                        //             shouldCache:
+                        //                 true, // The image should be cached (default: True)
+                        //             // maxSizeBytes:
+                        //             //     3000 * 1000, // 3MB max file size (default: 2.5MB)
+                        //             // cacheRefreshStrategy: CacheRefreshStrategy
+                        //             //     .NEVER // Switch off update checking
+                        //           ) //??
+                        //         : AssetImage('assets/user.png'),
+                        //     backgroundColor: Colors.white,
+                        ),
                   )),
               Text(myUser.getFullName,
                   style:

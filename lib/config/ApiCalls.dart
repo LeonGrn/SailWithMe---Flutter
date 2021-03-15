@@ -11,27 +11,29 @@ class ApiCalls {
   // final CollectionReference brewCollection = FirebaseFirestore.instance.collection('Users');
 
   static UserData myUser;
+  static var userId = FirebaseAuth.instance.currentUser.uid;
+  static final databaseReference = FirebaseDatabase.instance.reference();
 
   //Push a new post
   static Future<void> createPost(Post post) async {
-    final databaseReference = FirebaseDatabase.instance.reference();
-    String userId = FirebaseAuth.instance.currentUser.uid;
+    // final databaseReference = FirebaseDatabase.instance.reference();
+    // String userId = FirebaseAuth.instance.currentUser.uid;
     databaseReference.child(userId).child("Post").push().set(post.toJson());
   }
 
   //Get all data
-  static Future getUserData() async {
-    if (myUser == null) {
-      _getData();
-    }
-    return myUser;
-  }
+  // static Future getUserData() async {
+  //   if (myUser == null) {
+  //     _getData();
+  //   }
+  //   return myUser;
+  // }
 
-  static Future _getData() async {
-    final fb = FirebaseDatabase.instance;
-    final ref = fb.reference();
-    var userId = FirebaseAuth.instance.currentUser.uid;
-    await ref.child(userId).once().then((DataSnapshot data) {
+  static Future getData() async {
+    // final fb = FirebaseDatabase.instance;
+    // final ref = fb.reference();
+    // var userId = FirebaseAuth.instance.currentUser.uid;
+    await databaseReference.child(userId).once().then((DataSnapshot data) {
       myUser = UserData.fromJson(data);
       inspect(myUser);
     });
@@ -39,11 +41,15 @@ class ApiCalls {
 
   //Get only yhe post
   static Future getListOfPost() async {
-    String uid = FirebaseAuth.instance.currentUser.uid;
-    final fb = FirebaseDatabase.instance;
-    final ref = fb.reference();
+    // String uid = FirebaseAuth.instance.currentUser.uid;
+    // final fb = FirebaseDatabase.instance;
+    // final ref = fb.reference();
     List<Post> posts = [];
-    await ref.child(uid).child('Post').once().then((DataSnapshot dataSnapshot) {
+    await databaseReference
+        .child(userId)
+        .child('Post')
+        .once()
+        .then((DataSnapshot dataSnapshot) {
       for (var value in dataSnapshot.value.values) {
         posts.add(new Post(
             title: value['Title'].toString(),

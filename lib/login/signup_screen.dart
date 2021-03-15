@@ -34,10 +34,11 @@ class _MyAppState extends State<SignUpScreen> {
   String gender = "";
   String _yearsOfExperience = "";
   File _image;
+  //List<Post> posts;
 
   String _platformImei = 'Unknown';
   String uniqueId = "Unknown";
-  String imageRef = "";
+  String _imageRef = "";
   TextEditingController nameController = TextEditingController();
   int _radioValue = 0;
   AssetImage myChoosenImage = new AssetImage('assets/user.png');
@@ -82,8 +83,6 @@ class _MyAppState extends State<SignUpScreen> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
-        //myChoosenImage = _image;
-        //uploadPic();
       } else {
         print('No image selected.');
       }
@@ -91,19 +90,20 @@ class _MyAppState extends State<SignUpScreen> {
   }
 
   Future uploadPic() async {
+    if (_image == null) {
+      _imageRef = "";
+      return;
+    }
     var uuid = Uuid().v4();
 
     try {
-      if (_image != null) {
-        await firebase_storage.FirebaseStorage.instance
-            .ref('$_email/$uuid.png')
-            .putFile(_image);
-        imageRef = '$_email/$uuid.png';
-      }
+      await firebase_storage.FirebaseStorage.instance
+          .ref('$_email/posts/$uuid.png')
+          .putFile(_image);
 
-      print(imageRef);
-    } on FirebaseException catch (e) {
-      // e.g, e.code == 'canceled'
+      _imageRef = '$_email/posts/$uuid.png';
+    } on firebase_storage.FirebaseException catch (e) {
+      _imageRef = "";
       print(e);
     }
   }
@@ -117,6 +117,8 @@ class _MyAppState extends State<SignUpScreen> {
 
       String userId = FirebaseAuth.instance.currentUser.uid;
 
+      print(_imageRef);
+
       UserData createdUser = UserData(
         fullName: _fullName,
         email: _email,
@@ -124,7 +126,7 @@ class _MyAppState extends State<SignUpScreen> {
         gender: gender,
         yearsOfExperience: _yearsOfExperience,
         imei: uniqueId,
-        imageRef: imageRef,
+        imageRef: _imageRef,
       );
 
       databaseReference.child(userId).set(createdUser.toJson());
