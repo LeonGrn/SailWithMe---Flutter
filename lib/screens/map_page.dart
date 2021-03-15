@@ -4,6 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../config/ApiCalls.dart';
+import '../models/models.dart';
+import '../models/trip_module.dart';
+
 class MapPage extends StatefulWidget {
   @override
   _MapPageState createState() => _MapPageState();
@@ -14,6 +18,8 @@ class _MapPageState extends State<MapPage> {
   Response response;
   GoogleMapController mapController;
   double zoomVal = 5.0;
+  
+
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -130,7 +136,10 @@ class _MapPageState extends State<MapPage> {
           gramercyMarker,
           bernardinMarker,
           blueMarker
-        },
+        }
+         
+          
+        ,
       ),
     );
   }
@@ -141,40 +150,41 @@ class _MapPageState extends State<MapPage> {
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 20.0),
         height: 150.0,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: <Widget>[
-            SizedBox(width: 10.0),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _boxes(
-                  "https://lh5.googleusercontent.com/p/AF1QipO3VPL9m-b355xWeg4MXmOQTauFAEkavSluTtJU=w225-h160-k-no",
-                  40.738380,
-                  -73.988426,
-                  "Gramercy Tavern"),
-            ),
-            SizedBox(width: 10.0),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _boxes(
-                  "https://lh5.googleusercontent.com/p/AF1QipMKRN-1zTYMUVPrH-CcKzfTo6Nai7wdL7D8PMkt=w340-h160-k-no",
-                  40.761421,
-                  -73.981667,
-                  "Le Bernardin"),
-            ),
-            SizedBox(width: 10.0),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _boxes(
-                  "https://images.unsplash.com/photo-1504940892017-d23b9053d5d4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
-                  40.732128,
-                  -73.999619,
-                  "Blue Hill"),
-            ),
-          ],
-        ),
+        child: FutureBuilder(future: ApiCalls.getListOfTrips(),
+         builder: (BuildContext context,AsyncSnapshot snapshot){
+         if(snapshot.data==null){
+           return Container(child: Text("wait..."));
+         } 
+         else{
+          return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: snapshot.data.length,
+            itemBuilder:(BuildContext context,int index){
+                return Card(
+                  child:  SizedBox(
+                // width: 180,
+                //     height: 200,       
+                             child:  _boxes( 
+                         "https://images.unsplash.com/photo-1504940892017-d23b9053d5d4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
+                          snapshot.data[index].lat,
+                          snapshot.data[index].lng,
+                          snapshot.data[index].name
+                  
+                  )
+                  )
+                   
+            );
+                
+                    //  title: Text(snapshot.data[index].Title),
+              
+            }
+
+          );
+         }
+      }),
       ),
-    );
+
+      );
   }
 
   Widget _boxes(String _image, double lat, double long, String restaurantName) {
@@ -373,4 +383,26 @@ class _MapPageState extends State<MapPage> {
       BitmapDescriptor.hueBlue,
     ),
   );
+
+  getAllSavePlaces() async {
+     List<Trip> trips=ApiCalls.getListOfTrips() as List<Trip>;
+     List<Marker> markers=[];
+     String count="a";
+
+      for(Trip trip in trips){
+        markers.add(new Marker(
+        markerId:MarkerId(count),
+        position: LatLng(trip.lat,trip.lng),
+        infoWindow: InfoWindow(title: trip.name),
+        icon: BitmapDescriptor.defaultMarkerWithHue(
+               BitmapDescriptor.hueBlue,
+            ),
+        )); 
+        return markers;
+
+      }
+
+
+
+  }
 }
