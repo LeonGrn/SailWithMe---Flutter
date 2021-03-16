@@ -130,6 +130,7 @@ class _MapPageState extends State<MapPage> {
             CameraPosition(target: LatLng(40.712776, -74.005974), zoom: 12),
         onMapCreated: _onMapCreated,
         markers: {
+          
           newyork1Marker,
           newyork2Marker,
           newyork3Marker,
