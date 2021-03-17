@@ -414,7 +414,7 @@ class HomePageDrawer extends StatelessWidget {
             },
           ),
           new ListTile(
-            leading: Icon(Icons.group_outlined),
+            leading: Icon(Icons.group),
             title: new Text("Groups"),
             onTap: () {
               //   Navigator.pop(context);
@@ -423,7 +423,7 @@ class HomePageDrawer extends StatelessWidget {
             },
           ),
           new ListTile(
-            leading: Icon(Icons.work_outline),
+            leading: Icon(Icons.work),
             title: new Text("Jobs"),
             onTap: () {},
           ),
@@ -437,7 +437,7 @@ class HomePageDrawer extends StatelessWidget {
             onTap: () {},
           ),
           new ListTile(
-            leading: Icon(Icons.settings_applications_outlined),
+            leading: Icon(Icons.settings),
             title: new Text("Settings"),
             onTap: () {},
           ),

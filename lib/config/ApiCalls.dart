@@ -4,6 +4,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'dart:developer';
 import 'dart:convert';
 
+import '../models/models.dart';
+
+
 class ApiCalls {
   final String userid;
   ApiCalls({this.userid});
@@ -16,11 +19,12 @@ class ApiCalls {
 
   //Push a new post
   static Future<void> createPost(Post post) async {
-    // final databaseReference = FirebaseDatabase.instance.reference();
-    // String userId = FirebaseAuth.instance.currentUser.uid;
+
     databaseReference.child(userId).child("Post").push().set(post.toJson());
   }
-
+static Future<void> savePlaceForUser(Trip trip) async {
+    databaseReference.child(userId).child("Trips").push().set(trip.toJson());
+  }
   //Get all data
   // static Future getUserData() async {
   //   if (myUser == null) {
@@ -59,5 +63,24 @@ class ApiCalls {
       }
     });
     return posts;
+  }
+  //Get only yhe trips
+  static Future getListOfTrips() async {
+  
+    List<Trip> trips = [];
+    await databaseReference
+        .child(userId)
+        .child('Trips')
+        .once()
+        .then((DataSnapshot dataSnapshot) {
+      for (var value in dataSnapshot.value.values) {
+        trips.add(new Trip(
+            lat: value['lat'],
+            lng: value['lng'],
+            name: value['name']
+            ));
+      }
+    });
+    return trips;
   }
 }

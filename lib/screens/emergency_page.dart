@@ -1,9 +1,12 @@
-import 'package:SailWithMe/config/configMaps.dart';
+import 'package:SailWithMe/Keys/configMaps.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:google_place/google_place.dart';
+
+import '../config/ApiCalls.dart';
+import '../models/trip_module.dart';
 
 class EmergencyPage extends StatelessWidget {
   @override
@@ -159,9 +162,9 @@ class _DetailsPageState extends State<DetailsPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blueAccent,
         onPressed: () {
-          getDetils(this.placeId);
+          saveDetilsToFireBace(this.placeId);
         },
-        child: Icon(Icons.refresh),
+        child: Icon(Icons.star),
       ),
       body: SafeArea(
         child: Container(
@@ -339,6 +342,15 @@ class _DetailsPageState extends State<DetailsPage> {
         }
       }
     }
+  }
+
+
+  void saveDetilsToFireBace(String placeId){
+    double lat=detailsResult.geometry.location.lat;
+    String addressFormatted=detailsResult.formattedAddress;
+    double lng=detailsResult.geometry.location.lng;
+    ApiCalls.savePlaceForUser(new Trip(lat: lat,lng: lng,name: addressFormatted));
+    
   }
 
   void getPhoto(String photoReference) async {
