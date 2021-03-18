@@ -23,44 +23,14 @@ class _PostPageState extends State<PostPage> {
   final textController = new TextEditingController();
   File _image;
   String imageRef = "";
-  //final picker = ImagePicker();
-  final databaseReference = FirebaseDatabase.instance.reference();
-
-  UserData user1 =
-      new UserData.fromUserData("Leon", "g.com", "0544", "123", null);
-
   Post myPost;
-  UserData myUser;
-  String userId = FirebaseAuth.instance.currentUser.uid;
+  static UserData myUser;
   List<Post> posts = List<Post>();
-
-  Future<void> _getData() async {
-    print("userId");
-
-    final fb = FirebaseDatabase.instance;
-    final ref = fb.reference();
-    var userId = FirebaseAuth.instance.currentUser.uid;
-    print(userId);
-    ref.child(userId).once().then((DataSnapshot data) {
-      //myUser = UserData.fromJson(jsonDecode(data.value));
-      myUser = UserData.fromJson(data);
-      // print(data.value);
-      // print(data.key);
-      // inspect(myUser);
-      // // myUser = UserData.fromJson(data);
-      // print(myUser.age +
-      //     myUser.email +
-      //     myUser.fullName +
-      //     myUser.yearsOfExperience +
-      //     myUser.imei +
-      //     myUser.gender);
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    this._getData();
+    //myUser = ApiCalls.getData();
   }
 
   Future getImage() async {
@@ -140,7 +110,7 @@ class _PostPageState extends State<PostPage> {
                     ProfileAvatar(imageFile: _image, width: 30, height: 30),
 
                     SizedBox(width: 30), // give it width
-                    Text(user1.fullName,
+                    Text(myUser.fullName,
                         style: TextStyle(
                             fontSize: 25.0, fontWeight: FontWeight.bold)),
                   ],

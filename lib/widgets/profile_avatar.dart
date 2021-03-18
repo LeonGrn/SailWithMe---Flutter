@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class ProfileAvatar extends StatelessWidget {
+  final String imageUrl;
   final File imageFile;
   final double width;
   final double height;
@@ -11,8 +12,8 @@ class ProfileAvatar extends StatelessWidget {
 
   const ProfileAvatar(
       {Key key,
-      @required this.imageFile,
-      //@required this.radius,
+      this.imageFile,
+      this.imageUrl,
       @required this.width,
       @required this.height,
       this.isActice = false})

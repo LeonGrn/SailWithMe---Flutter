@@ -20,7 +20,6 @@ class UserData {
   List<Group> groupList;
   //List<Event> eventList;
   List<Post> posts = [];
-  // Map<String, Post> postss = [];
 
   List get getPosts {
     return posts;
@@ -76,7 +75,6 @@ class UserData {
       this.imei,
       this.imageRef,
       this.posts});
-  // : this.posts = [];
 
   UserData.fromUserData(this.fullName, this.email, this.id,
       this.yearsOfExperience, this.imageRef);
@@ -98,25 +96,13 @@ class UserData {
   }
 
   factory UserData.fromJson(DataSnapshot snapshot) {
-    if (snapshot.value['Posts'] != null) {
-      inspect(snapshot);
-      return UserData(
-          fullName: snapshot.value['FullName'],
-          email: snapshot.value['Email'],
-          age: snapshot.value['Age'],
-          gender: snapshot.value['Gender'],
-          yearsOfExperience: snapshot.value['YearsOfExperience'],
-          imei: snapshot.value['IMEI'],
-          imageRef: snapshot.value['ImageRef']);
-    } else {
-      return UserData(
-          fullName: snapshot.value['FullName'],
-          email: snapshot.value['Email'],
-          age: snapshot.value['Age'],
-          gender: snapshot.value['Gender'],
-          yearsOfExperience: snapshot.value['YearsOfExperience'],
-          imei: snapshot.value['IMEI'],
-          imageRef: snapshot.value['ImageRef']);
-    }
+    return UserData(
+        fullName: snapshot.value['FullName'],
+        email: snapshot.value['Email'],
+        age: snapshot.value['Age'],
+        gender: snapshot.value['Gender'],
+        yearsOfExperience: snapshot.value['YearsOfExperience'],
+        imei: snapshot.value['IMEI'],
+        imageRef: snapshot.value['ImageRef']);
   }
 }
