@@ -15,6 +15,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:uuid/uuid.dart';
 
+import '../config/ApiCalls.dart';
+
 class SignUpScreen extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -22,7 +24,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _MyAppState extends State<SignUpScreen> {
   //DatabaseReference _dbRef;
-  final databaseReference = FirebaseDatabase.instance.reference();
+  // final databaseReference = FirebaseDatabase.instance.reference();
 
   bool _passwordVisible;
   String birthDate = "";
@@ -109,31 +111,13 @@ class _MyAppState extends State<SignUpScreen> {
   }
 
   Future<void> _createUser() async {
+    uploadPic();
     try {
-      uploadPic();
+      // UserCredential userCredential = await FirebaseAuth.instance
+      //     .createUserWithEmailAndPassword(email: _email, password: _password);
+      ApiCalls.authNewUser(_email, _password);
 
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: _email, password: _password);
-
-      String userId = FirebaseAuth.instance.currentUser.uid;
-
-      print(_imageRef);
-
-      UserData createdUser = UserData(
-        fullName: _fullName,
-        email: _email,
-        age: age.toString(),
-        gender: gender,
-        yearsOfExperience: _yearsOfExperience,
-        imei: uniqueId,
-        imageRef: _imageRef,
-      );
-
-      databaseReference.child(userId).set(createdUser.toJson());
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => new BottomNavBar()),
-          (e) => false);
+      // String userId = FirebaseAuth.instance.currentUser.uid;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -143,6 +127,23 @@ class _MyAppState extends State<SignUpScreen> {
     } catch (e) {
       print(e);
     }
+    UserData createdUser = UserData(
+      fullName: _fullName,
+      email: _email,
+      age: age.toString(),
+      gender: gender,
+      yearsOfExperience: _yearsOfExperience,
+      imei: uniqueId,
+      imageRef: _imageRef,
+    );
+
+    ApiCalls.createUser(createdUser);
+
+    // databaseReference.child(userId).set(createdUser.toJson());
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => new BottomNavBar()),
+        (e) => false);
   }
 
   void _handleRadioValueChange(int value) {

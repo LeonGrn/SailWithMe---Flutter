@@ -76,7 +76,7 @@ class UserData {
       this.imei,
       this.imageRef,
       this.posts});
-  //: this.posts = [];
+  // : this.posts = [];
 
   UserData.fromUserData(this.fullName, this.email, this.id,
       this.yearsOfExperience, this.imageRef);
