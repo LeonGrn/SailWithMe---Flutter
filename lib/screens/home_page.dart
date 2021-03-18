@@ -30,7 +30,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   UserData myUser;
-
   var temp;
   //var location;
   var windSpeed;
@@ -54,27 +53,27 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future _getData() async {
-    final fb = FirebaseDatabase.instance;
-    final ref = fb.reference();
-    var userId = FirebaseAuth.instance.currentUser.uid;
-    await ref.child(userId).once().then((DataSnapshot data) {
-      print(data.value);
-      print(data.key);
+  // Future _getData() async {
+  //   final fb = FirebaseDatabase.instance;
+  //   final ref = fb.reference();
+  //   var userId = FirebaseAuth.instance.currentUser.uid;
+  //   await ref.child(userId).once().then((DataSnapshot data) {
+  //     print(data.value);
+  //     print(data.key);
 
-      myUser = UserData.fromJson(data);
+  //     myUser = UserData.fromJson(data);
 
-      inspect(myUser);
-      print(myUser.age +
-          myUser.email +
-          myUser.fullName +
-          myUser.yearsOfExperience +
-          myUser.imei +
-          myUser.gender);
+  //     inspect(myUser);
+  //     print(myUser.age +
+  //         myUser.email +
+  //         myUser.fullName +
+  //         myUser.yearsOfExperience +
+  //         myUser.imei +
+  //         myUser.gender);
 
-      //print(myUser.getImageRef);
-    });
-  }
+  //     //print(myUser.getImageRef);
+  //   });
+  // }
 
   Future<void> downloadFileFromFirebaseStorage() async {
     // Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -133,7 +132,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     this.getWeather();
-    //this._getData();
+    // this._getData();
     //this.downloadFileFromFirebaseStorage();
     // this.initPlatformState();
   }
@@ -141,13 +140,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: ApiCalls.getData(),
-      builder: (context, snapshot) => snapshot.hasData
-          ? buildScaffold(snapshot.data)
-          : const SizedBox(
-              child: Text("Error"),
-            ),
-    );
+        future: ApiCalls.getData(),
+        builder: (context, snapshot) {
+          print("Correct print");
+          inspect(snapshot.data);
+          if (snapshot.hasData) return buildScaffold(snapshot.data);
+          if (snapshot.hasError) return Text("Error");
+
+          return Text("no Oprions");
+        });
   }
 
   Scaffold buildScaffold(UserData myUser) {
@@ -276,7 +277,7 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: FutureBuilder(
-              future: ApiCalls.getData(), // async work
+              future: ApiCalls.getListOfPost(), // async work
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.none:
@@ -288,9 +289,9 @@ class _HomePageState extends State<HomePage> {
                       return new Text('Error: ${snapshot.error}');
                     else
                       return ListView.builder(
-                          itemCount: myUser.getPosts.length,
+                          itemCount: snapshot.data.length,
                           itemBuilder: (context, index) {
-                            Post post = myUser.getPosts[index];
+                            Post post = snapshot.data[index];
                             return PostContainer(post: post);
                           });
                 }
@@ -444,8 +445,8 @@ class HomePageDrawer extends StatelessWidget {
           new ListTile(
             leading: Icon(Icons.exit_to_app),
             title: new Text("Log Out"),
-            onTap: () async {
-              await FirebaseAuth.instance.signOut();
+            onTap: () {
+              ApiCalls.signOut();
               //Navigator.pop(context);
               // Navigator.push(
               //     context,

@@ -344,13 +344,12 @@ class _DetailsPageState extends State<DetailsPage> {
     }
   }
 
-
-  void saveDetilsToFireBace(String placeId){
-    double lat=detailsResult.geometry.location.lat;
-    String addressFormatted=detailsResult.formattedAddress;
-    double lng=detailsResult.geometry.location.lng;
-    ApiCalls.savePlaceForUser(new Trip(lat: lat,lng: lng,name: addressFormatted));
-    
+  void saveDetilsToFireBace(String placeId) {
+    double lat = detailsResult.geometry.location.lat;
+    String addressFormatted = detailsResult.formattedAddress;
+    double lng = detailsResult.geometry.location.lng;
+    ApiCalls.savePlaceForUser(
+        new Trip(lat: lat, lng: lng, name: addressFormatted));
   }
 
   void getPhoto(String photoReference) async {

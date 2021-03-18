@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:SailWithMe/widgets/rounded_password.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../config/ApiCalls.dart';
+
 class LoginBody extends StatefulWidget {
   @override
   _LoginBodyState createState() => _LoginBodyState();
@@ -20,21 +22,27 @@ class _LoginBodyState extends State<LoginBody> {
 
   Future<void> _login(context) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: _email, password: _password);
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => new BottomNavBar()),
-          (e) => false);
+      await ApiCalls.login(_email, _password);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-      }
-    } catch (e) {
-      print(e);
+      print(e.code);
     }
+
+    // try {
+    // UserCredential userCredential = await FirebaseAuth.instance
+    //     .signInWithEmailAndPassword(email: _email, password: _password);
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => new BottomNavBar()),
+        (e) => false);
+    // } on FirebaseAuthException catch (e) {
+    //   if (e.code == 'weak-password') {
+    //     print('The password provided is too weak.');
+    //   } else if (e.code == 'email-already-in-use') {
+    //     print('The account already exists for that email.');
+    //   }
+    // } catch (e) {
+    //   print(e);
+    // }
   }
 
   @override
