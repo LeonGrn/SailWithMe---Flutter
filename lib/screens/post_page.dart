@@ -1,7 +1,6 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
+import 'package:SailWithMe/models/createdBy_module.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -13,6 +12,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 import 'package:SailWithMe/config/ApiCalls.dart';
+import 'package:firebase_image/firebase_image.dart';
 
 class PostPage extends StatefulWidget {
   @override
@@ -22,15 +22,12 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   final textController = new TextEditingController();
   File _image;
-  String imageRef = "";
-  Post myPost;
-  static UserData myUser;
+  UserData myUser;
   List<Post> posts = List<Post>();
 
   @override
   void initState() {
     super.initState();
-    //myUser = ApiCalls.getData();
   }
 
   Future getImage() async {
@@ -47,27 +44,19 @@ class _PostPageState extends State<PostPage> {
     });
   }
 
-  Future uploadPic() async {
-    if (_image == null) {
-      imageRef = "";
-      return;
-    }
-    var uuid = Uuid().v4();
-
-    try {
-      await firebase_storage.FirebaseStorage.instance
-          .ref('${myUser.email}/posts/$uuid.png')
-          .putFile(_image);
-
-      imageRef = '${myUser.email}/posts/$uuid.png';
-    } on firebase_storage.FirebaseException catch (e) {
-      imageRef = "";
-      print(e);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: ApiCalls.getData(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) return _buildScaffold(snapshot.data);
+          if (snapshot.hasError) return Text("Error");
+
+          return Text("Loading");
+        });
+  }
+
+  Scaffold _buildScaffold(UserData myUser) {
     TextEditingController captionController = new TextEditingController();
     DateTime now = DateTime.now();
     return Scaffold(
@@ -79,14 +68,20 @@ class _PostPageState extends State<PostPage> {
             RaisedButton(
               color: Colors.cyan[400],
               onPressed: () async {
-                await uploadPic();
-                myPost = new Post(
+                String imageRef = "";
+
+                imageRef = await ApiCalls.uploadPic(myUser.email, _image);
+
+                Post myPost = new Post(
                     title: captionController.text,
                     description: "rterter",
                     timeAgo: "time ago",
-                    imageUrl: imageRef);
+                    imageUrl: imageRef,
+                    createdBy: CreatedBy(
+                        name: myUser.getFullName,
+                        imageUrl: myUser.getImageRef));
 
-                ApiCalls.createPost(myPost);
+                await ApiCalls.createPost(myPost);
               },
               child: Text(
                 "Post",
@@ -106,9 +101,17 @@ class _PostPageState extends State<PostPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    //ProfileAvatar(imageUrl: null, radius: 30),
-                    ProfileAvatar(imageFile: _image, width: 30, height: 30),
-
+                    CircleAvatar(
+                        radius: 25,
+                        backgroundImage: FirebaseImage(
+                          'gs://sailwithme.appspot.com/' + myUser.getImageRef,
+                          shouldCache:
+                              true, // The image should be cached (default: True)
+                          //             // maxSizeBytes:
+                          //             //     3000 * 1000, // 3MB max file size (default: 2.5MB)
+                          //             // cacheRefreshStrategy: CacheRefreshStrategy
+                          //             //     .NEVER // Switch off update checking
+                        )),
                     SizedBox(width: 30), // give it width
                     Text(myUser.fullName,
                         style: TextStyle(

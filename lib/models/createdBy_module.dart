@@ -9,12 +9,15 @@ class CreatedBy {
     this.imageUrl,
   });
 
+  String getName() => name;
+
   Map<String, dynamic> toJson() => {
         'Name': name,
         'ImageUrl': imageUrl,
       };
 
-  CreatedBy.fromJson(DataSnapshot snapshot)
-      : name = snapshot.value['Name'],
-        imageUrl = snapshot.value['ImageUrl'];
+  factory CreatedBy.fromJson(DataSnapshot snapshot) {
+    return CreatedBy(
+        name: snapshot.value['Name'], imageUrl: snapshot.value['ImageUrl']);
+  }
 }

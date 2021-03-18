@@ -142,16 +142,14 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder(
         future: ApiCalls.getData(),
         builder: (context, snapshot) {
-          print("Correct print");
-          inspect(snapshot.data);
-          if (snapshot.hasData) return buildScaffold(snapshot.data);
+          if (snapshot.hasData) return _buildScaffold(snapshot.data);
           if (snapshot.hasError) return Text("Error");
 
-          return Text("no Oprions");
+          return Text("Loading");
         });
   }
 
-  Scaffold buildScaffold(UserData myUser) {
+  Scaffold _buildScaffold(UserData myUser) {
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
     return Scaffold(
@@ -336,21 +334,7 @@ class HomePageDrawer extends StatelessWidget {
                           //             //     3000 * 1000, // 3MB max file size (default: 2.5MB)
                           //             // cacheRefreshStrategy: CacheRefreshStrategy
                           //             //     .NEVER // Switch off update checking
-                        ) //??
-                        //     backgroundImage: myUser.getImageRef != ""
-                        //         ? FirebaseImage(
-                        //             'gs://sailwithme.appspot.com/' +
-                        //                 myUser.getImageRef,
-                        //             shouldCache:
-                        //                 true, // The image should be cached (default: True)
-                        //             // maxSizeBytes:
-                        //             //     3000 * 1000, // 3MB max file size (default: 2.5MB)
-                        //             // cacheRefreshStrategy: CacheRefreshStrategy
-                        //             //     .NEVER // Switch off update checking
-                        //           ) //??
-                        //         : AssetImage('assets/user.png'),
-                        //     backgroundColor: Colors.white,
-                        ),
+                        )),
                   )),
               Text(myUser.getFullName,
                   style:
