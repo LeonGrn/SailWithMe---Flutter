@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:SailWithMe/models/createdBy_module.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 import 'package:SailWithMe/models/models.dart';
 import 'package:SailWithMe/widgets/widgets.dart';
@@ -59,6 +60,7 @@ class _PostPageState extends State<PostPage> {
   Scaffold _buildScaffold(UserData myUser) {
     TextEditingController captionController = new TextEditingController();
     DateTime now = DateTime.now();
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -69,13 +71,14 @@ class _PostPageState extends State<PostPage> {
               color: Colors.cyan[400],
               onPressed: () async {
                 String imageRef = "";
+                String formattedTime = DateFormat.Hms().format(now);
 
                 imageRef = await ApiCalls.uploadPic(myUser.email, _image);
 
                 Post myPost = new Post(
                     title: captionController.text,
                     description: "rterter",
-                    timeAgo: "time ago",
+                    timeAgo: formattedTime,
                     imageUrl: imageRef,
                     createdBy: CreatedBy(
                         name: myUser.getFullName,
