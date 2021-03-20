@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:SailWithMe/models/createdBy_module.dart';
 import 'package:SailWithMe/models/models.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:uuid/uuid.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 import '../models/models.dart';
 
@@ -69,8 +74,10 @@ class ApiCalls {
             title: value['Title'].toString(),
             description: value['Description'].toString(),
             timeAgo: value['TimeAgo'].toString(),
-            imageUrl: value['ImageUrl'].toString())
-            );
+            imageUrl: value['ImageUrl'].toString(),
+            createdBy: new CreatedBy(
+                name: value['CreatedBy']['Name'],
+                imageUrl: value['CreatedBy']['ImageUrl'])));
       }
     });
     return posts;
@@ -90,5 +97,25 @@ class ApiCalls {
       }
     });
     return trips;
+  }
+
+  static Future<String> uploadPic(String email, File _image) async {
+    String imageRef = "";
+
+    if (_image == null) {
+      return imageRef;
+    }
+    var uuid = Uuid().v4();
+    try {
+      await firebase_storage.FirebaseStorage.instance
+          .ref('$email/posts/$uuid.png')
+          .putFile(_image);
+
+      imageRef = '$email/posts/$uuid.png';
+    } on firebase_storage.FirebaseException catch (e) {
+      print(e);
+    }
+
+    return imageRef;
   }
 }

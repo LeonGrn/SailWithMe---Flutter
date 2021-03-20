@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:SailWithMe/models/models.dart';
 import 'package:flutter/material.dart';
-import 'widgets.dart';
 import 'package:SailWithMe/config/palette.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:firebase_image/firebase_image.dart';
@@ -35,18 +34,29 @@ class PostContainer extends StatelessWidget {
                   _PostHeader(post: post),
                   const SizedBox(height: 4.0),
                   Text(post.title),
-                  // post.imageUrl != null
-                  //     ? const SizedBox.shrink()
-                  //     : const SizedBox(height: 6.0),
+                  const SizedBox(height: 4.0),
+                  post.imageUrl == ""
+                      ? Text("")
+                      : FittedBox(
+                          fit: BoxFit.fitWidth,
+                          child: Image(
+                              width: 100,
+                              height: 60,
+                              image: FirebaseImage(
+                                'gs://sailwithme.appspot.com/${post.imageUrl}',
+                                shouldCache: false,
+                                maxSizeBytes: 3000 *
+                                    1000, // The image should be cached (default: True)
+                                // maxSizeBytes:
+                                //     3000 * 1000, // 3MB max file size (default: 2.5MB)
+                                // cacheRefreshStrategy: CacheRefreshStrategy
+                                //     .NEVER // Switch off update checking
+                              ) //??
+                              )),
+                  const SizedBox(height: 4.0),
                 ],
               ),
             ),
-            // post.imageUrl != null
-            //     ? Padding(
-            //         padding: const EdgeInsets.symmetric(vertical: 8.0),
-            //         child: CachedNetworkImage(imageUrl: post.imageUrl),
-            //       )
-            //     : const SizedBox.shrink(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: _PostStats(post: post),
@@ -70,15 +80,13 @@ class _PostHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        //ProfileAvatar(imageUrl: post.imageUrl , radius : 20),
-        //ProfileAvatar(imageFile: null, width: 20, height: 20),
         CircleAvatar(
-          radius: 80.0,
-          backgroundImage: post.imageUrl != ""
+          radius: 20.0,
+          backgroundImage: post.createdBy.imageUrl != ""
               ? FirebaseImage(
-                  'gs://sailwithme.appspot.com/' + post.imageUrl,
+                  'gs://sailwithme.appspot.com/${post.createdBy.imageUrl}',
                   shouldCache:
-                      true, // The image should be cached (default: True)
+                      false, // The image should be cached (default: True)
                   // maxSizeBytes:
                   //     3000 * 1000, // 3MB max file size (default: 2.5MB)
                   // cacheRefreshStrategy: CacheRefreshStrategy
@@ -93,7 +101,7 @@ class _PostHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "post.user.firstName",
+                "${post.createdBy.getName()}",
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                 ),

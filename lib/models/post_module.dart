@@ -31,7 +31,7 @@ class Post {
         'Description': description,
         'TimeAgo': timeAgo,
         'ImageUrl': imageUrl,
-        'CreatedBy': createdBy,
+        'CreatedBy': createdBy.toJson(),
       };
 
   Post.fromJson(DataSnapshot snapshot)
