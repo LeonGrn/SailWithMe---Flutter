@@ -2,7 +2,6 @@ import 'package:SailWithMe/Keys/configMaps.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:google_place/google_place.dart';
 
 import '../config/ApiCalls.dart';
@@ -145,6 +144,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
   DetailsResult detailsResult;
   List<Uint8List> images = [];
+  List<String> imageRef=[];
 
   @override
   void initState() {
@@ -349,7 +349,7 @@ class _DetailsPageState extends State<DetailsPage> {
     String addressFormatted = detailsResult.formattedAddress;
     double lng = detailsResult.geometry.location.lng;
     ApiCalls.savePlaceForUser(
-        new Trip(lat: lat, lng: lng, name: addressFormatted));
+        new Trip(lat: lat, lng: lng, name: addressFormatted,imageRef:imageRef[0]));
   }
 
   void getPhoto(String photoReference) async {
@@ -357,14 +357,10 @@ class _DetailsPageState extends State<DetailsPage> {
     if (result != null && mounted) {
       setState(() {
         images.add(result);
+        imageRef.add(photoReference);
       });
     }
   }
 }
 
-//     return Scaffold(
-//       backgroundColor: Color(0x80613f),
 
-//     );
-//   }
-// }

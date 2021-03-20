@@ -56,6 +56,9 @@ dev_dependencies:
   google_maps_flutter: ^0.5.0
   google_place: ^0.3.3
   font_awesome_flutter: ^8.11.0
+  geolocator: ^6.1.7
+  geocoding: ^1.0.5
+  flutter_polyline_points: ^0.2.4
 
 flutter:
   uses-material-design: true
