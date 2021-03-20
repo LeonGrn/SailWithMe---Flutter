@@ -93,7 +93,7 @@ class ApiCalls {
         .then((DataSnapshot dataSnapshot) {
       for (var value in dataSnapshot.value.values) {
         trips.add(new Trip(
-            lat: value['lat'], lng: value['lng'], name: value['name']));
+            lat: value['lat'], lng: value['lng'], name: value['name'],imageRef: value['imageRef']));
       }
     });
     return trips;
