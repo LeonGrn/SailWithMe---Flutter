@@ -135,6 +135,8 @@ class _MyAppState extends State<SignUpScreen> {
       yearsOfExperience: _yearsOfExperience,
       imei: uniqueId,
       imageRef: _imageRef,
+      posts: [],
+      friendsList: []
     );
 
     ApiCalls.createUser(createdUser);
