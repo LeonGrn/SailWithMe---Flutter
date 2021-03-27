@@ -53,45 +53,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Future _getData() async {
-  //   final fb = FirebaseDatabase.instance;
-  //   final ref = fb.reference();
-  //   var userId = FirebaseAuth.instance.currentUser.uid;
-  //   await ref.child(userId).once().then((DataSnapshot data) {
-  //     print(data.value);
-  //     print(data.key);
-
-  //     myUser = UserData.fromJson(data);
-
-  //     inspect(myUser);
-  //     print(myUser.age +
-  //         myUser.email +
-  //         myUser.fullName +
-  //         myUser.yearsOfExperience +
-  //         myUser.imei +
-  //         myUser.gender);
-
-  //     //print(myUser.getImageRef);
-  //   });
-  // }
-
   Future<void> downloadFileFromFirebaseStorage() async {
-    // Directory appDocDir = await getApplicationDocumentsDirectory();
-
-    // File downloadToFile = File('${appDocDir.path}/download-logo.png');
-    // final firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage(
-    //       app: Firestore.instance.app,
-    //       storageBucket: 'gs://my-project.appspot.com');
-
-    //   Uint8List imageBytes;
-    //   String errImage m;
-    // await FireStorageService.loadImage(context, image).then((downloadUrl) {
-    //   m = Image.network(
-    //     downloadUrl.toString(),
-    //     fit: BoxFit.scaleDown,
-    //   );
-    // }orMsg;
-
     try {
       final ref = firebase_storage.FirebaseStorage.instance
           .ref()
@@ -99,11 +61,6 @@ class _HomePageState extends State<HomePage> {
 // no need of the file extension, the name will do fine.
       var url = await ref.getDownloadURL();
       print(url);
-      // await firebase_storage.FirebaseStorage.instance
-      //     .ref(myUser.getImageRef)
-      //     .writeToFile(downloadToFile);
-      // //myUser.setImage(downloadToFile);
-      // imageUrl = downloadToFile;
     } on FirebaseException catch (e) {
       // e.g, e.code == 'canceled'
       print(e);
@@ -140,7 +97,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: ApiCalls.getData(),
+        future: ApiCalls.getUserData(),
         builder: (context, snapshot) {
           if (snapshot.hasData) return _buildScaffold(snapshot.data);
           if (snapshot.hasError) return Text("Error");
@@ -201,18 +158,7 @@ class _HomePageState extends State<HomePage> {
                       this.isSearching = true;
                     });
                   }),
-          CircleButton(
-              icon: Icons.add_alert,
-              iconSize: 25.0,
-              onPressed: () {
-                setState(() {
-                  Navigator.of(context).push(new MaterialPageRoute<Null>(
-                      builder: (BuildContext context) {
-                        return ProfileScreen();
-                      },
-                      fullscreenDialog: true));
-                });
-              }),
+          CircleButton(icon: Icons.add_alert, iconSize: 25.0, onPressed: () {}),
         ],
       ),
       body: Column(
@@ -340,7 +286,6 @@ class HomePageDrawer extends StatelessWidget {
                   style:
                       TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
               SizedBox(height: 4),
-              Text("View profile"),
               Padding(
                 padding: const EdgeInsets.fromLTRB(40, 5, 40, 0),
                 child: FlatButton(
@@ -362,12 +307,23 @@ class HomePageDrawer extends StatelessWidget {
                         height: 30,
                         color: Colors.blue,
                       ),
-                      Text(
-                        'My Boat',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.blue,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(new MaterialPageRoute<Null>(
+                                  builder: (BuildContext context) {
+                                    return ProfileScreen(
+                                        id: ApiCalls.recieveUserInstance());
+                                  },
+                                  fullscreenDialog: true));
+                        },
+                        child: Text(
+                          'View Profile',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.blue,
+                          ),
                         ),
                       ),
                       Icon(

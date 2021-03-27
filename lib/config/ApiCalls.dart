@@ -52,13 +52,38 @@ class ApiCalls {
     await instance.signOut();
   }
 
-  static Future<UserData> getData() async {
+  static Future<UserData> getUserDataById(String id) async {
+    return await databaseReference.child(id).once().then((DataSnapshot data) {
+      return myUser = UserData.fromJson(data);
+    });
+  }
+
+  static Future<UserData> getUserData() async {
     return await databaseReference
         .child(userId)
         .once()
         .then((DataSnapshot data) {
       return myUser = UserData.fromJson(data);
     });
+  }
+
+  static Future addFriend(String friendId) async {
+    return null;
+  }
+
+  static Future getAllFriends() async {
+    List<Friends> friends = [];
+    await databaseReference
+        .child(userId)
+        .child('Friends')
+        .once()
+        .then((DataSnapshot dataSnapshot) {
+      for (var value in dataSnapshot.value.values) {
+        friends.add(new Friends(
+            name: value['Name'], id: value['Id'], isFriend: value['IsFriend']));
+      }
+    });
+    return friends;
   }
 
   //Get only yhe post
@@ -71,13 +96,13 @@ class ApiCalls {
         .then((DataSnapshot dataSnapshot) {
       for (var value in dataSnapshot.value.values) {
         posts.add(new Post(
-            title: value['Title'].toString(),
             description: value['Description'].toString(),
             timeAgo: value['TimeAgo'].toString(),
             imageUrl: value['ImageUrl'].toString(),
             createdBy: new CreatedBy(
                 name: value['CreatedBy']['Name'],
-                imageUrl: value['CreatedBy']['ImageUrl'])));
+                imageUrl: value['CreatedBy']['ImageUrl'],
+                id: value['CreatedBy']['Id'])));
       }
     });
     return posts;
@@ -93,7 +118,10 @@ class ApiCalls {
         .then((DataSnapshot dataSnapshot) {
       for (var value in dataSnapshot.value.values) {
         trips.add(new Trip(
-            lat: value['lat'], lng: value['lng'], name: value['name'],imageRef: value['imageRef']));
+            lat: value['lat'],
+            lng: value['lng'],
+            name: value['name'],
+            imageRef: value['imageRef']));
       }
     });
     return trips;

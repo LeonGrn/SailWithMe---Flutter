@@ -7,7 +7,6 @@ import 'package:SailWithMe/models/post_models/post_comments.dart';
 import 'package:SailWithMe/models/post_models/post_likes.dart';
 
 class Post {
-  String title;
   String description;
   String timeAgo;
   String imageUrl;
@@ -16,18 +15,12 @@ class Post {
   List<Comments> comments;
   int shares;
 
-  Post(
-      {this.title,
-      this.description,
-      this.timeAgo,
-      this.imageUrl,
-      this.createdBy})
+  Post({this.description, this.timeAgo, this.imageUrl, this.createdBy})
       : likes = [],
         comments = [],
         shares = 0;
 
   Map<String, dynamic> toJson() => {
-        'Title': title,
         'Description': description,
         'TimeAgo': timeAgo,
         'ImageUrl': imageUrl,
@@ -35,8 +28,7 @@ class Post {
       };
 
   Post.fromJson(DataSnapshot snapshot)
-      : title = snapshot.value['Title'],
-        description = snapshot.value['Description'],
+      : description = snapshot.value['Description'],
         timeAgo = snapshot.value['TimeAgo'],
         imageUrl = snapshot.value['ImageUrl'],
         createdBy = snapshot.value['CreatedBy'];

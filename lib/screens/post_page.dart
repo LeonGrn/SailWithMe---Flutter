@@ -48,7 +48,7 @@ class _PostPageState extends State<PostPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: ApiCalls.getData(),
+        future: ApiCalls.getUserData(),
         builder: (context, snapshot) {
           if (snapshot.hasData) return _buildScaffold(snapshot.data);
           if (snapshot.hasError) return Text("Error");
@@ -74,15 +74,15 @@ class _PostPageState extends State<PostPage> {
                 String formattedTime = DateFormat.Hms().format(now);
 
                 imageRef = await ApiCalls.uploadPic(myUser.email, _image);
-
+                print(captionController.text);
                 Post myPost = new Post(
-                    title: captionController.text,
-                    description: "rterter",
+                    description: captionController.text,
                     timeAgo: formattedTime,
                     imageUrl: imageRef,
                     createdBy: CreatedBy(
                         name: myUser.getFullName,
-                        imageUrl: myUser.getImageRef));
+                        imageUrl: myUser.getImageRef,
+                        id: ApiCalls.recieveUserInstance()));
 
                 await ApiCalls.createPost(myPost);
               },
