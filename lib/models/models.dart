@@ -5,3 +5,4 @@ export 'group_module.dart';
 export 'chat_module.dart';
 export 'event_module.dart';
 export 'messege_module.dart';
+export 'friends_module.dart';
