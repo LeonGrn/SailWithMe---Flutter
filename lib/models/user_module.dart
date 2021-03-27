@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 
 import 'models.dart';
@@ -16,6 +13,7 @@ class UserData {
   String imei = "";
   String imageRef = "";
   bool _isOnline;
+  List<Friends> friendsList = [];
   List<Trip> tripList;
   List<Group> groupList;
   //List<Event> eventList;
@@ -82,7 +80,9 @@ class UserData {
   Map<String, dynamic> toJson() {
     List<Map> posts =
         this.posts != null ? this.posts.map((i) => i.toJson()).toList() : null;
-
+    List<Map> friendsList = this.friendsList != null
+        ? this.friendsList.map((i) => i.toJson()).toList()
+        : null;
     return {
       'FullName': fullName,
       'Email': email,
@@ -92,6 +92,7 @@ class UserData {
       'IMEI': imei,
       'ImageRef': imageRef,
       'Posts': posts,
+      'Friends': friendsList,
     };
   }
 

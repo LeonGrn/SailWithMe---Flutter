@@ -59,6 +59,7 @@ dev_dependencies:
   geolocator: ^6.1.7
   geocoding: ^1.0.5
   flutter_polyline_points: ^0.2.4
+  google_fonts: any
 
 flutter:
   uses-material-design: true
@@ -75,6 +76,7 @@ flutter:
     - assets/signup_top.png
     - assets/sun2.png
     - assets/user.png
+    - assets/sea.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

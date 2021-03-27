@@ -1,5 +1,7 @@
 import 'dart:ui';
+import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:SailWithMe/config/palette.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -33,7 +35,7 @@ class PostContainer extends StatelessWidget {
                 children: [
                   _PostHeader(post: post),
                   const SizedBox(height: 4.0),
-                  Text(post.title),
+                  Text(post.description),
                   const SizedBox(height: 4.0),
                   post.imageUrl == ""
                       ? Text("")
@@ -100,10 +102,19 @@ class _PostHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "${post.createdBy.getName()}",
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(new MaterialPageRoute<Null>(
+                      builder: (BuildContext context) {
+                        return ProfileScreen(id: "${post.createdBy.id}");
+                      },
+                      fullscreenDialog: true));
+                },
+                child: Text(
+                  "${post.createdBy.getName()}",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               Row(
