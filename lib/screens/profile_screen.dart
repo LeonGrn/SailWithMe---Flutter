@@ -44,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               margin: const EdgeInsets.all(6.0),
               child: IconButton(
-                icon: Icon(Icons.group_add_sharp),
+                icon: Icon(Icons.group_add),
                 iconSize: 30,
                 color: Colors.white,
                 onPressed: () {},

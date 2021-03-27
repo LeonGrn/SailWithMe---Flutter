@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:dio/dio.dart';
 
 import '../models/models.dart';
 
@@ -146,4 +147,34 @@ class ApiCalls {
 
     return imageRef;
   }
+
+
+  static Future<String> getRecomandRiver() async {
+ print("has click");
+  Dio dio = new Dio();
+
+ Response response;
+      try {
+        //"http://10.0.2.2:5000/api"
+        response = await dio.post("http://10.0.2.2:5000/api", data: {
+          "age": 50,
+          "years of experience": 2,
+          "how many children": 2,
+          "location": "tel aviv",
+          "sex": 1
+        });
+        print(response.data);
+        if (response.data.toString().contains("1")) {
+          return("the river in Camargue");
+        } else if (response.data.toString().contains("0")) {
+          return("the river in lot france");
+        } else if (response.data.toString().contains("2")) {
+          return("the river in Volga");
+        }
+      } on DioError catch (e) {
+        print("Error");
+        print(e.toString());
+      }
+}
+
 }

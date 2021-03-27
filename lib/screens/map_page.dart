@@ -7,10 +7,10 @@ import 'package:SailWithMe/Keys/configMaps.dart';
 import '../config/ApiCalls.dart';
 import '../models/models.dart';
 import 'package:geolocator/geolocator.dart' as geocoding;
-
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import '../models/trip_module.dart';
 import 'dart:math' show cos, sqrt, asin;
 
@@ -36,8 +36,6 @@ class _MapPageState extends State<MapPage> {
   final startAddressFocusNode = FocusNode();
   final desrinationAddressFocusNode = FocusNode();
   final destinationAddressController = TextEditingController();
-
-
   Set<Marker> markers = {};
   PolylinePoints polylinePoints;
   Map<PolylineId, Polyline> polylines = {};
@@ -117,12 +115,12 @@ void initState() {
           _buildGoogleMap(context),
            _safeAreaWithtInputTextFilled(),
           _safeAreawiget(),
-          _safeAreaForGetLocationButton(),
-          checkBuildContainer%2==0 ? _buildContainer():_flutterbutton()
+          checkBuildContainer%2==0 ? _buildContainer(): _safeAreaForGetLocationButton(),
           
-        ],
-      ),
-    );
+          ]
+          )
+        
+      );
   }
  
   Widget _safeAreawiget(){
@@ -168,94 +166,157 @@ void initState() {
                           },
                         ),
                       ),
-                    )
-                  ],
-                ),
-              ),
-            );
-  }
-  Widget _safeAreaForGetLocationButton(){
-    return(
-// Show current location button
-            SafeArea(
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
-                  child: ClipOval(
-                    child: Material(
-                      color: Colors.orange[100], // button color
-                      child: InkWell(
-                        splashColor: Colors.orange, // inkwell color
-                        child: SizedBox(
-                          width: 56,
-                          height: 56,
-                          child: Icon(Icons.my_location),
+
+                                        ),
+                                         SizedBox(height: 20),
+                                    savePlaces(),
+                                SizedBox(height: 20),
+                                    _ricomanderRiver(),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                      }
+       Widget savePlaces() {
+
+      return ClipOval(
+                      child: Material(
+                        color: Colors.yellow[500], // button color
+                        child: InkWell(
+                          splashColor: Colors.blue, // inkwell color
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: Icon(Icons.star
+                            ,color: Colors.white,),
+                          ),
+                          onTap: () {
+                              setState(() {
+                                    checkBuildContainer++;
+                                      });
+                            
+                          },
                         ),
-                        onTap: () {
-                          mapController.animateCamera(
-                            CameraUpdate.newCameraPosition(
-                              CameraPosition(
-                                target: LatLng(
-                                  _currentPosition.latitude,
-                                  _currentPosition.longitude,
-                                ),
-                                zoom: 18.0,
-                              ),
+                      ),
+                    );
+
+                        
+                      }
+
+                      Widget _safeAreaForGetLocationButton(){
+                        return(
+                    // Show current location button
+                                SafeArea(
+                                  child: Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
+                                      child: ClipOval(
+                                        child: Material(
+                                          color: Colors.orange[100], // button color
+                                          child: InkWell(
+                                            splashColor: Colors.orange, // inkwell color
+                                            child: SizedBox(
+                                              width: 56,
+                                              height: 56,
+                                              child: Icon(Icons.my_location),
+                                            ),
+                                            onTap: () {
+                                              mapController.animateCamera(
+                                                CameraUpdate.newCameraPosition(
+                                                  CameraPosition(
+                                                    target: LatLng(
+                                                      _currentPosition.latitude,
+                                                      _currentPosition.longitude,
+                                                    ),
+                                                    zoom: 18.0,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          )
+                                        )
+                                      )
+                                    )
+                                  )
+                                ) 
+                      );
+                    
+                      }
+
+                      Widget _ricomanderRiver(){
+                         return ClipOval(
+                      child: Material(
+                        child: InkWell(
+                          splashColor: Colors.blue, // inkwell color
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: SvgPicture.asset(
+                                    "river.svg",
+                                      height: 50.0,
+                                       width: 50.0,
+                                      allowDrawingOutsideViewBox: true,
+                                       ),
+                          ),
+                          onTap: () {
+                              setState(() {
+                                
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0))),
+                          title: Text(
+                            "Informations",
+                            style: GoogleFonts.lato(
+                              fontSize: 25,
+                              textStyle: TextStyle(
+                                  color: Colors.grey,
+                                  letterSpacing: .5,
+                                  fontStyle: FontStyle.italic),
                             ),
-                          );
-                        }
-                      )
-                    )
-                  )
-                )
-              )
-            ) 
-  );
+                          ),
+                          content: setupAlertDialoadContainer(),
+                        );
+                      });
 
-  }
+                              ApiCalls.getRecomandRiver();
 
-  Widget _flutterbutton() {
-    return RaisedButton(
-       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      color: Colors.blue,
-      textColor: Colors.white,
-      padding: EdgeInsets.all(8.0),
-      splashColor: Colors.blueAccent,
-      onPressed: () async {
-        print("has click");
-        try {
-          //"http://10.0.2.2:5000/api"
-          response = await dio.post("http://10.0.2.2:5000/api", data: {
-            "age": 50,
-            "years of experience": 2,
-            "how many children": 2,
-            "location": "tel aviv",
-            "sex": 1
-          });
-          print(response.data);
-          inspect(response.data);
-          if (response.data.toString().contains("1")) {
-            print("the river in Camargue");
-          } else if (response.data.toString().contains("0")) {
-            print("the river in lot france");
-          } else if (response.data.toString().contains("2")) {
-            print("the river in Volga");
-          }
-        } on DioError catch (e) {
-          print("Error");
+                                      });
+                            
+                          },
+                        ),
+                      ),
+                    );
+                      }
 
-          print(e.toString());
-        }
-        /*...*/
-      },
-      child: Text(
-        "recomand river",
-        style: TextStyle(fontSize: 7.0),
-      ),
+Widget setupAlertDialoadContainer() {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.blue,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20))),
+      height: 300.0, // Change as per your requirement
+      width: 300.0, // Change as per your requirement
+      child: ListView(shrinkWrap: true, children: <Widget>[
+        ListTile(
+          title: Text('the ricomander river is... '),
+        ),
+        ListTile(
+          title: Text('picture'),
+        ),
+        ListTile(
+          title: Text('info'),
+        )
+      ]),
     );
   }
 
+  
   Widget _buildGoogleMap(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height,
@@ -495,7 +556,7 @@ void initState() {
                               prefixIcon: Icon(Icons.looks_one),
                               suffixIcon: IconButton(
                                 icon: Icon(Icons.my_location),
-                                onPressed: () {
+                                onPressed: () {  
                                   startAddressController.text = _currentAddress;
                                   _startAddress = _currentAddress;
                                 },
@@ -533,40 +594,7 @@ void initState() {
                             ),
                           ),
                           SizedBox(height: 5),
-                          Row(
-                            children: [
-                              RaisedButton(
-                                  onPressed:() {
-                           setState(() {
-                            checkBuildContainer++;
-                           });
-                            
-                                   
-                                    },
-                            color: Colors.blueAccent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'save places'.toUpperCase(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10.0,
-                                ),
-                              ),
-                            ), 
-                            ),
-                            _flutterbutton(), 
-
-
-
-
-
-
-
-
+                  
                             RaisedButton(
                             onPressed: (_startAddress != '' && _destinationAddress != '')
                                 ? () async {
@@ -603,6 +631,7 @@ void initState() {
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
+                              
                               child: Text(
                                 'Show Route'.toUpperCase(),
                                 style: TextStyle(
@@ -616,13 +645,13 @@ void initState() {
 
                           ],)
                           
-                        ],
+                      
                       ),
                     ),
                   ),
                 ),
               )
-              )
+              
     );
   }
     getAllSavePlaces() async {
@@ -846,17 +875,8 @@ _getCurrentLocation() async {
       }
     
       }
-    }
-  
+
+}
 
 
 
-
-
-
-
-  
-
-
-
-    
