@@ -155,15 +155,13 @@ class ApiCalls {
 
  Response response;
       try {
-        //"http://10.0.2.2:5000/api"
-        response = await dio.post("http://10.0.2.2:5000/api", data: {
-          "age": 50,
-          "years of experience": 2,
+        response = await dio.post("https://yact-need.herokuapp.com/api", data: {
+          "age": 30,
+          "years of experience": 3,
           "how many children": 2,
           "location": "tel aviv",
           "sex": 1
         });
-        print(response.data);
         if (response.data.toString().contains("1")) {
           return("the river in Camargue");
         } else if (response.data.toString().contains("0")) {
@@ -175,6 +173,32 @@ class ApiCalls {
         print("Error");
         print(e.toString());
       }
+      return("not success to get data");
 }
+
+
+static Future searchUsers (String s) async {
+  List<String> friends = [];
+  UserData user;
+
+   await databaseReference
+        .orderByChild("FullName")
+        .startAt(s)
+        .limitToFirst(3)
+        .once()
+        .then((DataSnapshot dataSnapshot) {
+        
+      //  print(dataSnapshot.value);
+       user = UserData.fromJson(dataSnapshot);
+       print(user.fullName+"  ---user--   ");
+        
+    }
+
+    );
+    return friends;
+  
+
+}
+
 
 }
