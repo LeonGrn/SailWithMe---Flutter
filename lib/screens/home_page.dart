@@ -139,6 +139,10 @@ class _HomePageState extends State<HomePage> {
                     hintText: "Search",
                     contentPadding: EdgeInsets.all(16),
                     hintStyle: TextStyle(color: Colors.black)),
+                      onChanged: (text) {
+                        ApiCalls.searchUsers(text);
+                      }
+
               ),
         actions: [
           isSearching

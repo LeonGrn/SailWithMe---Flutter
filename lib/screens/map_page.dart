@@ -253,7 +253,7 @@ void initState() {
                             width: 50,
                             height: 50,
                             child: SvgPicture.asset(
-                                    "river.svg",
+                                    "assets/river.svg",
                                       height: 50.0,
                                        width: 50.0,
                                       allowDrawingOutsideViewBox: true,
@@ -283,7 +283,7 @@ void initState() {
                         );
                       });
 
-                              ApiCalls.getRecomandRiver();
+                             
 
                                       });
                             
@@ -302,18 +302,19 @@ Widget setupAlertDialoadContainer() {
           borderRadius: BorderRadius.all(Radius.circular(20))),
       height: 300.0, // Change as per your requirement
       width: 300.0, // Change as per your requirement
-      child: ListView(shrinkWrap: true, children: <Widget>[
+      child:FutureBuilder(
+                  future: ApiCalls.getRecomandRiver(), // async work
+                  builder: (BuildContext context, AsyncSnapshot snapshot){
+                     if (snapshot.hasData) {
+                   return ListView(shrinkWrap: true, children: <Widget>[
         ListTile(
-          title: Text('the ricomander river is... '),
-        ),
-        ListTile(
-          title: Text('picture'),
-        ),
-        ListTile(
-          title: Text('info'),
-        )
-      ]),
-    );
+          title: Text('Name: ${snapshot.data}'),
+        )]);
+                 } else {
+            return Center(child: CircularProgressIndicator());
+                  }
+                  }
+    ));
   }
 
   
