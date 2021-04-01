@@ -61,6 +61,7 @@ dev_dependencies:
   flutter_polyline_points: ^0.2.4
   google_fonts: any
 
+
 flutter:
   uses-material-design: true
 

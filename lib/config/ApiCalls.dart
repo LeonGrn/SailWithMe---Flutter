@@ -177,9 +177,11 @@ class ApiCalls {
 }
 
 
-static Future searchUsers (String s) async {
-  List<String> friends = [];
+static Future<List<Friends>> searchUsers (String s) async {
+  List<Friends> friends = [];
   UserData user;
+  String fullName;
+  String imagePath;
 
    await databaseReference
         .orderByChild("FullName")
@@ -187,13 +189,13 @@ static Future searchUsers (String s) async {
         .limitToFirst(3)
         .once()
         .then((DataSnapshot dataSnapshot) {
-        
-      //  print(dataSnapshot.value);
-       user = UserData.fromJson(dataSnapshot);
-       print(user.fullName+"  ---user--   ");
-        
+         for(var key in dataSnapshot.value.keys){
+         fullName= dataSnapshot.value[key]['FullName'];
+         imagePath=dataSnapshot.value[key]['ImageRef'];
+         friends.add(new Friends(id: key,name: fullName,isFriend: 0,imagePath: imagePath));
+        }
+  
     }
-
     );
     return friends;
   
