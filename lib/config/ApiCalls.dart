@@ -201,16 +201,37 @@ class ApiCalls {
     return ("not success to get data");
   }
 
-  static Future<List<Friends>> searchUsers(String s) async {
-    List<Friends> friends = [];
-    UserData user;
-    String fullName;
-    String imagePath;
-
+static Future searchUsers (String s) async {
+  List<Friends> friends = [];
+  UserData user;
+  String fullName;
+  String imagePath;
     await databaseReference
         .orderByChild("FullName")
         .startAt(s)
-        .limitToFirst(3)
+        .limitToFirst(5)
+        .once()
+        .then((DataSnapshot dataSnapshot) {
+         for(var key in dataSnapshot.value.keys){
+         fullName= dataSnapshot.value[key]['FullName'];
+         imagePath=dataSnapshot.value[key]['ImageRef'];
+         friends.add(new Friends(id: key,name: fullName,isFriend: 0,imageUrl : imagePath));
+        }
+  
+    }
+    );
+    return friends;
+  
+
+}
+static Future getAllUsers () async {
+  List<Friends> friends = [];
+  UserData user;
+  String fullName;
+  String imagePath;
+
+   await databaseReference
+        .orderByChild("FullName")
         .once()
         .then((DataSnapshot dataSnapshot) {
       for (var key in dataSnapshot.value.keys) {

@@ -27,6 +27,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   UserData myUser;
+  String searchText='';
   var temp;
   //var location;
   var windSpeed;
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePage> {
   String assetName = 'assets/sun.svg';
   bool isSearching = false;
   File imageUrl;
-
+  
   Future getWeather() async {
     http.Response response = await http.get(
         "http://api.openweathermap.org/data/2.5/weather?q=Netanya&appid=a43c41d2c4008b88f98a49068edebbf1");
@@ -105,7 +106,7 @@ class _HomePageState extends State<HomePage> {
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
     return Scaffold(
-      key: _scaffoldKey,
+      key: _scaffoldKey, 
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
@@ -121,24 +122,7 @@ class _HomePageState extends State<HomePage> {
                     fontFamily: 'IndieFlower',
                     fontSize: 25.0),
               )
-            : TextField(
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        width: 0,
-                        style: BorderStyle.none,
-                      ),
-                    ),
-                    filled: true,
-                    hintText: "Search",
-                    contentPadding: EdgeInsets.all(16),
-                    hintStyle: TextStyle(color: Colors.black)),
-                      onChanged: (text) {
-                        ApiCalls.searchUsers(text);
-                      }
-
-              ),
+            : textFieldForSearchBar(),
         actions: [
           isSearching
               ? CircleButton(
@@ -160,90 +144,193 @@ class _HomePageState extends State<HomePage> {
           CircleButton(icon: Icons.add_alert, iconSize: 25.0, onPressed: () {}),
         ],
       ),
-      body: Column(
-        children: [
-          new Container(
-            height: 80,
-            margin: EdgeInsets.all(10.0),
-            decoration: new BoxDecoration(
-              color: Colors.blueAccent,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              //mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Spacer(flex: 3),
-                Text(
-                  "Netanya",
-                  style: TextStyle(fontSize: 20.0),
-                ),
-                //SizedBox(width: 50),
-                Spacer(flex: 3),
-                SvgPicture.asset(
-                  assetName,
-                  width: 20,
-                  height: 20,
-                ),
-                Text(
-                  temp != null ? temp.toStringAsFixed(1) : "Loading",
-                  style: TextStyle(fontSize: 35.0),
-                ),
-                //SizedBox(width: 15),
-                Spacer(flex: 1),
-                VerticalDivider(
-                  color: Colors.blueGrey,
-                  thickness: 1,
-                  width: 1,
-                  indent: 20,
-                  endIndent: 20,
-                ),
-                //SizedBox(width: 15),
-                Spacer(flex: 3),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      main != null ? main : "Loading",
-                      style: TextStyle(fontSize: 20.0),
-                    ),
-                    Text(
-                      windSpeed != null
-                          ? windSpeed.toString() + "km/h"
-                          : "Loading",
-                      style: TextStyle(fontSize: 20.0),
-                    ),
-                  ],
-                ),
-                Spacer(flex: 3),
-              ],
-            ),
-          ),
-          Expanded(
-            child: FutureBuilder(
-              future: ApiCalls.getListOfPost(), // async work
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                    return new Text('No Connection');
-                  case ConnectionState.waiting:
-                    return new Text('Loading....');
-                  default:
-                    if (snapshot.hasError)
-                      return new Text('No posts exist');
-                    else
-                      return ListView.builder(
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (context, index) {
-                            Post post = snapshot.data[index];
-                            return PostContainer(post: post);
-                          });
-                }
-              },
-            ),
-          ),
-        ],
-      ),
+      body: !isSearching? PostsBodyWigit(assetName: assetName, temp: temp, main: main, windSpeed: windSpeed)
+      : searchBar(),
       drawer: HomePageDrawer(myUser: myUser),
+    );
+  }
+
+
+  Widget searchBar(){
+return (
+  FutureBuilder(
+         future: ApiCalls.searchUsers(searchText),
+         builder: (BuildContext context,AsyncSnapshot snapshot){
+         if(snapshot.data==null){
+            print(" eeeeeeeeeeeeeee");
+           return Container(child: Text("wait..."));
+         } 
+         if(snapshot.hasError){
+            print("error : "+ snapshot.error);
+         }
+         else{
+           searchText="";
+          return ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: snapshot.data.length,
+            itemBuilder:(BuildContext context,int index){
+             print( snapshot.data[index].name+" ggggggggggggggggggggggg");
+                return ListTile(
+                title:  GestureDetector(
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(new MaterialPageRoute<Null>(
+                                  builder: (BuildContext context) {
+                                    return ProfileScreen(
+                                        id: snapshot.data[index].id);
+                                  },
+                                  fullscreenDialog: true));
+                        },
+                        child: Text(
+                          snapshot.data[index].name)
+                         ,
+                        ),
+                      
+                trailing:CircleAvatar(
+                        radius: 20.0,
+                        backgroundImage: FirebaseImage(
+                          'gs://sailwithme.appspot.com/' + snapshot.data[index].imagePath,
+                          shouldCache:
+                              true, // The image should be cached (default: True)
+                          //             // maxSizeBytes:
+                          //             //     3000 * 1000, // 3MB max file size (default: 2.5MB)
+                          //             // cacheRefreshStrategy: CacheRefreshStrategy
+                          //             //     .NEVER // Switch off update checking
+                          // 
+                          
+                        ),
+                
+                ));}
+                  
+                );
+            }}
+
+            ));}
+  
+  Widget textFieldForSearchBar() {
+    
+    return TextField(
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      width: 0,
+                      style: BorderStyle.none,
+                    ),
+                  ),
+                  filled: true,
+                  prefixText:  searchText,
+                  contentPadding: EdgeInsets.all(16),
+                  hintStyle: TextStyle(color: Colors.black)),
+                  onChanged: (text) {                      
+                             searchText=text; 
+                             if(searchText.length>2){
+                               setState(() {
+                               });
+                             } 
+
+                  }
+            );}
+  }
+
+class PostsBodyWigit extends StatelessWidget {
+  const PostsBodyWigit({
+    Key key,
+    @required this.assetName,
+    @required this.temp,
+    @required this.main,
+    @required this.windSpeed,
+  }) : super(key: key);
+
+  final String assetName;
+  final  temp;
+  final String main;
+  final  windSpeed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        new Container(
+          height: 80,
+          margin: EdgeInsets.all(10.0),
+          decoration: new BoxDecoration(
+            color: Colors.blueAccent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            //mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Spacer(flex: 3),
+              Text(
+                "Netanya",
+                style: TextStyle(fontSize: 20.0),
+              ),
+              //SizedBox(width: 50),
+              Spacer(flex: 3),
+              SvgPicture.asset(
+                assetName,
+                width: 20,
+                height: 20,
+              ),
+              Text(
+                temp != null ? temp.toStringAsFixed(1) : "Loading",
+                style: TextStyle(fontSize: 35.0),
+              ),
+              //SizedBox(width: 15),
+              Spacer(flex: 1),
+              VerticalDivider(
+                color: Colors.blueGrey,
+                thickness: 1,
+                width: 1,
+                indent: 20,
+                endIndent: 20,
+              ),
+              //SizedBox(width: 15),
+              Spacer(flex: 3),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    main != null ? main : "Loading",
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                  Text(
+                    windSpeed != null
+                        ? windSpeed.toString() + "km/h"
+                        : "Loading",
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                ],
+              ),
+              Spacer(flex: 3),
+            ],
+          ),
+        ),
+        Expanded(
+          child: FutureBuilder(
+            future: ApiCalls.getListOfPost(), // async work
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return new Text('No posts exist');
+                case ConnectionState.waiting:
+                  return new Text('Loading....');
+                default:
+                  if (snapshot.hasError)
+                    return new Text('Error: ${snapshot.error}');
+                  else
+                    return ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (context, index) {
+                          Post post = snapshot.data[index];
+                          return PostContainer(post: post);
+                        });
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 }
