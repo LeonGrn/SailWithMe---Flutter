@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:dio/dio.dart';
 
 import '../models/models.dart';
 
@@ -171,5 +172,54 @@ class ApiCalls {
     }
 
     return imageRef;
+  }
+
+  static Future<String> getRecomandRiver() async {
+    print("has click");
+    Dio dio = new Dio();
+
+    Response response;
+    try {
+      response = await dio.post("https://yact-need.herokuapp.com/api", data: {
+        "age": 30,
+        "years of experience": 3,
+        "how many children": 2,
+        "location": "tel aviv",
+        "sex": 1
+      });
+      if (response.data.toString().contains("1")) {
+        return ("the river in Camargue");
+      } else if (response.data.toString().contains("0")) {
+        return ("the river in lot france");
+      } else if (response.data.toString().contains("2")) {
+        return ("the river in Volga");
+      }
+    } on DioError catch (e) {
+      print("Error");
+      print(e.toString());
+    }
+    return ("not success to get data");
+  }
+
+  static Future<List<Friends>> searchUsers(String s) async {
+    List<Friends> friends = [];
+    UserData user;
+    String fullName;
+    String imagePath;
+
+    await databaseReference
+        .orderByChild("FullName")
+        .startAt(s)
+        .limitToFirst(3)
+        .once()
+        .then((DataSnapshot dataSnapshot) {
+      for (var key in dataSnapshot.value.keys) {
+        fullName = dataSnapshot.value[key]['FullName'];
+        imagePath = dataSnapshot.value[key]['ImageRef'];
+        friends.add(new Friends(
+            id: key, name: fullName, isFriend: 0, imageUrl: imagePath));
+      }
+    });
+    return friends;
   }
 }
