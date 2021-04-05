@@ -189,7 +189,7 @@ return (
                 trailing:CircleAvatar(
                         radius: 20.0,
                         backgroundImage: FirebaseImage(
-                          'gs://sailwithme.appspot.com/' + snapshot.data[index].imagePath,
+                          'gs://sailwithme.appspot.com/' + snapshot.data[index].imageUrl,
                           shouldCache:
                               true, // The image should be cached (default: True)
                           //             // maxSizeBytes:
