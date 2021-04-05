@@ -36,7 +36,6 @@ class _MyAppState extends State<SignUpScreen> {
   String gender = "";
   String _yearsOfExperience = "";
   File _image;
-  //List<Post> posts;
 
   String _platformImei = 'Unknown';
   String uniqueId = "Unknown";
@@ -48,7 +47,6 @@ class _MyAppState extends State<SignUpScreen> {
   @override
   void initState() {
     _passwordVisible = false;
-    //_dbRef = FirebaseDatabase.instance.reference().child('myUsers');
     super.initState();
     initPlatformState();
   }
@@ -91,31 +89,30 @@ class _MyAppState extends State<SignUpScreen> {
     });
   }
 
-  Future uploadPic() async {
-    if (_image == null) {
-      _imageRef = "";
-      return;
-    }
-    var uuid = Uuid().v4();
+  // Future uploadPic() async {
+  //   if (_image == null) {
+  //     _imageRef = "";
+  //     return;
+  //   }
+  //   var uuid = Uuid().v4();
 
-    try {
-      await firebase_storage.FirebaseStorage.instance
-          .ref('$_email/posts/$uuid.png')
-          .putFile(_image);
+  //   try {
+  //     await firebase_storage.FirebaseStorage.instance
+  //         .ref('$_email/posts/$uuid.png')
+  //         .putFile(_image);
 
-      _imageRef = '$_email/posts/$uuid.png';
-    } on firebase_storage.FirebaseException catch (e) {
-      _imageRef = "";
-      print(e);
-    }
-  }
+  //     _imageRef = '$_email/posts/$uuid.png';
+  //   } on firebase_storage.FirebaseException catch (e) {
+  //     _imageRef = "";
+  //     print(e);
+  //   }
+  // }
 
   Future<void> _createUser() async {
-    uploadPic();
     try {
       // UserCredential userCredential = await FirebaseAuth.instance
       //     .createUserWithEmailAndPassword(email: _email, password: _password);
-      ApiCalls.authNewUser(_email, _password);
+      await ApiCalls.authNewUser(_email, _password);
 
       // String userId = FirebaseAuth.instance.currentUser.uid;
     } on FirebaseAuthException catch (e) {
@@ -127,21 +124,22 @@ class _MyAppState extends State<SignUpScreen> {
     } catch (e) {
       print(e);
     }
+
+    _imageRef = await ApiCalls.uploadPic(_email, _image, "Profile");
+
     UserData createdUser = UserData(
-      fullName: _fullName,
-      email: _email,
-      age: age.toString(),
-      gender: gender,
-      yearsOfExperience: _yearsOfExperience,
-      imei: uniqueId,
-      imageRef: _imageRef,
-      posts: [],
-      friendsList: []
-    );
+        fullName: _fullName,
+        email: _email,
+        age: age.toString(),
+        gender: gender,
+        yearsOfExperience: _yearsOfExperience,
+        imei: uniqueId,
+        imageRef: _imageRef,
+        posts: [],
+        friendsList: []);
 
-    ApiCalls.createUser(createdUser);
+    await ApiCalls.createUser(createdUser);
 
-    // databaseReference.child(userId).set(createdUser.toJson());
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => new BottomNavBar()),
@@ -193,7 +191,6 @@ class _MyAppState extends State<SignUpScreen> {
                   : lastDate)
           .then((temp) {
         if (temp == null) return null;
-//        _selectedDateInString = df.format(temp);
         completer.complete(temp);
         setState(() {});
       });
@@ -204,8 +201,7 @@ class _MyAppState extends State<SignUpScreen> {
         locale: 'en',
         onConfirm2: (temp, selectedIndex) {
           if (temp == null) return null;
-//          final df = new DateFormat('dd-MMM-yyyy');
-//          _selectedDateInString = df.format(temp);
+
           completer.complete(temp);
           setState(() {});
         },
@@ -241,22 +237,6 @@ class _MyAppState extends State<SignUpScreen> {
                   onTap: () {
                     getImage();
                   },
-                  // child: Container(
-                  //   width: 120.0,
-                  //   height: 120.0,
-                  //   decoration: BoxDecoration(
-                  //     image: _image == null
-                  //         ? DecorationImage(
-                  //             fit: BoxFit.cover, image: myChoosenImage)
-                  //         : DecorationImage(
-                  //             image: FileImage(_image),
-                  //             fit: BoxFit.cover,
-                  //           ),
-                  //     color: Colors.white,
-                  //     shape: BoxShape.circle,
-                  //     border: Border.all(color: Colors.black, width: 2),
-                  //   ),
-                  // ),
                   child:
                       ProfileAvatar(imageFile: _image, width: 120, height: 120),
                 ),

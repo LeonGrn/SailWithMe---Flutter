@@ -73,7 +73,8 @@ class _PostPageState extends State<PostPage> {
                 String imageRef = "";
                 String formattedTime = DateFormat.Hms().format(now);
 
-                imageRef = await ApiCalls.uploadPic(myUser.email, _image);
+                imageRef =
+                    await ApiCalls.uploadPic(myUser.email, _image, "post");
                 print(captionController.text);
                 Post myPost = new Post(
                     description: captionController.text,

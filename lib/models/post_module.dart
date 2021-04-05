@@ -20,12 +20,18 @@ class Post {
         comments = [],
         shares = 0;
 
-  Map<String, dynamic> toJson() => {
-        'Description': description,
-        'TimeAgo': timeAgo,
-        'ImageUrl': imageUrl,
-        'CreatedBy': createdBy.toJson(),
-      };
+  Map<String, dynamic> toJson() {
+    List<Map> likes =
+        this.likes != null ? this.likes.map((i) => i.toJson()).toList() : null;
+
+    return {
+      'Description': description,
+      'TimeAgo': timeAgo,
+      'ImageUrl': imageUrl,
+      'CreatedBy': createdBy.toJson(),
+      'Likes': likes,
+    };
+  }
 
   Post.fromJson(DataSnapshot snapshot)
       : description = snapshot.value['Description'],

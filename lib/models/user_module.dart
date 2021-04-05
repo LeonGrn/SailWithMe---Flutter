@@ -12,11 +12,9 @@ class UserData {
   int phoneNumber;
   String imei = "";
   String imageRef = "";
-  bool _isOnline;
   List<Friends> friendsList = [];
   List<Trip> tripList;
   List<Group> groupList;
-  //List<Event> eventList;
   List<Post> posts = [];
 
   List get getPosts {
@@ -72,8 +70,8 @@ class UserData {
       this.yearsOfExperience,
       this.imei,
       this.imageRef,
-      this.posts
-      ,this.friendsList});
+      this.posts,
+      this.friendsList});
 
   UserData.fromUserData(this.fullName, this.email, this.id,
       this.yearsOfExperience, this.imageRef);
@@ -81,9 +79,9 @@ class UserData {
   Map<String, dynamic> toJson() {
     List<Map> posts =
         this.posts != null ? this.posts.map((i) => i.toJson()).toList() : null;
-     List<Map> friendsList = this.friendsList != null
-         ? this.friendsList.map((i) => i.toJson()).toList()
-         : null;
+    List<Map> friendsList = this.friendsList != null
+        ? this.friendsList.map((i) => i.toJson()).toList()
+        : null;
     return {
       'FullName': fullName,
       'Email': email,
@@ -107,5 +105,4 @@ class UserData {
         imei: snapshot.value['IMEI'],
         imageRef: snapshot.value['ImageRef']);
   }
-  
 }

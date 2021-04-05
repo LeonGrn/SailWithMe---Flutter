@@ -2,14 +2,14 @@ class Friends {
   String name;
   String id;
   int isFriend;
-  String imagePath;
+  String imageUrl;
 
-  Friends({this.name, this.id, this.isFriend,this.imagePath});
+  Friends({this.name, this.id, this.isFriend, this.imageUrl});
 
   Map<String, dynamic> toJson() => {
         'Name': name,
         'Id': id,
         'IsFriend': isFriend.toString(),
-        'imagePath':imagePath,
+        'ImageUrl': imageUrl,
       };
 }

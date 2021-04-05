@@ -1,7 +1,9 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:SailWithMe/models/createdBy_module.dart';
 import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/post_models/post_likes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:uuid/uuid.dart';
@@ -41,11 +43,19 @@ class ApiCalls {
 
   //Push a new post
   static Future<void> createPost(Post post) async {
-    databaseReference.child(userId).child("Post").push().set(post.toJson());
+    await databaseReference
+        .child(userId)
+        .child("Post")
+        .push()
+        .set(post.toJson());
   }
 
   static Future<void> savePlaceForUser(Trip trip) async {
-    databaseReference.child(userId).child("Trips").push().set(trip.toJson());
+    await databaseReference
+        .child(userId)
+        .child("Trips")
+        .push()
+        .set(trip.toJson());
   }
 
   static Future<void> signOut() async {
@@ -68,6 +78,16 @@ class ApiCalls {
     });
   }
 
+  static Future<void> likePost(Likes like) async {
+    await databaseReference
+        .child(userId)
+        .child("Post")
+        .child("uuid")
+        .child("Likes")
+        .push()
+        .set(like.toJson());
+  }
+
   static Future addFriend(String friendId) async {
     return null;
   }
@@ -79,15 +99,19 @@ class ApiCalls {
         .child('Friends')
         .once()
         .then((DataSnapshot dataSnapshot) {
+      inspect(dataSnapshot.value.values);
       for (var value in dataSnapshot.value.values) {
         friends.add(new Friends(
-            name: value['Name'], id: value['Id'], isFriend: value['IsFriend']));
+            name: value['Name'],
+            id: value['Id'],
+            isFriend: value['IsFriend'],
+            imageUrl: value['ImageUrl']));
       }
     });
     return friends;
   }
 
-  //Get only yhe post
+  //Get only the post
   static Future getListOfPost() async {
     List<Post> posts = [];
     await databaseReference
@@ -128,19 +152,21 @@ class ApiCalls {
     return trips;
   }
 
-  static Future<String> uploadPic(String email, File _image) async {
+  static Future<String> uploadPic(
+      String email, File _image, String typeOfPhoto) async {
     String imageRef = "";
 
     if (_image == null) {
       return imageRef;
     }
     var uuid = Uuid().v4();
+
+    imageRef = '$email/$typeOfPhoto/$uuid.png';
+
     try {
       await firebase_storage.FirebaseStorage.instance
-          .ref('$email/posts/$uuid.png')
+          .ref(imageRef)
           .putFile(_image);
-
-      imageRef = '$email/posts/$uuid.png';
     } on firebase_storage.FirebaseException catch (e) {
       print(e);
     }
@@ -148,42 +174,39 @@ class ApiCalls {
     return imageRef;
   }
 
-
   static Future<String> getRecomandRiver() async {
- print("has click");
-  Dio dio = new Dio();
+    print("has click");
+    Dio dio = new Dio();
 
- Response response;
-      try {
-        response = await dio.post("https://yact-need.herokuapp.com/api", data: {
-          "age": 30,
-          "years of experience": 3,
-          "how many children": 2,
-          "location": "tel aviv",
-          "sex": 1
-        });
-        if (response.data.toString().contains("1")) {
-          return("the river in Camargue");
-        } else if (response.data.toString().contains("0")) {
-          return("the river in lot france");
-        } else if (response.data.toString().contains("2")) {
-          return("the river in Volga");
-        }
-      } on DioError catch (e) {
-        print("Error");
-        print(e.toString());
+    Response response;
+    try {
+      response = await dio.post("https://yact-need.herokuapp.com/api", data: {
+        "age": 30,
+        "years of experience": 3,
+        "how many children": 2,
+        "location": "tel aviv",
+        "sex": 1
+      });
+      if (response.data.toString().contains("1")) {
+        return ("the river in Camargue");
+      } else if (response.data.toString().contains("0")) {
+        return ("the river in lot france");
+      } else if (response.data.toString().contains("2")) {
+        return ("the river in Volga");
       }
-      return("not success to get data");
-}
-
+    } on DioError catch (e) {
+      print("Error");
+      print(e.toString());
+    }
+    return ("not success to get data");
+  }
 
 static Future searchUsers (String s) async {
   List<Friends> friends = [];
   UserData user;
   String fullName;
   String imagePath;
-
-   await databaseReference
+    await databaseReference
         .orderByChild("FullName")
         .startAt(s)
         .limitToFirst(5)
@@ -192,7 +215,7 @@ static Future searchUsers (String s) async {
          for(var key in dataSnapshot.value.keys){
          fullName= dataSnapshot.value[key]['FullName'];
          imagePath=dataSnapshot.value[key]['ImageRef'];
-         friends.add(new Friends(id: key,name: fullName,isFriend: 0,imagePath: imagePath));
+         friends.add(new Friends(id: key,name: fullName,isFriend: 0,imageUrl : imagePath));
         }
   
     }
@@ -211,18 +234,13 @@ static Future getAllUsers () async {
         .orderByChild("FullName")
         .once()
         .then((DataSnapshot dataSnapshot) {
-         for(var key in dataSnapshot.value.keys){
-         fullName= dataSnapshot.value[key]['FullName'];
-         imagePath=dataSnapshot.value[key]['ImageRef'];
-         friends.add(new Friends(id: key,name: fullName,isFriend: 0,imagePath: imagePath));
-        }
-  
-    }
-    );
+      for (var key in dataSnapshot.value.keys) {
+        fullName = dataSnapshot.value[key]['FullName'];
+        imagePath = dataSnapshot.value[key]['ImageRef'];
+        friends.add(new Friends(
+            id: key, name: fullName, isFriend: 0, imageUrl: imagePath));
+      }
+    });
     return friends;
-  
-
-}
-
-
+  }
 }
