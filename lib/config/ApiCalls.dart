@@ -88,9 +88,13 @@ class ApiCalls {
         .set(like.toJson());
   }
 
-  static Future addFriend(String friendId) async {
-    return null;
-  }
+  static Future addFriend(String friendId,String imageUrl,String name) async {
+ await databaseReference
+        .child(userId)
+        .child("Friends")
+        .push()
+        .set(new Friends(id:friendId,imageUrl:imageUrl,isFriend: 1,name: name).toJson());  
+        }
 
   static Future getAllFriends() async {
     List<Friends> friends = [];
@@ -104,7 +108,7 @@ class ApiCalls {
         friends.add(new Friends(
             name: value['Name'],
             id: value['Id'],
-            isFriend: value['IsFriend'],
+            isFriend: int.parse(value['IsFriend']),
             imageUrl: value['ImageUrl']));
       }
     });
