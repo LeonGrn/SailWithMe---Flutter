@@ -12,11 +12,9 @@ class UserData {
   int phoneNumber;
   String imei = "";
   String imageRef = "";
-  bool _isOnline;
   List<Friends> friendsList = [];
   List<Trip> tripList;
   List<Group> groupList;
-  //List<Event> eventList;
   List<Post> posts = [];
 
   List get getPosts {
@@ -72,7 +70,8 @@ class UserData {
       this.yearsOfExperience,
       this.imei,
       this.imageRef,
-      this.posts});
+      this.posts,
+      this.friendsList});
 
   UserData.fromUserData(this.fullName, this.email, this.id,
       this.yearsOfExperience, this.imageRef);

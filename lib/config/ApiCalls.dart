@@ -1,7 +1,9 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:SailWithMe/models/createdBy_module.dart';
 import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/post_models/post_likes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:uuid/uuid.dart';
@@ -40,11 +42,19 @@ class ApiCalls {
 
   //Push a new post
   static Future<void> createPost(Post post) async {
-    databaseReference.child(userId).child("Post").push().set(post.toJson());
+    await databaseReference
+        .child(userId)
+        .child("Post")
+        .push()
+        .set(post.toJson());
   }
 
   static Future<void> savePlaceForUser(Trip trip) async {
-    databaseReference.child(userId).child("Trips").push().set(trip.toJson());
+    await databaseReference
+        .child(userId)
+        .child("Trips")
+        .push()
+        .set(trip.toJson());
   }
 
   static Future<void> signOut() async {
@@ -67,6 +77,16 @@ class ApiCalls {
     });
   }
 
+  static Future<void> likePost(Likes like) async {
+    await databaseReference
+        .child(userId)
+        .child("Post")
+        .child("uuid")
+        .child("Likes")
+        .push()
+        .set(like.toJson());
+  }
+
   static Future addFriend(String friendId) async {
     return null;
   }
@@ -78,15 +98,19 @@ class ApiCalls {
         .child('Friends')
         .once()
         .then((DataSnapshot dataSnapshot) {
+      inspect(dataSnapshot.value.values);
       for (var value in dataSnapshot.value.values) {
         friends.add(new Friends(
-            name: value['Name'], id: value['Id'], isFriend: value['IsFriend']));
+            name: value['Name'],
+            id: value['Id'],
+            isFriend: value['IsFriend'],
+            imageUrl: value['ImageUrl']));
       }
     });
     return friends;
   }
 
-  //Get only yhe post
+  //Get only the post
   static Future getListOfPost() async {
     List<Post> posts = [];
     await databaseReference
@@ -127,19 +151,21 @@ class ApiCalls {
     return trips;
   }
 
-  static Future<String> uploadPic(String email, File _image) async {
+  static Future<String> uploadPic(
+      String email, File _image, String typeOfPhoto) async {
     String imageRef = "";
 
     if (_image == null) {
       return imageRef;
     }
     var uuid = Uuid().v4();
+
+    imageRef = '$email/$typeOfPhoto/$uuid.png';
+
     try {
       await firebase_storage.FirebaseStorage.instance
-          .ref('$email/posts/$uuid.png')
+          .ref(imageRef)
           .putFile(_image);
-
-      imageRef = '$email/posts/$uuid.png';
     } on firebase_storage.FirebaseException catch (e) {
       print(e);
     }
