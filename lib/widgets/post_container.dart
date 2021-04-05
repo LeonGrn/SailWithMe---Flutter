@@ -1,7 +1,6 @@
 import 'dart:ui';
-import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/models/models.dart';
-import 'package:SailWithMe/screens/profile_screen.dart';
+import 'package:SailWithMe/screens/sub-screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:SailWithMe/config/palette.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
