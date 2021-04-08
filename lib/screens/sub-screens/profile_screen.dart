@@ -44,10 +44,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               margin: const EdgeInsets.all(6.0),
               child: IconButton(
-                icon: Icon(Icons.group_add),
+                icon: Icon(Icons.group_add
+                ),
                 iconSize: 30,
                 color: Colors.white,
-                onPressed: () {},
+                onPressed: () {
+                
+                 ApiCalls.addFriend(widget.id,myUser.getImageRef,myUser.getFullName);
+
+
+
+                },
               ),
             ),
             Container(
@@ -97,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Expanded(
                 child: FutureBuilder(
-                  future: ApiCalls.getListOfPost(), // async work
+                  future: ApiCalls.getListOfPostByUserId(widget.id), // async work
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.none:
