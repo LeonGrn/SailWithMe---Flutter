@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/config/palette.dart';
@@ -11,11 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
-import 'package:SailWithMe/date.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:SailWithMe/main.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_image/firebase_image.dart';
 
 class HomePage extends StatefulWidget {
@@ -27,7 +24,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   UserData myUser;
-  String searchText='';
+  String searchText = '';
   var temp;
   //var location;
   var windSpeed;
@@ -36,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   String assetName = 'assets/sun.svg';
   bool isSearching = false;
   File imageUrl;
-  
+
   Future getWeather() async {
     http.Response response = await http.get(
         "http://api.openweathermap.org/data/2.5/weather?q=Netanya&appid=a43c41d2c4008b88f98a49068edebbf1");
@@ -48,21 +45,6 @@ class _HomePageState extends State<HomePage> {
         this.windSpeed = results['wind']['speed'];
         this.main = results['weather'][0]['main'];
       });
-    }
-  }
-
-  Future<void> downloadFileFromFirebaseStorage() async {
-    try {
-      final ref = firebase_storage.FirebaseStorage.instance
-          .ref()
-          .child(myUser.getImageRef);
-// no need of the file extension, the name will do fine.
-      var url = await ref.getDownloadURL();
-      print(url);
-    } on FirebaseException catch (e) {
-      // e.g, e.code == 'canceled'
-      print(e);
-      print("my life fail");
     }
   }
 
@@ -95,8 +77,9 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder(
         future: ApiCalls.getUserData(),
         builder: (context, snapshot) {
+          inspect(snapshot.data);
           if (snapshot.hasData) return _buildScaffold(snapshot.data);
-          if (snapshot.hasError) return Text("Error");
+          if (snapshot.hasError) return Text("Error ${snapshot.error}");
 
           return Text("Loading");
         });
@@ -106,7 +89,7 @@ class _HomePageState extends State<HomePage> {
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
     return Scaffold(
-      key: _scaffoldKey, 
+      key: _scaffoldKey,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
@@ -144,34 +127,36 @@ class _HomePageState extends State<HomePage> {
           CircleButton(icon: Icons.add_alert, iconSize: 25.0, onPressed: () {}),
         ],
       ),
-      body: !isSearching? PostsBodyWigit(assetName: assetName, temp: temp, main: main, windSpeed: windSpeed)
-      : searchBar(),
+      body: !isSearching
+          ? PostsBodyWigit(
+              assetName: assetName,
+              temp: temp,
+              main: main,
+              windSpeed: windSpeed)
+          : searchBar(),
       drawer: HomePageDrawer(myUser: myUser),
     );
   }
 
-
-  Widget searchBar(){
-return (
-  FutureBuilder(
-         future: ApiCalls.searchUsers(searchText),
-         builder: (BuildContext context,AsyncSnapshot snapshot){
-         if(snapshot.data==null){
+  Widget searchBar() {
+    return (FutureBuilder(
+        future: ApiCalls.searchUsers(searchText),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.data == null) {
             print(" eeeeeeeeeeeeeee");
-           return Container(child: Text("wait..."));
-         } 
-         if(snapshot.hasError){
-            print("error : "+ snapshot.error);
-         }
-         else{
-           searchText="";
-          return ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: snapshot.data.length,
-            itemBuilder:(BuildContext context,int index){
-             print( snapshot.data[index].name+" ggggggggggggggggggggggg");
-                return ListTile(
-                title:  GestureDetector(
+            return Container(child: Text("wait..."));
+          }
+          if (snapshot.hasError) {
+            print("error : " + snapshot.error);
+          } else {
+            searchText = "";
+            return ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  print(snapshot.data[index].name + " ggggggggggggggggggggggg");
+                  return ListTile(
+                      title: GestureDetector(
                         onTap: () {
                           Navigator.of(context)
                               .push(new MaterialPageRoute<Null>(
@@ -181,57 +166,49 @@ return (
                                   },
                                   fullscreenDialog: true));
                         },
-                        child: Text(
-                          snapshot.data[index].name)
-                         ,
-                        ),
-                      
-                trailing:CircleAvatar(
+                        child: Text(snapshot.data[index].name),
+                      ),
+                      trailing: CircleAvatar(
                         radius: 20.0,
                         backgroundImage: FirebaseImage(
-                          'gs://sailwithme.appspot.com/' + snapshot.data[index].imageUrl,
+                          'gs://sailwithme.appspot.com/' +
+                              snapshot.data[index].imageUrl,
                           shouldCache:
                               true, // The image should be cached (default: True)
                           //             // maxSizeBytes:
                           //             //     3000 * 1000, // 3MB max file size (default: 2.5MB)
                           //             // cacheRefreshStrategy: CacheRefreshStrategy
                           //             //     .NEVER // Switch off update checking
-                          // 
-                          
+                          //
                         ),
-                
-                ));}
-                  
-                );
-            }}
-
-            ));}
-  
-  Widget textFieldForSearchBar() {
-    
-    return TextField(
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(
-                      width: 0,
-                      style: BorderStyle.none,
-                    ),
-                  ),
-                  filled: true,
-                  prefixText:  searchText,
-                  contentPadding: EdgeInsets.all(16),
-                  hintStyle: TextStyle(color: Colors.black)),
-                  onChanged: (text) {                      
-                             searchText=text; 
-                             if(searchText.length>2){
-                               setState(() {
-                               });
-                             } 
-
-                  }
-            );}
+                      ));
+                });
+          }
+        }));
   }
+
+  Widget textFieldForSearchBar() {
+    return TextField(
+        decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(
+                width: 0,
+                style: BorderStyle.none,
+              ),
+            ),
+            filled: true,
+            prefixText: searchText,
+            contentPadding: EdgeInsets.all(16),
+            hintStyle: TextStyle(color: Colors.black)),
+        onChanged: (text) {
+          searchText = text;
+          if (searchText.length > 2) {
+            setState(() {});
+          }
+        });
+  }
+}
 
 class PostsBodyWigit extends StatelessWidget {
   const PostsBodyWigit({
@@ -243,9 +220,9 @@ class PostsBodyWigit extends StatelessWidget {
   }) : super(key: key);
 
   final String assetName;
-  final  temp;
+  final temp;
   final String main;
-  final  windSpeed;
+  final windSpeed;
 
   @override
   Widget build(BuildContext context) {
@@ -259,14 +236,12 @@ class PostsBodyWigit extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
-            //mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Spacer(flex: 3),
               Text(
                 "Netanya",
                 style: TextStyle(fontSize: 20.0),
               ),
-              //SizedBox(width: 50),
               Spacer(flex: 3),
               SvgPicture.asset(
                 assetName,
@@ -277,7 +252,6 @@ class PostsBodyWigit extends StatelessWidget {
                 temp != null ? temp.toStringAsFixed(1) : "Loading",
                 style: TextStyle(fontSize: 35.0),
               ),
-              //SizedBox(width: 15),
               Spacer(flex: 1),
               VerticalDivider(
                 color: Colors.blueGrey,
@@ -286,7 +260,6 @@ class PostsBodyWigit extends StatelessWidget {
                 indent: 20,
                 endIndent: 20,
               ),
-              //SizedBox(width: 15),
               Spacer(flex: 3),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -475,11 +448,7 @@ class HomePageDrawer extends StatelessWidget {
             title: new Text("Log Out"),
             onTap: () {
               ApiCalls.signOut();
-              //Navigator.pop(context);
-              // Navigator.push(
-              //     context,
-              //     new MaterialPageRoute(
-              //         builder: (context) => new LandingPage()));
+
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => new LandingPage()),

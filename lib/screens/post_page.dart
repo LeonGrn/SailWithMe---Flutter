@@ -6,12 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 import 'package:SailWithMe/models/models.dart';
-import 'package:SailWithMe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:uuid/uuid.dart';
 import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:firebase_image/firebase_image.dart';
 
@@ -38,7 +33,6 @@ class _PostPageState extends State<PostPage> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
-        //myChoosenImage = _image;
       } else {
         print('No image selected.');
       }

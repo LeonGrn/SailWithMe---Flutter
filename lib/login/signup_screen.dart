@@ -9,11 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:imei_plugin/imei_plugin.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:uuid/uuid.dart';
 
 import '../config/ApiCalls.dart';
 
@@ -23,9 +20,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _MyAppState extends State<SignUpScreen> {
-  //DatabaseReference _dbRef;
-  // final databaseReference = FirebaseDatabase.instance.reference();
-
   bool _passwordVisible;
   String birthDate = "";
   int age = -1;
@@ -89,32 +83,9 @@ class _MyAppState extends State<SignUpScreen> {
     });
   }
 
-  // Future uploadPic() async {
-  //   if (_image == null) {
-  //     _imageRef = "";
-  //     return;
-  //   }
-  //   var uuid = Uuid().v4();
-
-  //   try {
-  //     await firebase_storage.FirebaseStorage.instance
-  //         .ref('$_email/posts/$uuid.png')
-  //         .putFile(_image);
-
-  //     _imageRef = '$_email/posts/$uuid.png';
-  //   } on firebase_storage.FirebaseException catch (e) {
-  //     _imageRef = "";
-  //     print(e);
-  //   }
-  // }
-
   Future<void> _createUser() async {
     try {
-      // UserCredential userCredential = await FirebaseAuth.instance
-      //     .createUserWithEmailAndPassword(email: _email, password: _password);
       await ApiCalls.authNewUser(_email, _password);
-
-      // String userId = FirebaseAuth.instance.currentUser.uid;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -388,9 +359,6 @@ class _MyAppState extends State<SignUpScreen> {
                           ),
                         ],
                       ),
-                      // SizedBox(
-                      //   height: 32,
-                      // ),
                       GestureDetector(
                         child: new Icon(
                           Icons.calendar_today,

@@ -9,6 +9,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/models.dart';
 
@@ -74,6 +75,7 @@ class ApiCalls {
         .child(userId)
         .once()
         .then((DataSnapshot data) {
+      inspect(data);
       return myUser = UserData.fromJson(data);
     });
   }
@@ -88,13 +90,11 @@ class ApiCalls {
         .set(like.toJson());
   }
 
-  static Future addFriend(String friendId,String imageUrl,String name) async {
- await databaseReference
-        .child(userId)
-        .child("Friends")
-        .push()
-        .set(new Friends(id:friendId,imageUrl:imageUrl,isFriend: 1,name: name).toJson());  
-        }
+  static Future addFriend(String friendId, String imageUrl, String name) async {
+    await databaseReference.child(userId).child("Friends").push().set(
+        new Friends(id: friendId, imageUrl: imageUrl, isFriend: 1, name: name)
+            .toJson());
+  }
 
   static Future getAllFriends() async {
     List<Friends> friends = [];
@@ -115,17 +115,16 @@ class ApiCalls {
     return friends;
   }
 
- static Future getListOfPostByUserId(String uid) async {
- List<Post> posts = [];
+  static Future getListOfPostByUserId(String uid) async {
+    List<Post> posts = [];
     await databaseReference
         .child(uid)
         .child('Post')
         .once()
         .then((DataSnapshot dataSnapshot) {
-          if(dataSnapshot.value==null)
-          {
-            return posts;
-          }
+      if (dataSnapshot.value == null) {
+        return posts;
+      }
       for (var value in dataSnapshot.value.values) {
         posts.add(new Post(
             description: value['Description'].toString(),
@@ -138,12 +137,11 @@ class ApiCalls {
       }
     });
     return posts;
-
- }
+  }
 
   //Get only the post
   static Future getListOfPost() async {
-   return await getListOfPostByUserId(userId);
+    return await getListOfPostByUserId(userId);
   }
 
   //Get only yhe trips
@@ -214,36 +212,34 @@ class ApiCalls {
     return ("not success to get data");
   }
 
-static Future searchUsers (String s) async {
-  List<Friends> friends = [];
-  UserData user;
-  String fullName;
-  String imagePath;
+  static Future searchUsers(String s) async {
+    List<Friends> friends = [];
+    UserData user;
+    String fullName;
+    String imagePath;
     await databaseReference
         .orderByChild("FullName")
         .startAt(s)
         .limitToFirst(5)
         .once()
         .then((DataSnapshot dataSnapshot) {
-         for(var key in dataSnapshot.value.keys){
-         fullName= dataSnapshot.value[key]['FullName'];
-         imagePath=dataSnapshot.value[key]['ImageRef'];
-         friends.add(new Friends(id: key,name: fullName,isFriend: 0,imageUrl : imagePath));
-        }
-  
-    }
-    );
+      for (var key in dataSnapshot.value.keys) {
+        fullName = dataSnapshot.value[key]['FullName'];
+        imagePath = dataSnapshot.value[key]['ImageRef'];
+        friends.add(new Friends(
+            id: key, name: fullName, isFriend: 0, imageUrl: imagePath));
+      }
+    });
     return friends;
-  
+  }
 
-}
-static Future getAllUsers () async {
-  List<Friends> friends = [];
-  UserData user;
-  String fullName;
-  String imagePath;
+  static Future getAllUsers() async {
+    List<Friends> friends = [];
+    UserData user;
+    String fullName;
+    String imagePath;
 
-   await databaseReference
+    await databaseReference
         .orderByChild("FullName")
         .once()
         .then((DataSnapshot dataSnapshot) {
