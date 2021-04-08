@@ -115,14 +115,17 @@ class ApiCalls {
     return friends;
   }
 
-  //Get only the post
-  static Future getListOfPost() async {
-    List<Post> posts = [];
+ static Future getListOfPostByUserId(String uid) async {
+ List<Post> posts = [];
     await databaseReference
-        .child(userId)
+        .child(uid)
         .child('Post')
         .once()
         .then((DataSnapshot dataSnapshot) {
+          if(dataSnapshot.value==null)
+          {
+            return posts;
+          }
       for (var value in dataSnapshot.value.values) {
         posts.add(new Post(
             description: value['Description'].toString(),
@@ -135,6 +138,12 @@ class ApiCalls {
       }
     });
     return posts;
+
+ }
+
+  //Get only the post
+  static Future getListOfPost() async {
+   return await getListOfPostByUserId(userId);
   }
 
   //Get only yhe trips

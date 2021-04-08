@@ -104,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Expanded(
                 child: FutureBuilder(
-                  future: ApiCalls.getListOfPost(), // async work
+                  future: ApiCalls.getListOfPostByUserId(widget.id), // async work
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.none:
