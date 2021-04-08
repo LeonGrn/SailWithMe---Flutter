@@ -91,9 +91,31 @@ class ApiCalls {
   }
 
   static Future addFriend(String friendId, String imageUrl, String name) async {
-    await databaseReference.child(userId).child("Friends").push().set(
+    await databaseReference.child(userId).child("Friends").child(friendId).set(
         new Friends(id: friendId, imageUrl: imageUrl, isFriend: 1, name: name)
             .toJson());
+
+    await databaseReference.child(friendId).child("Friends").child(userId).set(
+        new Friends(
+                id: userId,
+                imageUrl: myUser.imageRef,
+                isFriend: 0,
+                name: myUser.fullName)
+            .toJson());
+  }
+
+  static Future acceptFriendRequest(String friendId) async {
+    await databaseReference
+        .child(userId)
+        .child("Friends")
+        .child(friendId)
+        .update({"isFriend": 2});
+
+    await databaseReference
+        .child(friendId)
+        .child("Friends")
+        .child(userId)
+        .update({"isFriend": 2});
   }
 
   static Future getAllFriends() async {
