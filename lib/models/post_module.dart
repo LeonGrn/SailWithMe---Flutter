@@ -10,12 +10,14 @@ class Post {
   String description;
   String timeAgo;
   String imageUrl;
+  int type;
+  Trip trip;
   CreatedBy createdBy;
   List<Likes> likes;
   List<Comments> comments;
   int shares;
 
-  Post({this.description, this.timeAgo, this.imageUrl, this.createdBy})
+  Post({this.description, this.timeAgo, this.imageUrl, this.createdBy,this.type,this.trip})
       : likes = [],
         comments = [],
         shares = 0;
@@ -30,6 +32,8 @@ class Post {
       'ImageUrl': imageUrl,
       'CreatedBy': createdBy.toJson(),
       'Likes': likes,
+      'Trips':trip.toJson(),
+      'Type':type,
     };
   }
 
