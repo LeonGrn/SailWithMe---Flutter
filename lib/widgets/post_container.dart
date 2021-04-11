@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/screens/map_page.dart';
 import 'package:SailWithMe/screens/sub-screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:SailWithMe/config/palette.dart';
@@ -217,12 +218,24 @@ class _PostStats extends StatelessWidget {
             ),
             _PostButton(
               icon: Icon(
-                MdiIcons.shareOutline,
-                color: Colors.grey[600],
+                MdiIcons.locationEnter,
+                color:post.trip!=null ? Colors.green: Colors.grey[200],
                 size: 25.0,
               ),
-              label: 'Share',
-              onTap: () => print('Share'),
+              label: 'location',
+              onTap: () => {
+                if(post.trip!=null){
+
+                   Navigator.of(context).push(new MaterialPageRoute<Null>(
+                      builder: (BuildContext context) {
+                        return MapPage(trip:post.trip);//id: "${post.createdBy.id}"
+                      },
+                      fullscreenDialog: true))
+                }
+               
+                   
+
+              } 
             )
           ],
         ),

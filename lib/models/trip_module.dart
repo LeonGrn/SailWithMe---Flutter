@@ -2,10 +2,10 @@
 import 'dart:typed_data';
 
 class Trip {
-String imageRef;
- double lat ;
- double lng ;
- String name;
+String imageRef="";
+ double lat=0.0 ;
+ double lng=0.0 ;
+ String name="";
 
 
  Trip({this.lat,this.lng,this.name,this.imageRef});

@@ -148,10 +148,17 @@ class ApiCalls {
         return posts;
       }
       for (var value in dataSnapshot.value.values) {
+
+        Trip trip;
+        if(value['Trip']!=null){
+          trip =new Trip(name:value['Trip']['name'] 
+          ,imageRef: value['Trip']['imageRef'],lat:value['Trip']['lat'],lng: value['Trip']['lng']);
+        }
         posts.add(new Post(
             description: value['Description'].toString(),
             timeAgo: value['TimeAgo'].toString(),
             imageUrl: value['ImageUrl'].toString(),
+            trip: trip,
             createdBy: new CreatedBy(
                 name: value['CreatedBy']['Name'],
                 imageUrl: value['CreatedBy']['ImageUrl'],

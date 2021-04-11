@@ -78,29 +78,21 @@ class _PostPageState extends State<PostPage> {
                 imageRef =
                     await ApiCalls.uploadPic(myUser.email, _image, "post");
                 print(captionController.text);
-                Post myPost;
-                if(widget.trip==null){
-                  myPost = new Post(
+                Trip temp=new Trip();
+                  if(widget.trip!=null)
+                  {
+                    temp=widget.trip;
+                  }
+                   Post myPost = new Post(
                     type: postType,
                     description: captionController.text,
+                    trip: temp,
                     timeAgo: formattedTime,
                     imageUrl: imageRef,
                     createdBy: CreatedBy(
                         name: myUser.getFullName,
                         imageUrl: myUser.getImageRef,
-                        id: ApiCalls.recieveUserInstance()));
-                }else{
-                   myPost = new Post(
-                    type: postType,
-                    description: captionController.text,
-                    trip: widget.trip,
-                    timeAgo: formattedTime,
-                    imageUrl: imageRef,
-                    createdBy: CreatedBy(
-                        name: myUser.getFullName,
-                        imageUrl: myUser.getImageRef,
-                        id: ApiCalls.recieveUserInstance()));
-                }      
+                        id: ApiCalls.recieveUserInstance()));     
                  await ApiCalls.createPost(myPost);
               },
               child: Text(
