@@ -14,6 +14,9 @@ import '../models/trip_module.dart';
 import 'dart:math' show cos, sqrt, asin;
 
 class MapPage extends StatefulWidget {
+  final Trip trip;
+  const MapPage({Key key, this.trip}) : super(key: key);
+
   @override
   _MapPageState createState() => _MapPageState();
 }
@@ -39,6 +42,9 @@ class _MapPageState extends State<MapPage> {
   List<LatLng> polylineCoordinates = [];
   final startAddressController = TextEditingController();
   CameraPosition _initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
+  
+
+  
 
   Widget _textField({
     TextEditingController controller,
@@ -297,8 +303,10 @@ class _MapPageState extends State<MapPage> {
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: GoogleMap(
-        markers: markers != null ? Set<Marker>.from(markers) : null,
-        initialCameraPosition: _initialLocation,
+      
+        markers: markers!=null ? Set<Marker>.from(markers) : null,
+        initialCameraPosition:widget.trip==null ? _initialLocation: 
+                    CameraPosition(target: LatLng(widget.trip.lat, widget.trip.lng)),
         myLocationEnabled: true,
         myLocationButtonEnabled: false,
         mapType: MapType.normal,
@@ -307,6 +315,7 @@ class _MapPageState extends State<MapPage> {
         polylines: Set<Polyline>.of(polylines.values),
         onMapCreated: (GoogleMapController controller) {
           mapController = controller;
+          
         },
       ),
     );
@@ -490,6 +499,10 @@ class _MapPageState extends State<MapPage> {
   }
 
   Widget _safeAreaWithtInputTextFilled() {
+    if(widget.trip!=null){
+         _gotoLocation(widget.trip.lat, widget.trip.lng);
+
+    }
     return (SafeArea(
       child: Align(
         alignment: Alignment.topCenter,
@@ -841,5 +854,8 @@ class _MapPageState extends State<MapPage> {
 
       return true;
     }
+   
   }
+  
+  
 }

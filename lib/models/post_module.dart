@@ -32,7 +32,7 @@ class Post {
       'ImageUrl': imageUrl,
       'CreatedBy': createdBy.toJson(),
       'Likes': likes,
-      'Trips':trip.toJson(),
+      'Trip':trip.toJson(),
       'Type':type,
     };
   }
