@@ -1,4 +1,5 @@
 import 'package:SailWithMe/Keys/configMaps.dart';
+import 'package:SailWithMe/config/palette.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
@@ -7,25 +8,26 @@ import 'package:google_place/google_place.dart';
 import '../config/ApiCalls.dart';
 import '../models/trip_module.dart';
 
-class EmergencyPage extends StatelessWidget {
+class SearchPlacePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: EmergencyPaging(),
+      home: SearchPlacePaging(),
     );
   }
 }
 
-class EmergencyPaging extends StatefulWidget {
+class SearchPlacePaging extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<EmergencyPaging> {
+class _HomePageState extends State<SearchPlacePaging> {
   GooglePlace googlePlace;
   List<AutocompletePrediction> predictions = [];
 
@@ -39,6 +41,18 @@ class _HomePageState extends State<EmergencyPaging> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          title: Text(
+            "Explore Place",
+            style: TextStyle(
+                color: Palette.sailWithMe,
+                fontFamily: 'IndieFlower',
+                fontSize: 25.0),
+          )),
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.only(right: 20, left: 20, top: 20),
@@ -104,10 +118,10 @@ class _HomePageState extends State<EmergencyPaging> {
                   },
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
-                child: Image.asset("assets/powered_by_google.png"),
-              ),
+              // Container(
+              //   margin: EdgeInsets.only(top: 10, bottom: 10),
+              //   child: Image.asset("assets/powered_by_google.png"),
+              // ),
             ],
           ),
         ),
@@ -144,7 +158,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
   DetailsResult detailsResult;
   List<Uint8List> images = [];
-  List<String> imageRef=[];
+  List<String> imageRef = [];
 
   @override
   void initState() {
@@ -317,10 +331,10 @@ class _DetailsPageState extends State<DetailsPage> {
                   ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(top: 20, bottom: 10),
-                child: Image.asset("assets/powered_by_google.png"),
-              ),
+              // Container(
+              //   margin: EdgeInsets.only(top: 20, bottom: 10),
+              //   child: Image.asset("assets/powered_by_google.png"),
+              // ),
             ],
           ),
         ),
@@ -348,8 +362,8 @@ class _DetailsPageState extends State<DetailsPage> {
     double lat = detailsResult.geometry.location.lat;
     String addressFormatted = detailsResult.formattedAddress;
     double lng = detailsResult.geometry.location.lng;
-    ApiCalls.savePlaceForUser(
-        new Trip(lat: lat, lng: lng, name: addressFormatted,imageRef:imageRef[0]));
+    ApiCalls.savePlaceForUser(new Trip(
+        lat: lat, lng: lng, name: addressFormatted, imageRef: imageRef[0]));
   }
 
   void getPhoto(String photoReference) async {
@@ -362,5 +376,3 @@ class _DetailsPageState extends State<DetailsPage> {
     }
   }
 }
-
-

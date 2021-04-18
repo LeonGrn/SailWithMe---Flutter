@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:SailWithMe/models/createdBy_module.dart';
-import 'package:SailWithMe/screens/chosePlace_page.dart';
+import 'package:SailWithMe/screens/choosePlace_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -12,8 +12,8 @@ import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:firebase_image/firebase_image.dart';
 
 class PostPage extends StatefulWidget {
-   final Trip trip;
-   const PostPage({Key key, this.trip}) : super(key: key);
+  final Trip trip;
+  const PostPage({Key key, this.trip}) : super(key: key);
 
   @override
   _PostPageState createState() => _PostPageState();
@@ -24,10 +24,8 @@ class _PostPageState extends State<PostPage> {
   File _image;
   UserData myUser;
   List<Post> posts = List<Post>();
-  String postInfo="What do you want to talk about?";
-  int postType=0;
-  
-  
+  String postInfo = "What do you want to talk about?";
+  int postType = 0;
 
   @override
   void initState() {
@@ -78,12 +76,11 @@ class _PostPageState extends State<PostPage> {
                 imageRef =
                     await ApiCalls.uploadPic(myUser.email, _image, "post");
                 print(captionController.text);
-                Trip temp=new Trip();
-                  if(widget.trip!=null)
-                  {
-                    temp=widget.trip;
-                  }
-                   Post myPost = new Post(
+                Trip temp = new Trip();
+                if (widget.trip != null) {
+                  temp = widget.trip;
+                }
+                Post myPost = new Post(
                     type: postType,
                     description: captionController.text,
                     trip: temp,
@@ -92,8 +89,8 @@ class _PostPageState extends State<PostPage> {
                     createdBy: CreatedBy(
                         name: myUser.getFullName,
                         imageUrl: myUser.getImageRef,
-                        id: ApiCalls.recieveUserInstance()));     
-                 await ApiCalls.createPost(myPost);
+                        id: ApiCalls.recieveUserInstance()));
+                await ApiCalls.createPost(myPost);
               },
               child: Text(
                 "Post",
@@ -136,10 +133,8 @@ class _PostPageState extends State<PostPage> {
                   child: TextField(
                     controller: captionController,
                     maxLines: null,
-                    
                     keyboardType: TextInputType.multiline,
-                    decoration: InputDecoration.collapsed(
-                        hintText: postInfo),
+                    decoration: InputDecoration.collapsed(hintText: postInfo),
                   ),
                 ),
                 Expanded(
@@ -173,19 +168,15 @@ class _PostPageState extends State<PostPage> {
                         getImage();
                       }),
                   SizedBox(width: 10),
-                  IconButton(icon: Icon(Icons.location_on
-                  ),color: widget.trip!=null ? Colors.yellow : Colors.grey,
-                   onPressed: () {
-
-                           Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                      builder: (context) => new ChosePlace_page()));
-
-
-
-
-                  }),
+                  IconButton(
+                      icon: Icon(Icons.location_on),
+                      color: widget.trip != null ? Colors.yellow : Colors.grey,
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) => new ChoosePlaceScreen()));
+                      }),
                   Container(
                     color: Colors.black45,
                     height: 50,
@@ -193,13 +184,11 @@ class _PostPageState extends State<PostPage> {
                   ),
                   FlatButton(
                     onPressed: () {
-                          setState(() {
-                         postInfo="please add a place that you want to travel to and write about the trip";
-                      postType=1;//type of job offering
+                      setState(() {
+                        postInfo =
+                            "please add a place that you want to travel to and write about the trip";
+                        postType = 1; //type of job offering
                       });
-
-
-
                     },
                     textColor: Colors.black,
                     padding: const EdgeInsets.all(10.0),
@@ -211,14 +200,16 @@ class _PostPageState extends State<PostPage> {
                           'assets/yacht.svg',
                           width: 15,
                           height: 15,
-                          color:postType==1 ? Colors.blue[400] :Colors.black,
+                          color:
+                              postType == 1 ? Colors.blue[400] : Colors.black,
                         ),
                         Text(
                           'Invite to join',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            color: postType==1 ? Colors.blue[400] :Colors.black,
+                            color:
+                                postType == 1 ? Colors.blue[400] : Colors.black,
                           ),
                         ),
                       ],
@@ -226,12 +217,10 @@ class _PostPageState extends State<PostPage> {
                   ),
                   FlatButton(
                     onPressed: () {
-
                       setState(() {
-                         postInfo="please give information about the job";
-                         postType=2;//type of job offering
+                        postInfo = "please give information about the job";
+                        postType = 2; //type of job offering
                       });
-
                     },
                     textColor: Colors.black,
                     padding: const EdgeInsets.all(10.0),
@@ -243,14 +232,16 @@ class _PostPageState extends State<PostPage> {
                           'assets/suitcase.svg',
                           width: 15,
                           height: 15,
-                          color:postType==2 ? Colors.blue[400] :Colors.black,
+                          color:
+                              postType == 2 ? Colors.blue[400] : Colors.black,
                         ),
                         Text(
                           'Job offer',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            color: postType==2 ? Colors.blue[400] :Colors.black,
+                            color:
+                                postType == 2 ? Colors.blue[400] : Colors.black,
                           ),
                         ),
                       ],

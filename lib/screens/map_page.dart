@@ -42,9 +42,6 @@ class _MapPageState extends State<MapPage> {
   List<LatLng> polylineCoordinates = [];
   final startAddressController = TextEditingController();
   CameraPosition _initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
-  
-
-  
 
   Widget _textField({
     TextEditingController controller,
@@ -231,44 +228,49 @@ class _MapPageState extends State<MapPage> {
   }
 
   Widget _ricomanderRiver() {
-    return ClipOval(
-      child: Material(
-        child: InkWell(
-          splashColor: Colors.blue, // inkwell color
-          child: SizedBox(
-            width: 50,
-            height: 50,
-            child: SvgPicture.asset(
-              "assets/river.svg",
-              height: 50.0,
-              width: 50.0,
-              allowDrawingOutsideViewBox: true,
+    return Tooltip(
+      message: "Reccomend a River",
+      height: 24,
+      verticalOffset: 35,
+      child: ClipOval(
+        child: Material(
+          child: InkWell(
+            splashColor: Colors.blue, // inkwell color
+            child: SizedBox(
+              width: 50,
+              height: 50,
+              child: SvgPicture.asset(
+                "assets/river.svg",
+                height: 50.0,
+                width: 50.0,
+                allowDrawingOutsideViewBox: true,
+              ),
             ),
-          ),
-          onTap: () {
-            setState(() {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(20.0))),
-                      title: Text(
-                        "Informations",
-                        style: GoogleFonts.lato(
-                          fontSize: 25,
-                          textStyle: TextStyle(
-                              color: Colors.grey,
-                              letterSpacing: .5,
-                              fontStyle: FontStyle.italic),
+            onTap: () {
+              setState(() {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0))),
+                        title: Text(
+                          "Informations",
+                          style: GoogleFonts.lato(
+                            fontSize: 25,
+                            textStyle: TextStyle(
+                                color: Colors.grey,
+                                letterSpacing: .5,
+                                fontStyle: FontStyle.italic),
+                          ),
                         ),
-                      ),
-                      content: setupAlertDialoadContainer(),
-                    );
-                  });
-            });
-          },
+                        content: setupAlertDialoadContainer(),
+                      );
+                    });
+              });
+            },
+          ),
         ),
       ),
     );
@@ -287,15 +289,123 @@ class _MapPageState extends State<MapPage> {
             future: ApiCalls.getRecomandRiver(), // async work
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                return ListView(shrinkWrap: true, children: <Widget>[
-                  ListTile(
-                    title: Text('Name: ${snapshot.data}'),
-                  )
-                ]);
+                print(snapshot.data);
+                switch (snapshot.data) {
+                  case 0:
+                    {
+                      return ListView(shrinkWrap: true, children: <Widget>[
+                        ListTile(
+                          title: Text('Name: ${snapshot.data}'),
+                        )
+                      ]);
+                    }
+                    break;
+
+                  case 1:
+                    {
+                      return ListView(shrinkWrap: true, children: <Widget>[
+                        ListTile(
+                          title: Text('Name: ${snapshot.data}'),
+                        )
+                      ]);
+                    }
+                    break;
+
+                  case 2:
+                    {
+                      return ListView(shrinkWrap: true, children: <Widget>[
+                        ListTile(
+                          title: Text('Name: ${snapshot.data}'),
+                        )
+                      ]);
+                    }
+                    break;
+
+                  case 3:
+                    {
+                      return ListView(shrinkWrap: true, children: <Widget>[
+                        ListTile(
+                          title: Text('Name: ${snapshot.data}'),
+                        )
+                      ]);
+                    }
+                    break;
+
+                  default:
+                    {
+                      return ListView(shrinkWrap: true, children: <Widget>[
+                        ListTile(
+                          title: Text('No river was found'),
+                        )
+                      ]);
+                    }
+                    break;
+                }
               } else {
                 return Center(child: CircularProgressIndicator());
               }
             }));
+  }
+
+  Widget contentBox(context) {
+    return Stack(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.only(left: 20, top: 65, right: 20, bottom: 20),
+          margin: EdgeInsets.only(top: 45),
+          decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black, offset: Offset(0, 10), blurRadius: 10),
+              ]),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                "widget.title",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                "widget.descriptions",
+                style: TextStyle(fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 22,
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "widget.text",
+                      style: TextStyle(fontSize: 18),
+                    )),
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          left: 20,
+          right: 20,
+          child: CircleAvatar(
+            backgroundColor: Colors.transparent,
+            radius: 45,
+            child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(45)),
+                child: Image.asset("assets/model.jpeg")),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildGoogleMap(BuildContext context) {
@@ -303,10 +413,10 @@ class _MapPageState extends State<MapPage> {
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: GoogleMap(
-      
-        markers: markers!=null ? Set<Marker>.from(markers) : null,
-        initialCameraPosition:widget.trip==null ? _initialLocation: 
-                    CameraPosition(target: LatLng(widget.trip.lat, widget.trip.lng)),
+        markers: markers != null ? Set<Marker>.from(markers) : null,
+        initialCameraPosition: widget.trip == null
+            ? _initialLocation
+            : CameraPosition(target: LatLng(widget.trip.lat, widget.trip.lng)),
         myLocationEnabled: true,
         myLocationButtonEnabled: false,
         mapType: MapType.normal,
@@ -315,7 +425,6 @@ class _MapPageState extends State<MapPage> {
         polylines: Set<Polyline>.of(polylines.values),
         onMapCreated: (GoogleMapController controller) {
           mapController = controller;
-          
         },
       ),
     );
@@ -499,9 +608,8 @@ class _MapPageState extends State<MapPage> {
   }
 
   Widget _safeAreaWithtInputTextFilled() {
-    if(widget.trip!=null){
-         _gotoLocation(widget.trip.lat, widget.trip.lng);
-
+    if (widget.trip != null) {
+      _gotoLocation(widget.trip.lat, widget.trip.lng);
     }
     return (SafeArea(
       child: Align(
@@ -732,7 +840,7 @@ class _MapPageState extends State<MapPage> {
   }
 
 // Method for calculating the distance between two places
-  Future<bool> _calculateDistance() async {
+  Future _calculateDistance() async {
     // Retrieving placemarks from addresses
     List<Location> startPlacemark = await locationFromAddress(_startAddress);
     List<Location> destinationPlacemark =
@@ -854,8 +962,5 @@ class _MapPageState extends State<MapPage> {
 
       return true;
     }
-   
   }
-  
-  
 }

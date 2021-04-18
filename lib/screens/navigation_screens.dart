@@ -1,4 +1,4 @@
-import 'package:SailWithMe/screens/emergency_page.dart';
+import 'package:SailWithMe/screens/searchPlace_page.dart';
 import 'package:SailWithMe/screens/home_page.dart';
 import 'package:SailWithMe/screens/map_page.dart';
 import 'package:SailWithMe/screens/messages_page.dart';
@@ -15,7 +15,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   GlobalKey _bottomNavigationKey = GlobalKey();
 
   final HomePage _homePage = HomePage();
-  final EmergencyPage _emergencyPage = EmergencyPage();
+  final SearchPlacePage _emergencyPage = SearchPlacePage();
   final MapPage _mapPage = MapPage();
   final PostPage _postPage = PostPage();
   final MessagesPage _messagesPage = MessagesPage();
@@ -65,7 +65,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             Icon(Icons.map, size: 30),
             Icon(Icons.add_circle_outline, size: 30),
             Icon(Icons.sms, size: 30),
-            Icon(Icons.error_outline, size: 30),
+            Icon(Icons.search, size: 30),
           ],
           color: Colors.white,
           buttonBackgroundColor: Colors.white,
