@@ -75,7 +75,7 @@ class ApiCalls {
         .once()
         .then((DataSnapshot data) {
       inspect(data);
-      return myUser = UserData.fromJson(data);
+      return UserData.fromJson(data);
     });
   }
 
@@ -91,7 +91,11 @@ class ApiCalls {
 
   static Future addFriend(String friendId, String imageUrl, String name) async {
     await databaseReference.child(userId).child("Friends").child(friendId).set(
-        new Friends(id: friendId, imageUrl: imageUrl, isFriend: FriendStatus.waitingForEcsept, name: name)
+        new Friends(
+                id: friendId,
+                imageUrl: imageUrl,
+                isFriend: FriendStatus.waitingForEcsept,
+                name: name)
             .toJson());
 
     await databaseReference.child(friendId).child("Friends").child(userId).set(
@@ -114,7 +118,7 @@ class ApiCalls {
         .child(friendId)
         .child("Friends")
         .child(userId)
-        .update({"IsFriend":  FriendStatus.friends});
+        .update({"IsFriend": FriendStatus.friends});
   }
 
   static Future getAllFriends() async {
@@ -124,8 +128,7 @@ class ApiCalls {
         .child('Friends')
         .once()
         .then((DataSnapshot dataSnapshot) {
-          if(dataSnapshot.value==null)
-              return friends;
+      if (dataSnapshot.value == null) return friends;
       for (var value in dataSnapshot.value.values) {
         friends.add(new Friends(
             name: value['Name'],
@@ -138,19 +141,16 @@ class ApiCalls {
   }
 
   static Future getStatusFriend(String id) async {
-      List<Friends> friends =await getAllFriends() as List<Friends>;
-      for(var friend in friends){
-        if(friend.id==id){
-          return friend.isFriend;
-        }
+    List<Friends> friends = await getAllFriends() as List<Friends>;
+    for (var friend in friends) {
+      if (friend.id == id) {
+        return friend.isFriend;
       }
-      if(id==userId)
-      {
-        return FriendStatus.myUser;
-      }
-      return FriendStatus.notFriends;
-
-  
+    }
+    if (id == userId) {
+      return FriendStatus.myUser;
+    }
+    return FriendStatus.notFriends;
   }
 
   static Future getListOfPostByUserId(String uid) async {
