@@ -9,8 +9,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
-
 import '../models/models.dart';
 
 class ApiCalls {
@@ -109,13 +107,13 @@ class ApiCalls {
         .child(userId)
         .child("Friends")
         .child(friendId)
-        .update({"isFriend": 2});
+        .update({"IsFriend": 2});
 
     await databaseReference
         .child(friendId)
         .child("Friends")
         .child(userId)
-        .update({"isFriend": 2});
+        .update({"IsFriend": 2});
   }
 
   static Future getAllFriends() async {
@@ -125,7 +123,7 @@ class ApiCalls {
         .child('Friends')
         .once()
         .then((DataSnapshot dataSnapshot) {
-      inspect(dataSnapshot.value.values);
+      //inspect(dataSnapshot.value.values);
       for (var value in dataSnapshot.value.values) {
         friends.add(new Friends(
             name: value['Name'],
@@ -135,6 +133,30 @@ class ApiCalls {
       }
     });
     return friends;
+  }
+
+  static Future getSpecificFriend(String id) async {
+    print(id);
+    await databaseReference
+        .child(userId)
+        .child('Friends')
+        //.child(id)
+        .once()
+        .then((DataSnapshot dataSnapshot) {
+      inspect(dataSnapshot.value);
+
+      inspect(dataSnapshot.value.values);
+      //if(dataSnapshot.key.)
+
+      if (dataSnapshot.value == null)
+        return Friends(name: "", id: "", isFriend: 3, imageUrl: "");
+
+      return Friends(
+          name: dataSnapshot.value['Name'],
+          id: dataSnapshot.value['Id'],
+          isFriend: int.parse(dataSnapshot.value['IsFriend']),
+          imageUrl: dataSnapshot.value['ImageUrl']);
+    });
   }
 
   static Future getListOfPostByUserId(String uid) async {
@@ -148,11 +170,13 @@ class ApiCalls {
         return posts;
       }
       for (var value in dataSnapshot.value.values) {
-
         Trip trip;
-        if(value['Trip']!=null){
-          trip =new Trip(name:value['Trip']['name'] 
-          ,imageRef: value['Trip']['imageRef'],lat:value['Trip']['lat'],lng: value['Trip']['lng']);
+        if (value['Trip'] != null) {
+          trip = new Trip(
+              name: value['Trip']['name'],
+              imageRef: value['Trip']['imageRef'],
+              lat: value['Trip']['lat'],
+              lng: value['Trip']['lng']);
         }
         posts.add(new Post(
             description: value['Description'].toString(),

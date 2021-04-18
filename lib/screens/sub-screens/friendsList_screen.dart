@@ -1,5 +1,7 @@
 import 'package:SailWithMe/config/ApiCalls.dart';
+import 'package:SailWithMe/config/palette.dart';
 import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/screens/home_page.dart';
 import 'package:SailWithMe/screens/sub-screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_image/firebase_image.dart';
@@ -13,6 +15,21 @@ class _FriendListScreenState extends State<FriendListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        leading: new IconButton(
+            color: Colors.black,
+            icon: new Icon(Icons.arrow_back),
+            onPressed: () => {Navigator.pop(context)}),
+        title: Text(
+          "MY FRIENDS",
+          style: TextStyle(
+              color: Palette.sailWithMe,
+              fontFamily: 'IndieFlower',
+              fontSize: 25.0),
+        ),
+      ),
       body: FutureBuilder(
         future: ApiCalls.getAllFriends(), // async work
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -48,25 +65,70 @@ class FriendsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new ListTile(
-      onTap: () => {
-        Navigator.of(context).push(new MaterialPageRoute<Null>(
-            builder: (BuildContext context) {
-              return ProfileScreen(id: friends.id);
+    String status = "";
+    Color choosenColor;
+    switch (friends.isFriend) {
+      case 0:
+        {
+          status = "WAITING";
+          choosenColor = Palette.waitingForAccept;
+        }
+        break;
+
+      case 1:
+        {
+          status = "ACCEPT";
+          choosenColor = Palette.friendAccept;
+        }
+        break;
+
+      case 2:
+        {
+          status = "FRIENDS";
+          choosenColor = Palette.alreadyFriends;
+        }
+        break;
+
+      default:
+        {
+          print("No statement in switch case");
+        }
+        break;
+    }
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListTile(
+        leading: CircleAvatar(
+            radius: 25.0,
+            backgroundImage: FirebaseImage(
+              'gs://sailwithme.appspot.com/' + friends.imageUrl,
+              shouldCache: true, // The image should be cached (default: True)
+              //             // maxSizeBytes:
+              //             //     3000 * 1000, // 3MB max file size (default: 2.5MB)
+              //             // cacheRefreshStrategy: CacheRefreshStrategy
+              //             //     .NEVER // Switch off update checking
+            )),
+        title: GestureDetector(
+            onTap: () => {
+                  Navigator.of(context).push(new MaterialPageRoute<Null>(
+                      builder: (BuildContext context) {
+                        return ProfileScreen(id: friends.id);
+                      },
+                      fullscreenDialog: true))
+                },
+            child: new Text(friends.name)),
+        trailing: GestureDetector(
+            onTap: () {
+              print("accept");
             },
-            fullscreenDialog: true))
-      },
-      leading: CircleAvatar(
-          radius: 25.0,
-          backgroundImage: FirebaseImage(
-            'gs://sailwithme.appspot.com/' + friends.imageUrl,
-            shouldCache: true, // The image should be cached (default: True)
-            //             // maxSizeBytes:
-            //             //     3000 * 1000, // 3MB max file size (default: 2.5MB)
-            //             // cacheRefreshStrategy: CacheRefreshStrategy
-            //             //     .NEVER // Switch off update checking
-          )),
-      title: new Text(friends.name),
+            child: Text(
+              "$status",
+              style: TextStyle(
+                  color: choosenColor,
+                  fontFamily: 'IndieFlower',
+                  fontSize: 20.0),
+            )),
+      ),
     );
   }
 }

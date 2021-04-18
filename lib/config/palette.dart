@@ -11,4 +11,7 @@ class Palette {
   // );
   static const kPrimaryColor = Color(0xFF1777F2);
   static const kPrimaryLightColor = Color(0xFFF0F2F5);
+  static const friendAccept = Color(0xFF05CA05);
+  static const waitingForAccept = Color(0xFF7C889B);
+  static const alreadyFriends = Color(0xFF1F9DF1);
 }

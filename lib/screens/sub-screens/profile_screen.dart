@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/models/models.dart';
 import 'package:SailWithMe/widgets/post_container.dart';
@@ -43,15 +45,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actions: [
             Container(
               margin: const EdgeInsets.all(6.0),
-              child: IconButton(
-                icon: Icon(Icons.group_add),
-                iconSize: 30,
-                color: Colors.white,
-                onPressed: () {
-                  ApiCalls.addFriend(
-                      widget.id, myUser.getImageRef, myUser.getFullName);
-                },
-              ),
+              child: FutureBuilder(
+                  future: ApiCalls.getSpecificFriend(widget.id),
+                  builder: (context, snapshot) {
+                    //inspect(snapshot.data);
+                    Friends myFriend = snapshot.data;
+                    Icon icon;
+                    //inspect(snapshot.data);
+                    switch (myFriend.isFriend) {
+                      case 0:
+                        {
+                          icon = Icon(Icons.group_add); //waiting for my accept
+                        }
+                        break;
+
+                      case 1:
+                        {
+                          icon = Icon(Icons.group_add); //Accept someone
+                        }
+                        break;
+
+                      case 2:
+                        {
+                          icon = Icon(Icons
+                              .mobile_friendly_sharp); //Friend with someone
+                        }
+                        break;
+
+                      case 3:
+                        {
+                          icon = Icon(Icons.group_add); //nothing
+                        }
+                        break;
+
+                      default:
+                        {
+                          print("No statement in switch case");
+                        }
+                        break;
+                    }
+                    return IconButton(
+                      icon: icon,
+                      iconSize: 30,
+                      color: Colors.white,
+                      onPressed: () async {
+                        await ApiCalls.addFriend(
+                            widget.id, myUser.getImageRef, myUser.getFullName);
+                      },
+                    );
+                  }),
             ),
             Container(
               margin: const EdgeInsets.all(6.0),
