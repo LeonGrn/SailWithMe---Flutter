@@ -1,5 +1,6 @@
 import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/config/palette.dart';
+import 'package:SailWithMe/models/FriendStatus.dart';
 import 'package:SailWithMe/models/models.dart';
 import 'package:SailWithMe/screens/home_page.dart';
 import 'package:SailWithMe/screens/sub-screens/profile_screen.dart';
@@ -68,21 +69,21 @@ class FriendsContainer extends StatelessWidget {
     String status = "";
     Color choosenColor;
     switch (friends.isFriend) {
-      case 0:
+      case FriendStatus.waitingForEcsept:
         {
           status = "WAITING";
           choosenColor = Palette.waitingForAccept;
         }
         break;
 
-      case 1:
+      case FriendStatus.approveFriendRequest:
         {
           status = "ACCEPT";
           choosenColor = Palette.friendAccept;
         }
         break;
 
-      case 2:
+      case FriendStatus.friends:
         {
           status = "FRIENDS";
           choosenColor = Palette.alreadyFriends;

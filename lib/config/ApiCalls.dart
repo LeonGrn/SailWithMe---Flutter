@@ -10,6 +10,7 @@ import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:dio/dio.dart';
 import '../models/models.dart';
+import 'package:SailWithMe/models/FriendStatus.dart';
 
 class ApiCalls {
   static UserData myUser;
@@ -90,14 +91,14 @@ class ApiCalls {
 
   static Future addFriend(String friendId, String imageUrl, String name) async {
     await databaseReference.child(userId).child("Friends").child(friendId).set(
-        new Friends(id: friendId, imageUrl: imageUrl, isFriend: 1, name: name)
+        new Friends(id: friendId, imageUrl: imageUrl, isFriend: FriendStatus.waitingForEcsept, name: name)
             .toJson());
 
     await databaseReference.child(friendId).child("Friends").child(userId).set(
         new Friends(
                 id: userId,
                 imageUrl: myUser.imageRef,
-                isFriend: 0,
+                isFriend: FriendStatus.approveFriendRequest,
                 name: myUser.fullName)
             .toJson());
   }
@@ -107,13 +108,13 @@ class ApiCalls {
         .child(userId)
         .child("Friends")
         .child(friendId)
-        .update({"IsFriend": 2});
+        .update({"IsFriend": FriendStatus.friends});
 
     await databaseReference
         .child(friendId)
         .child("Friends")
         .child(userId)
-        .update({"IsFriend": 2});
+        .update({"IsFriend":  FriendStatus.friends});
   }
 
   static Future getAllFriends() async {
@@ -123,7 +124,8 @@ class ApiCalls {
         .child('Friends')
         .once()
         .then((DataSnapshot dataSnapshot) {
-      //inspect(dataSnapshot.value.values);
+          if(dataSnapshot.value==null)
+              return friends;
       for (var value in dataSnapshot.value.values) {
         friends.add(new Friends(
             name: value['Name'],
@@ -135,28 +137,20 @@ class ApiCalls {
     return friends;
   }
 
-  static Future getSpecificFriend(String id) async {
-    print(id);
-    await databaseReference
-        .child(userId)
-        .child('Friends')
-        //.child(id)
-        .once()
-        .then((DataSnapshot dataSnapshot) {
-      inspect(dataSnapshot.value);
+  static Future getStatusFriend(String id) async {
+      List<Friends> friends =await getAllFriends() as List<Friends>;
+      for(var friend in friends){
+        if(friend.id==id){
+          return friend.isFriend;
+        }
+      }
+      if(id==userId)
+      {
+        return FriendStatus.myUser;
+      }
+      return FriendStatus.notFriends;
 
-      inspect(dataSnapshot.value.values);
-      //if(dataSnapshot.key.)
-
-      if (dataSnapshot.value == null)
-        return Friends(name: "", id: "", isFriend: 3, imageUrl: "");
-
-      return Friends(
-          name: dataSnapshot.value['Name'],
-          id: dataSnapshot.value['Id'],
-          isFriend: int.parse(dataSnapshot.value['IsFriend']),
-          imageUrl: dataSnapshot.value['ImageUrl']);
-    });
+  
   }
 
   static Future getListOfPostByUserId(String uid) async {
