@@ -238,7 +238,7 @@ class ApiCalls {
     return imageRef;
   }
 
-  static Future<String> getRecomandRiver() async {
+  static Future<int> getRecomandRiver() async {
     print("has click");
     Dio dio = new Dio();
 
@@ -252,17 +252,17 @@ class ApiCalls {
         "sex": 1
       });
       if (response.data.toString().contains("1")) {
-        return ("the river in Camargue");
+        return (/*"the river in Camargue"*/ 1);
       } else if (response.data.toString().contains("0")) {
-        return ("the river in lot france");
+        return (/*"the river in lot france"*/ 0);
       } else if (response.data.toString().contains("2")) {
-        return ("the river in Volga");
+        return (/*"the river in Volga"*/ 2);
       }
     } on DioError catch (e) {
       print("Error");
       print(e.toString());
     }
-    return ("not success to get data");
+    return (-1);
   }
 
   static Future searchUsers(String s) async {

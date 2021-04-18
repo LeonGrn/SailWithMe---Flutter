@@ -1,4 +1,3 @@
-
 import 'package:SailWithMe/models/models.dart';
 import 'package:SailWithMe/screens/post_page.dart';
 import 'package:flutter/material.dart';
@@ -10,46 +9,39 @@ import 'package:google_place/google_place.dart';
 import '../config/ApiCalls.dart';
 import '../models/trip_module.dart';
 
-class ChosePlace_page extends StatefulWidget {
+// class chosePlace_page extends StatefulWidget {
+// //  final Post post;
+//   _chosePlaceState createState() => _chosePlaceState();
+// }
 
-//  final Post post;
+// class _chosePlaceState extends State<chosePlace_page> {
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'search for place',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: ChoosePlaceScreen(),
+//     );
+//   }
+// }
 
-
-
-
-_chosePlaceState createState() =>_chosePlaceState();
-
-  }
-class _chosePlaceState extends State<ChosePlace_page>{
-   Widget build(BuildContext context) {
-     
-      return MaterialApp(
-      title: 'search for place',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: EmergencyPaging(),
-    );
-
-   }
-
-}
-
-class EmergencyPaging extends StatefulWidget {
+class ChoosePlaceScreen extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _ChoosePageScreenState createState() => _ChoosePageScreenState();
 }
 
-class _HomePageState extends State<EmergencyPaging> {
+class _ChoosePageScreenState extends State<ChoosePlaceScreen> {
   GooglePlace googlePlace;
   List<AutocompletePrediction> predictions = [];
-   
+
   @override
   void initState() {
     String apiKey = mapKey;
     googlePlace = GooglePlace(apiKey);
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,10 +110,10 @@ class _HomePageState extends State<EmergencyPaging> {
                   },
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
-                child: Image.asset("assets/powered_by_google.png"),
-              ),
+              // Container(
+              //   margin: EdgeInsets.only(top: 10, bottom: 10),
+              //   child: Image.asset("assets/powered_by_google.png"),
+              // ),
             ],
           ),
         ),
@@ -158,7 +150,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
   DetailsResult detailsResult;
   List<Uint8List> images = [];
-  List<String> imageRef=[];
+  List<String> imageRef = [];
 
   @override
   void initState() {
@@ -331,10 +323,10 @@ class _DetailsPageState extends State<DetailsPage> {
                   ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(top: 20, bottom: 10),
-                child: Image.asset("assets/powered_by_google.png"),
-              ),
+              // Container(
+              //   margin: EdgeInsets.only(top: 20, bottom: 10),
+              //   child: Image.asset("assets/powered_by_google.png"),
+              // ),
             ],
           ),
         ),
@@ -364,13 +356,17 @@ class _DetailsPageState extends State<DetailsPage> {
     double lng = detailsResult.geometry.location.lng;
     Navigator.pop(context);
     Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                      builder: (context) => new PostPage(trip: new Trip(lat: lat, lng: lng, name: addressFormatted,imageRef:imageRef[0]))));
+        context,
+        new MaterialPageRoute(
+            builder: (context) => new PostPage(
+                trip: new Trip(
+                    lat: lat,
+                    lng: lng,
+                    name: addressFormatted,
+                    imageRef: imageRef[0]))));
 
-    
-    ApiCalls.savePlaceForUser(
-        new Trip(lat: lat, lng: lng, name: addressFormatted,imageRef:imageRef[0]));
+    ApiCalls.savePlaceForUser(new Trip(
+        lat: lat, lng: lng, name: addressFormatted, imageRef: imageRef[0]));
   }
 
   void getPhoto(String photoReference) async {
