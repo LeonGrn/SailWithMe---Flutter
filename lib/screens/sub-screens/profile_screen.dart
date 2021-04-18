@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:SailWithMe/config/ApiCalls.dart';
+import 'package:SailWithMe/models/FriendStatus.dart';
 import 'package:SailWithMe/models/models.dart';
 import 'package:SailWithMe/widgets/post_container.dart';
 import 'package:SailWithMe/widgets/widgets.dart';
@@ -46,41 +47,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               margin: const EdgeInsets.all(6.0),
               child: FutureBuilder(
-                  future: ApiCalls.getSpecificFriend(widget.id),
+                  future: ApiCalls.getStatusFriend(widget.id),
                   builder: (context, snapshot) {
                     //inspect(snapshot.data);
-                    Friends myFriend = snapshot.data;
+                    int myFriend = snapshot.data;
                     Icon icon;
                     //inspect(snapshot.data);
-                    switch (myFriend.isFriend) {
-                      case 0:
+                    switch (myFriend) {
+                      case FriendStatus.notFriends:
                         {
-                          icon = Icon(Icons.group_add); //waiting for my accept
+                          icon =Icon(Icons.group_add); //waiting for my accept
                         }
                         break;
 
-                      case 1:
+                      case FriendStatus.waitingForEcsept:
                         {
-                          icon = Icon(Icons.group_add); //Accept someone
+                          icon = Icon(Icons.transfer_within_a_station); // waiting for his Accept 
                         }
                         break;
 
-                      case 2:
+                      case FriendStatus.friends:
                         {
-                          icon = Icon(Icons
-                              .mobile_friendly_sharp); //Friend with someone
+                          icon =Icon(Icons
+                              .mobile_screen_share); //Friend with someone
                         }
                         break;
 
-                      case 3:
+                      case FriendStatus.approveFriendRequest:
                         {
-                          icon = Icon(Icons.group_add); //nothing
+                          icon =Icon(Icons.group_add); //not in my friends list
                         }
                         break;
 
-                      default:
+                      case FriendStatus.myUser:
                         {
-                          print("No statement in switch case");
+                         icon=Icon(Icons
+                              .mobile_screen_share);
                         }
                         break;
                     }
@@ -89,8 +91,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       iconSize: 30,
                       color: Colors.white,
                       onPressed: () async {
+
+                      if(myFriend==FriendStatus.approveFriendRequest){
+                        ApiCalls.acceptFriendRequest(widget.id);
+                        icon=Icon(Icons
+                              .mobile_screen_share);
+                               setState(() {
+                          
+                        }); 
+                      }
+                      if(myFriend==FriendStatus.notFriends){
                         await ApiCalls.addFriend(
                             widget.id, myUser.getImageRef, myUser.getFullName);
+                            icon=Icon(Icons
+                              .mobile_screen_share);
+                               setState(() {
+                          
+                        });  
+                      }
+                       
                       },
                     );
                   }),
