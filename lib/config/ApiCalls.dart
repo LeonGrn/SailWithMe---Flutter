@@ -65,7 +65,7 @@ class ApiCalls {
 
   static Future<UserData> getUserDataById(String id) async {
     return await databaseReference.child(id).once().then((DataSnapshot data) {
-      return myUser = UserData.fromJson(data);
+      return UserData.fromJson(data);
     });
   }
 
