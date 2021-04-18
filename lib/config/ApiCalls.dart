@@ -75,7 +75,8 @@ class ApiCalls {
         .once()
         .then((DataSnapshot data) {
       inspect(data);
-      return UserData.fromJson(data);
+      myUser=UserData.fromJson(data);
+      return myUser;
     });
   }
 
@@ -112,13 +113,13 @@ class ApiCalls {
         .child(userId)
         .child("Friends")
         .child(friendId)
-        .update({"IsFriend": FriendStatus.friends});
+        .update({"IsFriend": FriendStatus.friends.toString()});
 
     await databaseReference
         .child(friendId)
         .child("Friends")
         .child(userId)
-        .update({"IsFriend": FriendStatus.friends});
+        .update({"IsFriend": FriendStatus.friends.toString()});
   }
 
   static Future getAllFriends() async {
