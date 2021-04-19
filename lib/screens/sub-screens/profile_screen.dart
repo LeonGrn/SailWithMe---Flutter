@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_image/firebase_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'chat_page.dart';
+
 class ProfileScreen extends StatefulWidget {
   final String id;
 
@@ -47,10 +49,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               margin: const EdgeInsets.all(6.0),
               child: FutureBuilder(
-                  future: ApiCalls.getStatusFriend(widget.id),
+                  future: ApiCalls.getFriendById(widget.id),
                   builder: (context, snapshot) {
-                    //inspect(snapshot.data);
-                    int myFriend = snapshot.data;
+                    inspect(snapshot.data);
+                    Friends friend= snapshot.data;
+                    int myFriend = friend.isFriend;
                     Icon icon;
                     //inspect(snapshot.data);
                     switch (myFriend) {
@@ -69,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       case FriendStatus.friends:
                         {
                           icon =Icon(Icons
-                              .mobile_screen_share); //Friend with someone
+                              .message); //Friend with someone
                         }
                         break;
 
@@ -86,12 +89,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         }
                         break;
                     }
-                    return IconButton(
-                      icon: icon,
-                      iconSize: 30,
-                      color: Colors.white,
-                      onPressed: () async {
+         return IconButton(
+             icon: icon,
+             iconSize: 30,
+             color: Colors.white,
+             onPressed: () async {
 
+                   if(myFriend==FriendStatus.friends)
+                   {
+                     Navigator.of(context)
+                         .push(new MaterialPageRoute(
+                         builder:  (BuildContext context) {
+                           return ChatPage(user:friend);
+                         },
+                         fullscreenDialog: true
+                            ));
+                   }   
                       if(myFriend==FriendStatus.approveFriendRequest){
                         ApiCalls.acceptFriendRequest(widget.id);
                         icon=Icon(Icons
@@ -107,10 +120,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               .mobile_screen_share);
                                setState(() {
                           
-                        });  
+                        }); 
                       }
+             
                        
-                      },
+                      }
                     );
                   }),
             ),

@@ -1,3 +1,4 @@
+import 'package:SailWithMe/widgets/utils.dart';
 import 'package:flutter/material.dart';
 
 class MessageField {
@@ -9,7 +10,7 @@ class Message {
   final String urlAvatar;
   final String username;
   final String message;
-  final DateTime createdAt;
+  final String createdAt;
 
   const Message({
     @required this.idUser,
@@ -18,6 +19,24 @@ class Message {
     @required this.message,
     @required this.createdAt,
   });
+
+  static Message fromJson(Map<String, dynamic> json) => Message(
+        idUser: json['idUser'],
+        urlAvatar: json['urlAvatar'],
+        username: json['username'],
+        message: json['message'],
+        createdAt: json['createdAt'],
+      );
+
+  Map<String, dynamic> toJson() => {
+        'idUser': idUser,
+        'urlAvatar': urlAvatar,
+        'username': username,
+        'message': message,
+        'createdAt':createdAt,
+      };
+
+
 
   // static Message fromJson(Map<String, dynamic> json) => Message(
   //       idUser: json['idUser'],

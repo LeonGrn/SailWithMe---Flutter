@@ -25,7 +25,7 @@ class _MyAppState extends State<SpashScreen> {
   @override
   Widget build(BuildContext context) {
     return new SplashScreen(
-        seconds: 8,
+        seconds: 3,
         navigateAfterSeconds: new LandingPage(),
         title: new Text(
           'Welcome to Sail With ME',

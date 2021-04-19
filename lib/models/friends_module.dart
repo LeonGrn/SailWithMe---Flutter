@@ -1,4 +1,7 @@
 
+import 'package:SailWithMe/models/models.dart';
+import 'package:firebase_database/firebase_database.dart';
+
 class Friends {
   String name;
   String id;
@@ -13,4 +16,13 @@ class Friends {
         'IsFriend': isFriend.toString(),
         'ImageUrl': imageUrl,
       };
+
+       static Friends fromJson(DataSnapshot snapshot){
+         return  Friends(
+        id: snapshot.value['Id'],
+        name: snapshot.value['Name'],
+        isFriend: int.parse(snapshot.value['IsFriend']),
+        imageUrl: snapshot.value['ImageUrl'] 
+      );
+       }
 }

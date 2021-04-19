@@ -4,13 +4,14 @@ import 'dart:io';
 import 'package:SailWithMe/models/createdBy_module.dart';
 import 'package:SailWithMe/models/models.dart';
 import 'package:SailWithMe/models/post_models/post_likes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:dio/dio.dart';
 import '../models/models.dart';
 import 'package:SailWithMe/models/FriendStatus.dart';
+import 'package:SailWithMe/widgets/utils.dart';
 
 class ApiCalls {
   static UserData myUser;
@@ -63,6 +64,15 @@ class ApiCalls {
     await instance.signOut();
   }
 
+  static Future<Friends> getFriendById(String id) async {
+     return await databaseReference.child(userId).child("Friends").child(id).once().then((DataSnapshot data) {
+     Friends friend= Friends.fromJson(data);
+      return friend;
+    });
+
+    
+  }
+
   static Future<UserData> getUserDataById(String id) async {
     return await databaseReference.child(id).once().then((DataSnapshot data) {
       return UserData.fromJson(data);
@@ -108,6 +118,31 @@ class ApiCalls {
             .toJson());
   }
 
+
+  static Future uploudNewMessage(String friendId, String msgInfo) async {
+    final newMessage = Message(
+       idUser: userId,
+      urlAvatar: myUser.imageRef,
+      username: myUser.fullName,
+      message: msgInfo,
+      createdAt: DateTime.now().toString()
+    );
+
+    await databaseReference.child(friendId).child("messages").child(userId).push().set(
+     newMessage.toJson()
+    );
+
+     await databaseReference.child(userId).child("messages").child(friendId).push().set(
+     newMessage.toJson()
+    );
+  }
+
+    static Stream<List<Message>> getMessagesByStream(String idUser) =>
+     databaseReference
+      .child(userId)
+      .child('messages').
+      child(idUser).onValue.transform(Utils.transformerForMessages());
+    
   static Future acceptFriendRequest(String friendId) async {
     await databaseReference
         .child(userId)
@@ -140,6 +175,12 @@ class ApiCalls {
     });
     return friends;
   }
+    static Stream<List<Friends>> getAllFriendsByStream() => databaseReference
+      .child(userId)
+      .child('Friends')
+      .onValue.transform(Utils.transformerForFriends());
+      
+  
 
   static Future getStatusFriend(String id) async {
     List<Friends> friends = await getAllFriends() as List<Friends>;
@@ -300,4 +341,6 @@ class ApiCalls {
     });
     return friends;
   }
+
+
 }

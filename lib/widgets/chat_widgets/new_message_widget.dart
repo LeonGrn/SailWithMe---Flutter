@@ -1,3 +1,4 @@
+import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -20,7 +21,7 @@ class _NewMessageWidgetState extends State<NewMessageWidget> {
   void sendMessage() async {
     FocusScope.of(context).unfocus();
 
-    //await FirebaseApi.uploadMessage(widget.idUser, message);
+    await ApiCalls.uploudNewMessage(widget.idUser, message);
 
     _controller.clear();
   }
