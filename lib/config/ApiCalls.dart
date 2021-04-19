@@ -240,7 +240,7 @@ class ApiCalls {
     Response response;
     try {
       response = await dio.post("https://yact-need.herokuapp.com/api", data: {
-        "age": 30,
+        "age": myUser.age,
         "years of experience": 3,
         "how many children": 2,
         "location": "tel aviv",

@@ -251,21 +251,13 @@ class _MapPageState extends State<MapPage> {
                 showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return AlertDialog(
+                      return Dialog(
                         shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20.0))),
-                        title: Text(
-                          "Informations",
-                          style: GoogleFonts.lato(
-                            fontSize: 25,
-                            textStyle: TextStyle(
-                                color: Colors.grey,
-                                letterSpacing: .5,
-                                fontStyle: FontStyle.italic),
-                          ),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        content: setupAlertDialoadContainer(),
+                        elevation: 0,
+                        backgroundColor: Colors.transparent,
+                        child: setupAlertDialoadContainer(),
                       );
                     });
               });
@@ -280,10 +272,10 @@ class _MapPageState extends State<MapPage> {
     return Container(
         decoration: BoxDecoration(
             border: Border.all(
-              color: Colors.blue,
+              color: Colors.transparent,
             ),
             borderRadius: BorderRadius.all(Radius.circular(20))),
-        height: 300.0, // Change as per your requirement
+        height: 400.0, // Change as per your requirement
         width: 300.0, // Change as per your requirement
         child: FutureBuilder(
             future: ApiCalls.getRecomandRiver(), // async work
@@ -293,41 +285,31 @@ class _MapPageState extends State<MapPage> {
                 switch (snapshot.data) {
                   case 0:
                     {
-                      return ListView(shrinkWrap: true, children: <Widget>[
-                        ListTile(
-                          title: Text('Name: ${snapshot.data}'),
-                        )
-                      ]);
+                      return contentBox(
+                          context,
+                          "assets/river2.jpg",
+                          "la Loire",
+                          "The Loire is the longest river in France and the 171st longest in the world.[4] With a length of 1,006 kilometres");
                     }
                     break;
 
                   case 1:
                     {
-                      return ListView(shrinkWrap: true, children: <Widget>[
-                        ListTile(
-                          title: Text('Name: ${snapshot.data}'),
-                        )
-                      ]);
+                      return contentBox(
+                          context,
+                          "assets/river1.jpg",
+                          "la Garonne",
+                          "The Garonne is a river in southwest France and northern Spain. It flows from the central Spanish Pyrenees to the Gironde estuary at the French port of Bordeaux");
                     }
                     break;
 
                   case 2:
                     {
-                      return ListView(shrinkWrap: true, children: <Widget>[
-                        ListTile(
-                          title: Text('Name: ${snapshot.data}'),
-                        )
-                      ]);
-                    }
-                    break;
-
-                  case 3:
-                    {
-                      return ListView(shrinkWrap: true, children: <Widget>[
-                        ListTile(
-                          title: Text('Name: ${snapshot.data}'),
-                        )
-                      ]);
+                      return contentBox(
+                          context,
+                          "assets/river3.jpg",
+                          "le Rhône",
+                          "The Rhône is one of the major rivers of Europe and has twice the average discharge of the Loire (which is the longest French river)");
                     }
                     break;
 
@@ -347,7 +329,8 @@ class _MapPageState extends State<MapPage> {
             }));
   }
 
-  Widget contentBox(context) {
+  Widget contentBox(BuildContext context, String assetPath, String title,
+      String description) {
     return Stack(
       children: <Widget>[
         Container(
@@ -365,14 +348,14 @@ class _MapPageState extends State<MapPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                "widget.title",
+                title,
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
               ),
               SizedBox(
                 height: 15,
               ),
               Text(
-                "widget.descriptions",
+                description,
                 style: TextStyle(fontSize: 14),
                 textAlign: TextAlign.center,
               ),
@@ -386,7 +369,7 @@ class _MapPageState extends State<MapPage> {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      "widget.text",
+                      "OK",
                       style: TextStyle(fontSize: 18),
                     )),
               ),
@@ -398,10 +381,16 @@ class _MapPageState extends State<MapPage> {
           right: 20,
           child: CircleAvatar(
             backgroundColor: Colors.transparent,
-            radius: 45,
+            radius: 50,
             child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(45)),
-                child: Image.asset("assets/model.jpeg")),
+              borderRadius: BorderRadius.all(Radius.circular(45)),
+              child: Image.asset(
+                assetPath,
+                fit: BoxFit.fill,
+                width: 100.0,
+                height: 100.0,
+              ),
+            ),
           ),
         ),
       ],
