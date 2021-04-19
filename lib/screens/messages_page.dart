@@ -1,6 +1,7 @@
 import 'dart:ui';
 
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/config/ApiCalls.dart';
+import 'package:SailWithMe/models/friends_module.dart';
 import 'package:SailWithMe/widgets/chat_widgets/chat_body_widget.dart';
 import 'package:SailWithMe/widgets/chat_widgets/chat_header.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +10,15 @@ import 'package:flutter/widgets.dart';
 class MessagesPage extends StatelessWidget {
   const MessagesPage({Key key}) : super(key: key);
 
+
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context){
+
+    return Scaffold(
         backgroundColor: Colors.blue,
         body: SafeArea(
-          child: StreamBuilder<List<UserData>>(
-            stream: null, //FirebaseApi.getUsers(),
+          child: StreamBuilder<List<Friends>>(
+            stream: ApiCalls.getAllFriendsByStream(),
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
@@ -31,7 +35,7 @@ class MessagesPage extends StatelessWidget {
                     } else
                       return Column(
                         children: [
-                          ChatHeaderWidget(users: users),
+                          ChatHeaderWidget(),
                           ChatBodyWidget(users: users)
                         ],
                       );
@@ -41,7 +45,7 @@ class MessagesPage extends StatelessWidget {
           ),
         ),
       );
-
+  }
   Widget buildText(String text) => Center(
         child: Text(
           text,

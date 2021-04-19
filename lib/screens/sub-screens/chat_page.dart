@@ -5,7 +5,7 @@ import 'package:SailWithMe/widgets/chat_widgets/profile_header_widget.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
-  final UserData user;
+  final Friends user;
 
   const ChatPage({
     @required this.user,
@@ -24,7 +24,7 @@ class _ChatPageState extends State<ChatPage> {
         body: SafeArea(
           child: Column(
             children: [
-              ProfileHeaderWidget(name: widget.user.fullName),
+              ProfileHeaderWidget(name: widget.user.name),
               Expanded(
                 child: Container(
                   padding: EdgeInsets.all(10),

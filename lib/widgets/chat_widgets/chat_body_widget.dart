@@ -1,9 +1,10 @@
 import 'package:SailWithMe/models/models.dart';
 import 'package:SailWithMe/screens/sub-screens/chat_page.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_image/firebase_image.dart';
 
 class ChatBodyWidget extends StatelessWidget {
-  final List<UserData> users;
+  final List<Friends> users;
 
   const ChatBodyWidget({
     @required this.users,
@@ -40,12 +41,23 @@ class ChatBodyWidget extends StatelessWidget {
               },
               leading: CircleAvatar(
                 radius: 25,
-                backgroundImage: NetworkImage(user.imageRef),
+                backgroundImage:FirebaseImage(
+                          'gs://sailwithme.appspot.com/' +
+                              user.imageUrl,
+                          shouldCache:
+                              true, // The image should be cached (default: True)
+                          //             // maxSizeBytes:
+                          //             //     3000 * 1000, // 3MB max file size (default: 2.5MB)
+                          //             // cacheRefreshStrategy: CacheRefreshStrategy
+                          //             //     .NEVER // Switch off update checking
+                          //
+                        ),
               ),
-              title: Text(user.fullName),
+              title: Text(user.name),
             ),
           );
         },
         itemCount: users.length,
       );
 }
+                       

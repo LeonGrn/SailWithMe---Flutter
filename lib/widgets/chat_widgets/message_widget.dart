@@ -1,5 +1,6 @@
 import 'package:SailWithMe/models/models.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_image/firebase_image.dart';
 
 class MessageWidget extends StatelessWidget {
   final Message message;
@@ -20,7 +21,18 @@ class MessageWidget extends StatelessWidget {
       children: <Widget>[
         if (!isMe)
           CircleAvatar(
-              radius: 16, backgroundImage: NetworkImage(message.urlAvatar)),
+              radius: 16, backgroundImage: FirebaseImage(
+                          'gs://sailwithme.appspot.com/' +
+                             message.urlAvatar,
+                          shouldCache:
+                              true, // The image should be cached (default: True)
+                          //             // maxSizeBytes:
+                          //             //     3000 * 1000, // 3MB max file size (default: 2.5MB)
+                          //             // cacheRefreshStrategy: CacheRefreshStrategy
+                          //             //     .NEVER // Switch off update checking
+                          //
+                        ),
+              ),
         Container(
           padding: EdgeInsets.all(16),
           margin: EdgeInsets.all(16),
