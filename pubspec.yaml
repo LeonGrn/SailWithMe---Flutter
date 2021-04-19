@@ -61,7 +61,6 @@ dev_dependencies:
   flutter_polyline_points: ^0.2.4
   google_fonts: any
 
-
 flutter:
   uses-material-design: true
 
@@ -79,6 +78,9 @@ flutter:
     - assets/user.png
     - assets/sea.jpg
     - assets/river.svg
+    - assets/river1.jpg
+    - assets/river2.jpg
+    - assets/river3.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
