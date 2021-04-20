@@ -56,10 +56,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     int myFriend;
                     if (friend==null){
                       myFriend =FriendStatus.notFriends;
-                    }
-                    if(widget.id==ApiCalls.userId){
+                      
+                      if(widget.id==ApiCalls.userId){
                       myFriend=FriendStatus.myUser;
-                    }else{
+                    }
+                    }
+                    else{
                      myFriend=friend.isFriend;
                     }
                     Icon icon;
