@@ -236,13 +236,14 @@ class ApiCalls {
     allPosts.addAll(posts);
     posts=[];
     List<Friends> friends=await getAllFriends();
-    for(Friends friend in friends){
+    if(friends!=null){
+       for(Friends friend in friends){
       if(friend.isFriend==FriendStatus.friends){
           posts=await getListOfPostByUserId(friend.id);
           allPosts.addAll(posts);
           posts=[];
       }
-
+    }
     }
     return allPosts;//await getListOfPostByUserId(userId);
   }
