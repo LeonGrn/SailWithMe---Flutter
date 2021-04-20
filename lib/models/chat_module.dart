@@ -1,4 +1,4 @@
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/modules.dart';
 
 class Chat {
   UserData _sender;

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/screens/navigation_screens.dart';
 import 'package:SailWithMe/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';

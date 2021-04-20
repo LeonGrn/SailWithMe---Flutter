@@ -2,14 +2,15 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:SailWithMe/models/createdBy_module.dart';
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/jobPost_module.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/models/post_models/post_likes.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:dio/dio.dart';
-import '../models/models.dart';
+import '../models/modules.dart';
 import 'package:SailWithMe/models/FriendStatus.dart';
 import 'package:SailWithMe/widgets/utils.dart';
 
@@ -51,6 +52,14 @@ class ApiCalls {
         .set(post.toJson());
   }
 
+  static Future<void> createJobOfferPost(JobPost myJob) async {
+    await databaseReference
+        .child(userId)
+        .child("JobOffer")
+        .push()
+        .set(myJob.toJson());
+  }
+
   static Future<void> savePlaceForUser(Trip trip) async {
     await databaseReference
         .child(userId)
@@ -65,12 +74,15 @@ class ApiCalls {
   }
 
   static Future<Friends> getFriendById(String id) async {
-     return await databaseReference.child(userId).child("Friends").child(id).once().then((DataSnapshot data) {
-     Friends friend= Friends.fromJson(data);
+    return await databaseReference
+        .child(userId)
+        .child("Friends")
+        .child(id)
+        .once()
+        .then((DataSnapshot data) {
+      Friends friend = Friends.fromJson(data);
       return friend;
     });
-
-    
   }
 
   static Future<UserData> getUserDataById(String id) async {
@@ -85,7 +97,7 @@ class ApiCalls {
         .once()
         .then((DataSnapshot data) {
       inspect(data);
-      myUser=UserData.fromJson(data);
+      myUser = UserData.fromJson(data);
       return myUser;
     });
   }
@@ -118,31 +130,37 @@ class ApiCalls {
             .toJson());
   }
 
-
   static Future uploudNewMessage(String friendId, String msgInfo) async {
     final newMessage = Message(
-       idUser: userId,
-      urlAvatar: myUser.imageRef,
-      username: myUser.fullName,
-      message: msgInfo,
-      createdAt: DateTime.now().toString()
-    );
+        idUser: userId,
+        urlAvatar: myUser.imageRef,
+        username: myUser.fullName,
+        message: msgInfo,
+        createdAt: DateTime.now().toString());
 
-    await databaseReference.child(friendId).child("messages").child(userId).push().set(
-     newMessage.toJson()
-    );
+    await databaseReference
+        .child(friendId)
+        .child("messages")
+        .child(userId)
+        .push()
+        .set(newMessage.toJson());
 
-     await databaseReference.child(userId).child("messages").child(friendId).push().set(
-     newMessage.toJson()
-    );
+    await databaseReference
+        .child(userId)
+        .child("messages")
+        .child(friendId)
+        .push()
+        .set(newMessage.toJson());
   }
 
-    static Stream<List<Message>> getMessagesByStream(String idUser) =>
-     databaseReference
-      .child(userId)
-      .child('messages').
-      child(idUser).onValue.transform(Utils.transformerForMessages());
-    
+  static Stream<List<Message>> getMessagesByStream(String idUser) =>
+      databaseReference
+          .child(userId)
+          .child('messages')
+          .child(idUser)
+          .onValue
+          .transform(Utils.transformerForMessages());
+
   static Future acceptFriendRequest(String friendId) async {
     await databaseReference
         .child(userId)
@@ -175,12 +193,12 @@ class ApiCalls {
     });
     return friends;
   }
-    static Stream<List<Friends>> getAllFriendsByStream() => databaseReference
+
+  static Stream<List<Friends>> getAllFriendsByStream() => databaseReference
       .child(userId)
       .child('Friends')
-      .onValue.transform(Utils.transformerForFriends());
-      
-  
+      .onValue
+      .transform(Utils.transformerForFriends());
 
   static Future getStatusFriend(String id) async {
     List<Friends> friends = await getAllFriends() as List<Friends>;
@@ -231,6 +249,34 @@ class ApiCalls {
   //Get only the post
   static Future getListOfPost() async {
     return await getListOfPostByUserId(userId);
+  }
+
+  static Future getListOfJobsByUserId() async {
+    List<JobPost> jobPosts = [];
+    await databaseReference
+        .child(userId)
+        .child('JobOffer')
+        .once()
+        .then((DataSnapshot dataSnapshot) {
+      if (dataSnapshot.value == null) {
+        return jobPosts;
+      }
+      for (var value in dataSnapshot.value.values) {
+        jobPosts.add(new JobPost(
+            position: value['Position'].toString(),
+            location: value['Location'].toString(),
+            employmentType: value['EmploymentType'].toString(),
+            vessel: value['Vessel'],
+            salary: value['Salary'],
+            description: value['Description'],
+            timeAgo: value['TimeAgo'],
+            createdBy: new CreatedBy(
+                name: value['CreatedBy']['Name'],
+                imageUrl: value['CreatedBy']['ImageUrl'],
+                id: value['CreatedBy']['Id'])));
+      }
+    });
+    return jobPosts;
   }
 
   //Get only yhe trips
@@ -341,6 +387,4 @@ class ApiCalls {
     });
     return friends;
   }
-
-
 }

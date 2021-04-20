@@ -1,4 +1,4 @@
-import 'models.dart';
+import 'modules.dart';
 
 class Group {
   List<UserData> friendsList;

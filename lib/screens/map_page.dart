@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:SailWithMe/Keys/configMaps.dart';
 import '../config/ApiCalls.dart';
-import '../models/models.dart';
+import '../models/modules.dart';
 import 'package:geolocator/geolocator.dart' as geocoding;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';

@@ -1,4 +1,4 @@
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/screens/sub-screens/chat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_image/firebase_image.dart';

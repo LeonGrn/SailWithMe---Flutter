@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/models/FriendStatus.dart';
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/widgets/post_container.dart';
 import 'package:SailWithMe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -52,88 +52,74 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   future: ApiCalls.getFriendById(widget.id),
                   builder: (context, snapshot) {
                     inspect(snapshot.data);
-                    Friends friend= snapshot.data;
+                    Friends friend = snapshot.data;
                     int myFriend;
-                    if (friend==null){
-                      myFriend =FriendStatus.notFriends;
-                    }
-                    if(widget.id==ApiCalls.userId){
-                      myFriend=FriendStatus.myUser;
-                    }else{
-                     myFriend=friend.isFriend;
+                    if (friend == null) {
+                      myFriend = FriendStatus.notFriends;
+                      if (widget.id == ApiCalls.userId) {
+                        myFriend = FriendStatus.myUser;
+                      }
+                    } else {
+                      myFriend = friend.isFriend;
                     }
                     Icon icon;
                     //inspect(snapshot.data);
                     switch (myFriend) {
                       case FriendStatus.notFriends:
                         {
-                          icon =Icon(Icons.group_add); //waiting for my accept
+                          icon = Icon(Icons.group_add); //waiting for my accept
                         }
                         break;
 
                       case FriendStatus.waitingForEcsept:
                         {
-                          icon = Icon(Icons.transfer_within_a_station); // waiting for his Accept 
+                          icon = Icon(Icons
+                              .transfer_within_a_station); // waiting for his Accept
                         }
                         break;
 
                       case FriendStatus.friends:
                         {
-                          icon =Icon(Icons
-                              .message); //Friend with someone
+                          icon = Icon(Icons.message); //Friend with someone
                         }
                         break;
 
                       case FriendStatus.approveFriendRequest:
                         {
-                          icon =Icon(Icons.group_add); //not in my friends list
+                          icon = Icon(Icons.group_add); //not in my friends list
                         }
                         break;
 
                       case FriendStatus.myUser:
                         {
-                         icon=Icon(Icons
-                              .mobile_screen_share);
+                          icon = Icon(Icons.mobile_screen_share);
                         }
                         break;
                     }
-         return IconButton(
-             icon: icon,
-             iconSize: 30,
-             color: Colors.white,
-             onPressed: () async {
-
-                   if(myFriend==FriendStatus.friends)
-                   {
-                     Navigator.of(context)
-                         .push(new MaterialPageRoute(
-                         builder:  (BuildContext context) {
-                           return ChatPage(user:friend);
-                         },
-                         fullscreenDialog: true
-                            ));
-                   }   
-                      if(myFriend==FriendStatus.approveFriendRequest){
-                        ApiCalls.acceptFriendRequest(widget.id);
-                        icon=Icon(Icons
-                              .mobile_screen_share);
-                               setState(() {
-                          
-                        }); 
-                      }
-                      if(myFriend==FriendStatus.notFriends){
-                        await ApiCalls.addFriend(
-                            widget.id, myUser.getImageRef, myUser.getFullName);
-                            icon=Icon(Icons
-                              .mobile_screen_share);
-                               setState(() {
-                          
-                        }); 
-                      }
-             
-                       
-                      }
-                    );
+                    return IconButton(
+                        icon: icon,
+                        iconSize: 30,
+                        color: Colors.white,
+                        onPressed: () async {
+                          if (myFriend == FriendStatus.friends) {
+                            Navigator.of(context).push(new MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return ChatPage(user: friend);
+                                },
+                                fullscreenDialog: true));
+                          }
+                          if (myFriend == FriendStatus.approveFriendRequest) {
+                            ApiCalls.acceptFriendRequest(widget.id);
+                            icon = Icon(Icons.mobile_screen_share);
+                            setState(() {});
+                          }
+                          if (myFriend == FriendStatus.notFriends) {
+                            await ApiCalls.addFriend(widget.id,
+                                myUser.getImageRef, myUser.getFullName);
+                            icon = Icon(Icons.mobile_screen_share);
+                            setState(() {});
+                          }
+                        });
                   }),
             ),
             Container(

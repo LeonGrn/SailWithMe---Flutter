@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/screens/map_page.dart';
 import 'package:SailWithMe/screens/sub-screens/profile_screen.dart';
 import 'package:flutter/material.dart';

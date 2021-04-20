@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/config/palette.dart';
 import 'package:SailWithMe/screens/sub-screens/friendsList_screen.dart';
+import 'package:SailWithMe/screens/sub-screens/jobOfferList_screen.dart';
 import 'package:SailWithMe/screens/sub-screens/profile_screen.dart';
 import 'package:SailWithMe/widgets/circle_button.dart';
 import 'package:SailWithMe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -427,7 +428,13 @@ class HomePageDrawer extends StatelessWidget {
           new ListTile(
             leading: Icon(Icons.work),
             title: new Text("Jobs"),
-            onTap: () {},
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new JobOfferListScreen()));
+            },
           ),
           Divider(
             height: 3,

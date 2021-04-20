@@ -1,8 +1,7 @@
 import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/config/palette.dart';
 import 'package:SailWithMe/models/FriendStatus.dart';
-import 'package:SailWithMe/models/models.dart';
-import 'package:SailWithMe/screens/home_page.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/screens/sub-screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_image/firebase_image.dart';

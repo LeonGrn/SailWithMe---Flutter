@@ -1,4 +1,4 @@
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/widgets/chat_widgets/messages_widget.dart';
 import 'package:SailWithMe/widgets/chat_widgets/new_message_widget.dart';
 import 'package:SailWithMe/widgets/chat_widgets/profile_header_widget.dart';
