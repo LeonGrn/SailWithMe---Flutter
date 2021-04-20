@@ -230,7 +230,21 @@ class ApiCalls {
 
   //Get only the post
   static Future getListOfPost() async {
-    return await getListOfPostByUserId(userId);
+    List<Post> posts = [];
+    List<Post> allPosts = [];
+    posts=await getListOfPostByUserId(userId);
+    allPosts.addAll(posts);
+    posts=[];
+    List<Friends> friends=await getAllFriends();
+    for(Friends friend in friends){
+      if(friend.isFriend==FriendStatus.friends){
+          posts=await getListOfPostByUserId(friend.id);
+          allPosts.addAll(posts);
+          posts=[];
+      }
+
+    }
+    return allPosts;//await getListOfPostByUserId(userId);
   }
 
   //Get only yhe trips
