@@ -54,13 +54,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     inspect(snapshot.data);
                     Friends friend = snapshot.data;
                     int myFriend;
-                    if (friend == null) {
-                      myFriend = FriendStatus.notFriends;
-                      if (widget.id == ApiCalls.userId) {
-                        myFriend = FriendStatus.myUser;
-                      }
-                    } else {
-                      myFriend = friend.isFriend;
+
+
+                    if (friend==null){
+                      myFriend =FriendStatus.notFriends;
+                      
+                      if(widget.id==ApiCalls.userId){
+                      myFriend=FriendStatus.myUser;
+                    }
+                    }
+                    else{
+                     myFriend=friend.isFriend;
+
                     }
                     Icon icon;
                     //inspect(snapshot.data);
