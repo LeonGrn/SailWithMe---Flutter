@@ -1,5 +1,4 @@
-
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class Friends {
@@ -17,12 +16,11 @@ class Friends {
         'ImageUrl': imageUrl,
       };
 
-       static Friends fromJson(DataSnapshot snapshot){
-         return  Friends(
+  static Friends fromJson(DataSnapshot snapshot) {
+    return Friends(
         id: snapshot.value['Id'],
         name: snapshot.value['Name'],
         isFriend: int.parse(snapshot.value['IsFriend']),
-        imageUrl: snapshot.value['ImageUrl'] 
-      );
-       }
+        imageUrl: snapshot.value['ImageUrl']);
+  }
 }

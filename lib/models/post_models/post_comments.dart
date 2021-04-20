@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import '../models.dart';
+import '../modules.dart';
 
 class Comments {
   UserData _user;

@@ -2,11 +2,12 @@ import 'dart:io';
 
 import 'package:SailWithMe/models/createdBy_module.dart';
 import 'package:SailWithMe/screens/choosePlace_screen.dart';
+import 'package:SailWithMe/screens/sub-screens/jobOffer_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:flutter/material.dart';
 import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:firebase_image/firebase_image.dart';
@@ -53,7 +54,7 @@ class _PostPageState extends State<PostPage> {
           if (snapshot.hasData) return _buildScaffold(snapshot.data);
           if (snapshot.hasError) return Text("Error");
 
-          return Text("Loading");
+          return Center(child: new CircularProgressIndicator());
         });
   }
 
@@ -235,13 +236,24 @@ class _PostPageState extends State<PostPage> {
                           color:
                               postType == 2 ? Colors.blue[400] : Colors.black,
                         ),
-                        Text(
-                          'Job offer',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color:
-                                postType == 2 ? Colors.blue[400] : Colors.black,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context)
+                                .push(new MaterialPageRoute<Null>(
+                                    builder: (BuildContext context) {
+                                      return JobOfferScreen(user: myUser);
+                                    },
+                                    fullscreenDialog: true));
+                          },
+                          child: Text(
+                            'Job offer',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: postType == 2
+                                  ? Colors.blue[400]
+                                  : Colors.black,
+                            ),
                           ),
                         ),
                       ],

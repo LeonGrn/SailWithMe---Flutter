@@ -1,4 +1,4 @@
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/screens/post_page.dart';
 import 'package:flutter/material.dart';
 import 'package:SailWithMe/Keys/configMaps.dart';

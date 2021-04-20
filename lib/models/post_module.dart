@@ -1,8 +1,7 @@
-import 'dart:io';
 import 'package:SailWithMe/models/createdBy_module.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/models/post_models/post_comments.dart';
 import 'package:SailWithMe/models/post_models/post_likes.dart';
 
@@ -17,7 +16,13 @@ class Post {
   List<Comments> comments;
   int shares;
 
-  Post({this.description, this.timeAgo, this.imageUrl, this.createdBy,this.type,this.trip})
+  Post(
+      {this.description,
+      this.timeAgo,
+      this.imageUrl,
+      this.createdBy,
+      this.type,
+      this.trip})
       : likes = [],
         comments = [],
         shares = 0;
@@ -32,8 +37,8 @@ class Post {
       'ImageUrl': imageUrl,
       'CreatedBy': createdBy.toJson(),
       'Likes': likes,
-      'Trip':trip.toJson(),
-      'Type':type,
+      'Trip': trip.toJson(),
+      'Type': type,
     };
   }
 

@@ -1,5 +1,5 @@
 import 'package:SailWithMe/config/ApiCalls.dart';
-import 'package:SailWithMe/models/models.dart';
+import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/widgets/chat_widgets/message_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +13,8 @@ class MessagesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => StreamBuilder<List<Message>>(
-        stream: ApiCalls.getMessagesByStream(idUser), //FirebaseApi.getMessages(idUser),
+        stream: ApiCalls.getMessagesByStream(
+            idUser), //FirebaseApi.getMessages(idUser),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
