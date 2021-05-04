@@ -36,7 +36,7 @@ class Utils {
               String urlAvatar= s[key]['urlAvatar'];
               String  username= s[key]['username'];
               String message=s[key]['message'];
-              String  createdAt= s[key]['createdAt'];
+              DateTime  createdAt= DateTime.parse((s[key]['createdAt']));
               Message newMessage = Message(
                 idUser:idUser,
                 urlAvatar: urlAvatar,
@@ -46,11 +46,16 @@ class Utils {
               );
                  messages.add(newMessage);
               }
+          messages.sort((a,b){
+            return b.createdAt.compareTo(a.createdAt);
+
+          });
           sink.add(messages);
         },
       );
 
   static DateTime toDateTime(Timestamp value) {
+
     if (value == null) return null;
 
     return value.toDate();

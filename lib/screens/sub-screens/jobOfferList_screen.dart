@@ -156,7 +156,7 @@ class JobCard extends StatelessWidget {
                       IconButton(
                         iconSize: 40,
                         icon: Icon(
-                          Icons.work_outline,
+                          Icons.work,
                           color: Colors.white,
                         ),
                         onPressed: () {},

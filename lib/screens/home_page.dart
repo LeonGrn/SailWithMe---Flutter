@@ -199,15 +199,18 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             filled: true,
-            prefixText: searchText,
             contentPadding: EdgeInsets.all(16),
             hintStyle: TextStyle(color: Colors.black)),
-        onChanged: (text) {
-          searchText = text;
-          if (searchText.length > 2) {
-            setState(() {});
+            onChanged: (text) {
+            searchText = text;
+            if(text.length>2){
+              setState(() {
+            });
+            }
+            
           }
-        });
+        
+         );
   }
 }
 
