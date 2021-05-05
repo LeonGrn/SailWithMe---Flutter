@@ -136,7 +136,7 @@ class ApiCalls {
         urlAvatar: myUser.imageRef,
         username: myUser.fullName,
         message: msgInfo,
-        createdAt: DateTime.now().toString());
+        createdAt: DateTime.now());
 
     await databaseReference
         .child(friendId)
@@ -376,8 +376,12 @@ class ApiCalls {
       for (var key in dataSnapshot.value.keys) {
         fullName = dataSnapshot.value[key]['FullName'];
         imagePath = dataSnapshot.value[key]['ImageRef'];
-        friends.add(new Friends(
+        if(fullName.startsWith(s) || s==""){
+          friends.add(new Friends(
             id: key, name: fullName, isFriend: 0, imageUrl: imagePath));
+       
+        }
+        
       }
     });
     return friends;
