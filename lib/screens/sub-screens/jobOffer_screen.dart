@@ -25,11 +25,23 @@ class _JobOfferScreenState extends State<JobOfferScreen> {
   TextEditingController salaryController = new TextEditingController();
   TextEditingController descriptionController = new TextEditingController();
 
-  String validateField(String value) {
-    if (value.isNotEmpty) {
-      return "Field cannot be empty";
+  bool validateField() {
+    if (positionController.text == null ||
+        positionController.text == "" ||
+        locationController.text == null ||
+        locationController.text == "" ||
+        employmentTypeController.text == null ||
+        employmentTypeController.text == "" ||
+        vesselController.text == null ||
+        vesselController.text == "" ||
+        salaryController.text == null ||
+        salaryController.text == "" ||
+        descriptionController.text == null ||
+        descriptionController.text == "") {
+      return false;
     }
-    return null;
+
+    return true;
   }
 
   @override
@@ -37,7 +49,8 @@ class _JobOfferScreenState extends State<JobOfferScreen> {
     DateTime now = DateTime.now();
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -46,22 +59,24 @@ class _JobOfferScreenState extends State<JobOfferScreen> {
             RaisedButton(
               color: Colors.cyan[400],
               onPressed: () async {
-                String formattedTime = DateFormat.Hms().format(now);
+                if (validateField() == true) {
+                  String formattedTime = DateFormat.Hms().format(now);
 
-                JobPost myJob = JobPost(
-                    position: positionController.text,
-                    location: locationController.text,
-                    employmentType: employmentTypeController.text,
-                    vessel: vesselController.text,
-                    salary: salaryController.text,
-                    description: descriptionController.text,
-                    timeAgo: formattedTime,
-                    createdBy: CreatedBy(
-                        name: widget.user.getFullName,
-                        imageUrl: widget.user.getImageRef,
-                        id: ApiCalls.recieveUserInstance()));
+                  JobPost myJob = JobPost(
+                      position: positionController.text,
+                      location: locationController.text,
+                      employmentType: employmentTypeController.text,
+                      vessel: vesselController.text,
+                      salary: salaryController.text,
+                      description: descriptionController.text,
+                      timeAgo: formattedTime,
+                      createdBy: CreatedBy(
+                          name: widget.user.getFullName,
+                          imageUrl: widget.user.getImageRef,
+                          id: ApiCalls.recieveUserInstance()));
 
-                await ApiCalls.createJobOfferPost(myJob);
+                  await ApiCalls.createJobOfferPost(myJob);
+                }
               },
               child: Text(
                 "Post",
@@ -73,66 +88,85 @@ class _JobOfferScreenState extends State<JobOfferScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            new ListTile(
-              title: TextFormField(
-                controller: positionController,
-                maxLines: 1,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(
-                  labelText: 'Position',
-                  errorText: validateField(positionController.text),
+        child: Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          // padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Expanded(
+                flex: 1,
+                child: TextFormField(
+                  controller: positionController,
+                  maxLines: 1,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    labelText: 'Position',
+                  ),
                 ),
               ),
-              onTap: () {},
-            ),
-            new ListTile(
-              title: TextFormField(
-                controller: locationController,
-                maxLines: 1,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(labelText: 'Location'),
+              Expanded(
+                flex: 1,
+                child: TextFormField(
+                  controller: locationController,
+                  maxLines: 1,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    labelText: 'Location',
+                    // errorText: validateField(locationController.text),
+                  ),
+                ),
               ),
-              onTap: () {},
-            ),
-            new ListTile(
-              title: TextFormField(
-                controller: employmentTypeController,
-                maxLines: 1,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(labelText: "Employemnt type"),
+              Expanded(
+                flex: 1,
+                child: TextFormField(
+                  controller: employmentTypeController,
+                  maxLines: 1,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    labelText: "Employemnt type",
+                    // errorText: validateField(employmentTypeController.text),
+                  ),
+                ),
               ),
-              onTap: () {},
-            ),
-            new ListTile(
-              title: TextFormField(
-                controller: vesselController,
-                maxLines: 1,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(labelText: "Vessel"),
+              Expanded(
+                flex: 1,
+                child: TextFormField(
+                  controller: vesselController,
+                  maxLines: 1,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    labelText: "Vessel",
+                    // errorText: validateField(vesselController.text),
+                  ),
+                ),
               ),
-              onTap: () {},
-            ),
-            new ListTile(
-              title: TextFormField(
-                controller: salaryController,
-                maxLines: 1,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(labelText: "Salary"),
+              Expanded(
+                flex: 1,
+                child: TextFormField(
+                  controller: salaryController,
+                  maxLines: 1,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    labelText: "Salary",
+                    // errorText: validateField(salaryController.text),
+                  ),
+                ),
               ),
-              onTap: () {},
-            ),
-            new ListTile(
-              title: TextFormField(
-                controller: descriptionController,
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(labelText: "Description"),
+              Expanded(
+                flex: 1,
+                child: TextFormField(
+                  controller: descriptionController,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    labelText: "Description",
+                    // errorText: validateField(descriptionController.text),
+                  ),
+                ),
               ),
-              onTap: () {},
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

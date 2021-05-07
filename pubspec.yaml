@@ -60,6 +60,7 @@ dev_dependencies:
   geocoding: ^1.0.5
   flutter_polyline_points: ^0.2.4
   google_fonts: any
+  fluttertoast: any
 
 flutter:
   uses-material-design: true
