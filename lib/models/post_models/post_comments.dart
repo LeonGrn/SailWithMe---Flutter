@@ -1,17 +1,17 @@
-import 'package:meta/meta.dart';
-import '../modules.dart';
 
 class Comments {
-  UserData _user;
-  String _userComment;
+String userID;
+  String imgeRef;
+  String fullName;
+  String userComment;
 
-  Comments(@required this._user, @required this._userComment);
+  Comments({this.userID, this.fullName, this.imgeRef,this.userComment});
 
-  UserData get user => _user;
-
-  set user(UserData value) => _user = value;
-
-  String get userComment => _userComment;
-
-  set userComment(String value) => _userComment = value;
+ Map<String, dynamic> toJson() => {
+        'UserID': userID,
+        'FullName': fullName,
+        'ImgeRef': imgeRef,
+        'UserComment':userComment,
+      };
 }
+

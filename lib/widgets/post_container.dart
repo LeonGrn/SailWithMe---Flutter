@@ -2,8 +2,8 @@ import 'dart:ui';
 import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/screens/map_page.dart';
+import 'package:SailWithMe/screens/sub-screens/comment_screen.dart';
 import 'package:SailWithMe/screens/sub-screens/like_screen.dart';
-import 'package:SailWithMe/screens/sub-screens/jobOfferList_screen.dart';
 import 'package:SailWithMe/screens/sub-screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:SailWithMe/config/palette.dart';
@@ -192,19 +192,20 @@ class _PostStats extends StatelessWidget {
             ),
                 ),
            
-            Text(
-              '${post.comments.length} Comments',
-              style: TextStyle(
-                color: Colors.grey[600],
+            GestureDetector(
+               onTap: () {
+         Navigator.push(
+               context,
+                  new MaterialPageRoute(
+                      builder: (context) => new CommentsScreen(post:post)));
+                   },
+                          child: Text(
+                '${post.comments.length} Comments',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                ),
               ),
             ),
-            // const SizedBox(width: 8.0),
-            // Text(
-            //   '${post.shares} Shares',
-            //   style: TextStyle(
-            //     color: Colors.grey[600],
-            //   ),
-            // )
           ],
         ),
         const Divider(),

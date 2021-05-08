@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:SailWithMe/models/createdBy_module.dart';
 import 'package:SailWithMe/models/jobPost_module.dart';
 import 'package:SailWithMe/models/modules.dart';
+import 'package:SailWithMe/models/post_models/post_comments.dart';
 import 'package:SailWithMe/models/post_models/post_likes.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -27,18 +28,12 @@ class ApiCalls {
     return userId;
   }
   static Future<void> addLike(String postId,String postUserId) async {
-    print("$postUserId postUserId");
-    print("$postId post Id");
-    print("$userId userId");
-
     await databaseReference.child(postUserId).child("Post").child(postId).child("likes").child(userId).set(
       Likes(
       fullName: myUser.fullName,
       imgeRef: myUser.imageRef,
       userID: userId
     ).toJson());
-
-
   }
 
   static Future<void> createUser(UserData createdUser) async {
@@ -262,6 +257,21 @@ class ApiCalls {
           }
 
 
+      List <Comments> commentsList=[];
+      if (value['Comments'] != null) 
+        {
+          print("${value['Comments'].values} value['likes'].values");
+          for (var commentValue in value['Comments'].values) {
+            print(commentValue);
+           Comments comment= Comments(
+              imgeRef: commentValue['ImgeRef'],
+              userID: commentValue['UserID'],
+              fullName: commentValue['FullName'],
+              userComment: commentValue['UserComment']
+            );
+            commentsList.add(comment);
+          }
+
         }
         posts.add(new Post(
             description: value['Description'].toString(),
@@ -273,10 +283,11 @@ class ApiCalls {
                 imageUrl: value['CreatedBy']['ImageUrl'],
                 id: value['CreatedBy']['Id']),
                 postId:value['PostId'],
-                likes: likesList
+                likes: likesList,
+                comments: commentsList
                 ),
                 );
-      }
+      }}
     });
     return posts;
   }
@@ -440,5 +451,15 @@ class ApiCalls {
       }
     });
     return friends;
+  }
+
+    static Future<void> uploudNewComment(String postuserId,String postId,String message) async {
+    await databaseReference.child(postuserId).child("Post").child(postId).child("Comments").push().set(
+      Comments(
+      fullName: myUser.fullName,
+      imgeRef: myUser.imageRef,
+      userID: userId,
+      userComment: message
+    ).toJson());
   }
 }
