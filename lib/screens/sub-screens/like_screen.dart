@@ -24,12 +24,14 @@ class _LikeScreenState extends State<LikeScreen> {
 Widget build(BuildContext context) {
       return Scaffold(
     body:
-                 ListView.builder(
-                    itemCount: widget.post.likes.length,
-                    itemBuilder: (context, index) {
-                      Likes like = widget.post.likes[index];
-                      return LikesListContaner(like: like);
-                    }));
+                 Container(
+                   child: ListView.builder(
+                      itemCount: widget.post.likes.length,
+                      itemBuilder: (context, index) {
+                        Likes like = widget.post.likes[index];
+                        return LikesListContaner(like: like);
+                      }),
+                 ));
           }
 }
        
@@ -73,6 +75,7 @@ class LikesListContaner extends StatelessWidget {
                 color: Colors.blue,
               ),
       ),
+      
     );
   }
 }

@@ -24,9 +24,9 @@ class Post {
       this.type,
       this.trip
       ,this.postId
-      ,this.likes})
-      : 
-        comments = []
+      ,this.likes
+      ,this.comments})
+    
         ;
 
   Map<String, dynamic> toJson() {
