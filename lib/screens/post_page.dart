@@ -6,6 +6,7 @@ import 'package:SailWithMe/screens/sub-screens/jobOffer_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:SailWithMe/models/modules.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +91,10 @@ class _PostPageState extends State<PostPage> {
                     createdBy: CreatedBy(
                         name: myUser.getFullName,
                         imageUrl: myUser.getImageRef,
-                        id: ApiCalls.recieveUserInstance()));
+                        id: ApiCalls.recieveUserInstance()
+                        ),
+                        postId:Uuid().v4() 
+                        );
                 await ApiCalls.createPost(myPost);
               },
               child: Text(

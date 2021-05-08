@@ -14,7 +14,7 @@ class Post {
   CreatedBy createdBy;
   List<Likes> likes;
   List<Comments> comments;
-  int shares;
+  String postId;
 
   Post(
       {this.description,
@@ -22,10 +22,12 @@ class Post {
       this.imageUrl,
       this.createdBy,
       this.type,
-      this.trip})
-      : likes = [],
-        comments = [],
-        shares = 0;
+      this.trip
+      ,this.postId
+      ,this.likes})
+      : 
+        comments = []
+        ;
 
   Map<String, dynamic> toJson() {
     List<Map> likes =
@@ -39,6 +41,7 @@ class Post {
       'Likes': likes,
       'Trip': trip.toJson(),
       'Type': type,
+      'PostId':postId
     };
   }
 

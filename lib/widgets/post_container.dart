@@ -1,6 +1,9 @@
 import 'dart:ui';
+import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/screens/map_page.dart';
+import 'package:SailWithMe/screens/sub-screens/like_screen.dart';
+import 'package:SailWithMe/screens/sub-screens/jobOfferList_screen.dart';
 import 'package:SailWithMe/screens/sub-screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:SailWithMe/config/palette.dart';
@@ -173,26 +176,35 @@ class _PostStats extends StatelessWidget {
             ),
             const SizedBox(width: 4.0),
             Expanded(
-              child: Text(
-                '${post.likes}',
+              child: GestureDetector(
+            onTap: () {
+         Navigator.push(
+               context,
+                  new MaterialPageRoute(
+                      builder: (context) => new LikeScreen(post:post)));
+                   },
+              child:Text(
+                '${post.likes.length} ',
                 style: TextStyle(
                   color: Colors.grey[600],
                 ),
               ),
             ),
+                ),
+           
             Text(
-              '${post.comments} Comments',
+              '${post.comments.length} Comments',
               style: TextStyle(
                 color: Colors.grey[600],
               ),
             ),
-            const SizedBox(width: 8.0),
-            Text(
-              '${post.shares} Shares',
-              style: TextStyle(
-                color: Colors.grey[600],
-              ),
-            )
+            // const SizedBox(width: 8.0),
+            // Text(
+            //   '${post.shares} Shares',
+            //   style: TextStyle(
+            //     color: Colors.grey[600],
+            //   ),
+            // )
           ],
         ),
         const Divider(),
@@ -205,7 +217,11 @@ class _PostStats extends StatelessWidget {
                 size: 20.0,
               ),
               label: 'Like',
-              onTap: () => print('Like'),
+              onTap:() async {print('Like');
+              await ApiCalls.addLike(post.postId,post.createdBy.id);
+              
+             
+              },
             ),
             _PostButton(
               icon: Icon(

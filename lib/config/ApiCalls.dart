@@ -26,6 +26,20 @@ class ApiCalls {
     }
     return userId;
   }
+  static Future<void> addLike(String postId,String postUserId) async {
+    print("$postUserId postUserId");
+    print("$postId post Id");
+    print("$userId userId");
+
+    await databaseReference.child(postUserId).child("Post").child(postId).child("likes").child(userId).set(
+      Likes(
+      fullName: myUser.fullName,
+      imgeRef: myUser.imageRef,
+      userID: userId
+    ).toJson());
+
+
+  }
 
   static Future<void> createUser(UserData createdUser) async {
     await databaseReference.child(userId).set(createdUser.toJson());
@@ -48,7 +62,7 @@ class ApiCalls {
     await databaseReference
         .child(userId)
         .child("Post")
-        .push()
+        .child(post.postId)
         .set(post.toJson());
   }
 
@@ -102,15 +116,15 @@ class ApiCalls {
     });
   }
 
-  static Future<void> likePost(Likes like) async {
-    await databaseReference
-        .child(userId)
-        .child("Post")
-        .child("uuid")
-        .child("Likes")
-        .push()
-        .set(like.toJson());
-  }
+  // static Future<void> likePost(Likes like) async {
+  //   await databaseReference
+  //       .child(userId)
+  //       .child("Post")
+  //       .child("uuid")
+  //       .child("Likes")
+  //       .push()
+  //       .set(like.toJson());
+  // }
 
   static Future addFriend(String friendId, String imageUrl, String name) async {
     await databaseReference.child(userId).child("Friends").child(friendId).set(
@@ -232,6 +246,23 @@ class ApiCalls {
               lat: value['Trip']['lat'],
               lng: value['Trip']['lng']);
         }
+
+      List <Likes> likesList=[];
+      if (value['likes'] != null) 
+        {
+          print("${value['likes'].values} value['likes'].values");
+          for (var likesValue in value['likes'].values) {
+            print(likesValue);
+           Likes like= Likes(
+              imgeRef: likesValue['ImgeRef'],
+              userID: likesValue['UserID'],
+              fullName: likesValue['FullName']
+            );
+            likesList.add(like);
+          }
+
+
+        }
         posts.add(new Post(
             description: value['Description'].toString(),
             timeAgo: value['TimeAgo'].toString(),
@@ -240,7 +271,11 @@ class ApiCalls {
             createdBy: new CreatedBy(
                 name: value['CreatedBy']['Name'],
                 imageUrl: value['CreatedBy']['ImageUrl'],
-                id: value['CreatedBy']['Id'])));
+                id: value['CreatedBy']['Id']),
+                postId:value['PostId'],
+                likes: likesList
+                ),
+                );
       }
     });
     return posts;
