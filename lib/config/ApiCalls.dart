@@ -28,13 +28,19 @@ class ApiCalls {
     }
     return userId;
   }
-  static Future<void> addLike(String postId,String postUserId) async {
-    await databaseReference.child(postUserId).child("Post").child(postId).child("likes").child(userId).set(
-      Likes(
-      fullName: myUser.fullName,
-      imgeRef: myUser.imageRef,
-      userID: userId
-    ).toJson());
+
+  static Future<void> addLike(String postId, String postUserId) async {
+    await databaseReference
+        .child(postUserId)
+        .child("Post")
+        .child(postId)
+        .child("likes")
+        .child(userId)
+        .set(Likes(
+                fullName: myUser.fullName,
+                imgeRef: myUser.imageRef,
+                userID: userId)
+            .toJson());
   }
 
   static Future<void> createUser(UserData createdUser) async {
@@ -233,38 +239,33 @@ class ApiCalls {
               lng: value['Trip']['lng']);
         }
 
-      List <Likes> likesList=[];
-      if (value['likes'] != null) 
-        {
+        List<Likes> likesList = [];
+        if (value['likes'] != null) {
           print("${value['likes'].values} value['likes'].values");
           for (var likesValue in value['likes'].values) {
             print(likesValue);
-           Likes like= Likes(
-              imgeRef: likesValue['ImgeRef'],
-              userID: likesValue['UserID'],
-              fullName: likesValue['FullName']
-            );
+            Likes like = Likes(
+                imgeRef: likesValue['ImgeRef'],
+                userID: likesValue['UserID'],
+                fullName: likesValue['FullName']);
             likesList.add(like);
           }
-
-
-      List <Comments> commentsList=[];
-      if (value['Comments'] != null) 
-        {
+        }
+        List<Comments> commentsList = [];
+        if (value['Comments'] != null) {
           print("${value['Comments'].values} value['likes'].values");
           for (var commentValue in value['Comments'].values) {
             print(commentValue);
-           Comments comment= Comments(
-              imgeRef: commentValue['ImgeRef'],
-              userID: commentValue['UserID'],
-              fullName: commentValue['FullName'],
-              userComment: commentValue['UserComment']
-            );
+            Comments comment = Comments(
+                imgeRef: commentValue['ImgeRef'],
+                userID: commentValue['UserID'],
+                fullName: commentValue['FullName'],
+                userComment: commentValue['UserComment']);
             commentsList.add(comment);
           }
-
         }
-        posts.add(new Post(
+        posts.add(
+          new Post(
             description: value['Description'].toString(),
             timeAgo: value['TimeAgo'].toString(),
             imageUrl: value['ImageUrl'].toString(),
@@ -273,12 +274,13 @@ class ApiCalls {
                 name: value['CreatedBy']['Name'],
                 imageUrl: value['CreatedBy']['ImageUrl'],
                 id: value['CreatedBy']['Id']),
-                postId:value['PostId'],
-                likes: likesList,
-                comments: commentsList
-                ),
-                );
-      }}
+            postId: value['PostId'],
+            likes: likesList,
+            comments: commentsList,
+            type: value['Type'],
+          ),
+        );
+      }
     });
     return posts;
   }
@@ -287,20 +289,20 @@ class ApiCalls {
   static Future getListOfPost() async {
     List<Post> posts = [];
     List<Post> allPosts = [];
-    posts=await getListOfPostByUserId(userId);
+    posts = await getListOfPostByUserId(userId);
     allPosts.addAll(posts);
-    posts=[];
-    List<Friends> friends=await getAllFriends();
-    if(friends!=null){
-       for(Friends friend in friends){
-      if(friend.isFriend==FriendStatus.friends){
-          posts=await getListOfPostByUserId(friend.id);
+    posts = [];
+    List<Friends> friends = await getAllFriends();
+    if (friends != null) {
+      for (Friends friend in friends) {
+        if (friend.isFriend == FriendStatus.friends) {
+          posts = await getListOfPostByUserId(friend.id);
           allPosts.addAll(posts);
-          posts=[];
+          posts = [];
+        }
       }
     }
-    }
-    return allPosts;//await getListOfPostByUserId(userId);
+    return allPosts; //await getListOfPostByUserId(userId);
   }
 
   static Future getListOfJobsByUserId() async {
@@ -378,12 +380,12 @@ class ApiCalls {
 
     Response response;
     try {
-      response = await dio.post("https://yact-need.herokuapp.com/api", data:  {
+      response = await dio.post("https://yact-need.herokuapp.com/api", data: {
         "age": myUser.age,
         "years of experience": myUser.yearsOfExperience,
         "how many children": myUser.numberOfChildren,
         "location": myLocation,
-        "sex":  myUser.getGender
+        "sex": myUser.getGender
       });
       if (response.data.toString().contains("1")) {
         return (/*"the river in Camargue"*/ 1);
@@ -413,12 +415,10 @@ class ApiCalls {
       for (var key in dataSnapshot.value.keys) {
         fullName = dataSnapshot.value[key]['FullName'];
         imagePath = dataSnapshot.value[key]['ImageRef'];
-        if(fullName.startsWith(s) || s==""){
+        if (fullName.startsWith(s) || s == "") {
           friends.add(new Friends(
-            id: key, name: fullName, isFriend: 0, imageUrl: imagePath));
-       
+              id: key, name: fullName, isFriend: 0, imageUrl: imagePath));
         }
-        
       }
     });
     return friends;
@@ -444,13 +444,19 @@ class ApiCalls {
     return friends;
   }
 
-    static Future<void> uploudNewComment(String postuserId,String postId,String message) async {
-    await databaseReference.child(postuserId).child("Post").child(postId).child("Comments").push().set(
-      Comments(
-      fullName: myUser.fullName,
-      imgeRef: myUser.imageRef,
-      userID: userId,
-      userComment: message
-    ).toJson());
+  static Future<void> uploudNewComment(
+      String postuserId, String postId, String message) async {
+    await databaseReference
+        .child(postuserId)
+        .child("Post")
+        .child(postId)
+        .child("Comments")
+        .push()
+        .set(Comments(
+                fullName: myUser.fullName,
+                imgeRef: myUser.imageRef,
+                userID: userId,
+                userComment: message)
+            .toJson());
   }
 }

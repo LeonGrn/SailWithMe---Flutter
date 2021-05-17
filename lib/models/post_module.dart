@@ -22,12 +22,10 @@ class Post {
       this.imageUrl,
       this.createdBy,
       this.type,
-      this.trip
-      ,this.postId
-      ,this.likes
-      ,this.comments})
-    
-        ;
+      this.trip,
+      this.postId,
+      this.likes,
+      this.comments});
 
   Map<String, dynamic> toJson() {
     List<Map> likes =
@@ -41,7 +39,7 @@ class Post {
       'Likes': likes,
       'Trip': trip.toJson(),
       'Type': type,
-      'PostId':postId
+      'PostId': postId
     };
   }
 

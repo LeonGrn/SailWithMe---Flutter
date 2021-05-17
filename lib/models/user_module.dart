@@ -1,4 +1,3 @@
-
 import 'package:firebase_database/firebase_database.dart';
 
 import 'modules.dart';
@@ -10,13 +9,12 @@ class UserData {
   int gender;
   String age = "";
   String yearsOfExperience = "";
-  String location="";
+  String location = "";
   int phoneNumber;
   String imei = "";
   String imageRef = "";
   List<Friends> friendsList = [];
   List<Trip> tripList;
-  List<Group> groupList;
   List<Post> posts = [];
   int numberOfChildren;
 
@@ -30,8 +28,8 @@ class UserData {
 
   String get getId => id;
 
-  set setLocation(String location) =>this.location=location;
-  
+  set setLocation(String location) => this.location = location;
+
   set setId(String id) => this.id = id;
 
   String get getFullName => fullName;
@@ -100,7 +98,7 @@ class UserData {
       'ImageRef': imageRef,
       'Posts': posts,
       'Friends': friendsList,
-      'Location':location
+      'Location': location
     };
   }
 
@@ -110,12 +108,10 @@ class UserData {
         email: snapshot.value['Email'],
         age: snapshot.value['Age'],
         gender: snapshot.value['Gender'],
-       numberOfChildren: snapshot.value['NumberOfChildren'],
+        numberOfChildren: snapshot.value['NumberOfChildren'],
         yearsOfExperience: snapshot.value['YearsOfExperience'],
         imei: snapshot.value['IMEI'],
-        location:snapshot.value['Location'],
+        location: snapshot.value['Location'],
         imageRef: snapshot.value['ImageRef']);
   }
-
-
 }

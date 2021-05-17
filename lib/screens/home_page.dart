@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:SailWithMe/Keys/configMaps.dart';
 import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/config/palette.dart';
+import 'package:SailWithMe/screens/sub-screens/event_screen.dart';
 import 'package:SailWithMe/screens/sub-screens/friendsList_screen.dart';
 import 'package:SailWithMe/screens/sub-screens/jobOfferList_screen.dart';
 import 'package:SailWithMe/screens/sub-screens/profile_screen.dart';
@@ -17,7 +18,6 @@ import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:SailWithMe/main.dart';
 import 'package:firebase_image/firebase_image.dart';
 import 'package:geolocator/geolocator.dart' as geocoding;
-
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -39,17 +39,18 @@ class _HomePageState extends State<HomePage> {
   File imageUrl;
   geocoding.Position _currentPosition;
 
-
   Future getWeather() async {
-     http.Response response;
+    http.Response response;
     await _getCurrentLocation();
 
-    if(_currentPosition!=null){
-          response = await http.get("http://api.openweathermap.org/data/2.5/weather?lat=${_currentPosition.latitude}&lon=${_currentPosition.longitude}&appid=$weatherApiKey");
-    }else{
-        response = await http.get("http://api.openweathermap.org/data/2.5/weather?q=Netanya&appid=$weatherApiKey");
+    if (_currentPosition != null) {
+      response = await http.get(
+          "http://api.openweathermap.org/data/2.5/weather?lat=${_currentPosition.latitude}&lon=${_currentPosition.longitude}&appid=$weatherApiKey");
+    } else {
+      response = await http.get(
+          "http://api.openweathermap.org/data/2.5/weather?q=Netanya&appid=$weatherApiKey");
     }
-  
+
     var results = jsonDecode(response.body);
     if (mounted) {
       setState(() {
@@ -57,10 +58,8 @@ class _HomePageState extends State<HomePage> {
         this.temp = this.temp - 273.15;
         this.windSpeed = results['wind']['speed'];
         this.main = results['weather'][0]['main'];
-        ApiCalls.myLocation=(results["name"]);
-        this.locationName=results["name"];
-
-
+        ApiCalls.myLocation = (results["name"]);
+        this.locationName = results["name"];
       });
     }
   }
@@ -86,18 +85,14 @@ class _HomePageState extends State<HomePage> {
     await geocoding.Geolocator.getCurrentPosition(
             desiredAccuracy: geocoding.LocationAccuracy.high)
         .then((geocoding.Position position) async {
-        // Store the position in the variable
-        _currentPosition = position;
+      // Store the position in the variable
+      _currentPosition = position;
 
-        print('CURRENT POS: $_currentPosition');
-
-      
+      print('CURRENT POS: $_currentPosition');
     }).catchError((e) {
       print(e);
     });
   }
-
-
 
   @override
   void initState() {
@@ -235,16 +230,12 @@ class _HomePageState extends State<HomePage> {
             filled: true,
             contentPadding: EdgeInsets.all(16),
             hintStyle: TextStyle(color: Colors.black)),
-            onChanged: (text) {
-            searchText = text;
-            if(text.length>2){
-              setState(() {
-            });
-            }
-            
+        onChanged: (text) {
+          searchText = text;
+          if (text.length > 2) {
+            setState(() {});
           }
-        
-         );
+        });
   }
 }
 
@@ -279,7 +270,7 @@ class PostsBodyWigit extends StatelessWidget {
             children: [
               Spacer(flex: 3),
               Text(
-               locationName!=null? locationName:"loading",
+                locationName != null ? locationName : "loading",
                 style: TextStyle(fontSize: 20.0),
               ),
               Spacer(flex: 3),
@@ -450,9 +441,11 @@ class HomePageDrawer extends StatelessWidget {
             leading: Icon(Icons.event),
             title: new Text("Events"),
             onTap: () {
-              // Navigator.pop(context);
-              // Navigator.push(context,
-              //     new MaterialPageRoute(builder: (context) => new HomePage()));
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new EventScreen()));
             },
           ),
           new ListTile(
