@@ -1,8 +1,8 @@
+import 'package:SailWithMe/screens/login/welcome_screen.dart';
 import 'package:SailWithMe/screens/navigation_screens.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:SailWithMe/login/welcome_screen.dart';
 import 'package:splashscreen/splashscreen.dart';
 
 void main() => runApp(MyApp());

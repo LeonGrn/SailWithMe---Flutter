@@ -6,7 +6,7 @@ class UserData {
   String id;
   String fullName = "";
   String email = "";
-  String gender = "";
+  int gender;
   String age = "";
   String yearsOfExperience = "";
   int phoneNumber;
@@ -16,6 +16,7 @@ class UserData {
   List<Trip> tripList;
   List<Group> groupList;
   List<Post> posts = [];
+  int numberOfChildren;
 
   List get getPosts {
     return posts;
@@ -37,9 +38,9 @@ class UserData {
 
   set setEmail(String email) => this.email = email;
 
-  String get getGender => gender;
+  int get getGender => gender;
 
-  set setGender(String gender) => this.gender = gender;
+  set setGender(int gender) => this.gender = gender;
 
   String get getAge => age;
 
@@ -71,7 +72,8 @@ class UserData {
       this.imei,
       this.imageRef,
       this.posts,
-      this.friendsList});
+      this.friendsList,
+      this.numberOfChildren});
 
   UserData.fromUserData(this.fullName, this.email, this.id,
       this.yearsOfExperience, this.imageRef);
@@ -88,6 +90,7 @@ class UserData {
       'Age': age,
       'Gender': gender,
       'YearsOfExperience': yearsOfExperience,
+      'NumberOfChildren': numberOfChildren,
       'IMEI': imei,
       'ImageRef': imageRef,
       'Posts': posts,
@@ -101,6 +104,7 @@ class UserData {
         email: snapshot.value['Email'],
         age: snapshot.value['Age'],
         gender: snapshot.value['Gender'],
+       numberOfChildren: snapshot.value['NumberOfChildren'],
         yearsOfExperience: snapshot.value['YearsOfExperience'],
         imei: snapshot.value['IMEI'],
         imageRef: snapshot.value['ImageRef']);
