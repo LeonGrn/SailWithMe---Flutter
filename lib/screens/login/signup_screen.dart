@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/models/modules.dart';
 import 'package:SailWithMe/screens/navigation_screens.dart';
 import 'package:SailWithMe/widgets/profile_avatar.dart';
@@ -12,7 +13,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:imei_plugin/imei_plugin.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../config/ApiCalls.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -27,9 +27,10 @@ class _MyAppState extends State<SignUpScreen> {
   String _email = "";
   String _password = "";
   String _fullName = "";
-  String gender = "";
+  int gender = 0;
   String _yearsOfExperience = "";
   File _image;
+  int _numberOfChildren=0;
 
   String _platformImei = 'Unknown';
   String uniqueId = "Unknown";
@@ -104,6 +105,7 @@ class _MyAppState extends State<SignUpScreen> {
         age: age.toString(),
         gender: gender,
         yearsOfExperience: _yearsOfExperience,
+        numberOfChildren: _numberOfChildren,
         imei: uniqueId,
         imageRef: _imageRef,
         posts: [],
@@ -123,10 +125,10 @@ class _MyAppState extends State<SignUpScreen> {
 
       switch (_radioValue) {
         case 0:
-          gender = "Male";
+          gender = 0;
           break;
         case 1:
-          gender = "Female";
+          gender = 1;
           break;
       }
     });
@@ -401,6 +403,31 @@ class _MyAppState extends State<SignUpScreen> {
                       ),
                       labelText: "Please enter years of experience"),
                 ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                TextField(
+                  onChanged: (value) {
+                    _numberOfChildren = int.parse(value);
+                  },
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ], // Only numb
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        borderSide: BorderSide(color: Colors.green),
+                      ),
+                      hintText: "Please enter number of children",
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(
+                        Icons.tag_faces,
+                        color: Colors.white,
+                      ),
+                      labelText: "Please enter number of children"),
+                ),
+
                 SizedBox(
                   height: 10.0,
                 ),

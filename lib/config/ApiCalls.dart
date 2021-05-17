@@ -16,6 +16,7 @@ import 'package:SailWithMe/models/FriendStatus.dart';
 import 'package:SailWithMe/widgets/utils.dart';
 
 class ApiCalls {
+  static String myLocation;
   static UserData myUser;
   static var instance = FirebaseAuth.instance;
   static String userId = instance.currentUser.uid;
@@ -110,16 +111,6 @@ class ApiCalls {
       return myUser;
     });
   }
-
-  // static Future<void> likePost(Likes like) async {
-  //   await databaseReference
-  //       .child(userId)
-  //       .child("Post")
-  //       .child("uuid")
-  //       .child("Likes")
-  //       .push()
-  //       .set(like.toJson());
-  // }
 
   static Future addFriend(String friendId, String imageUrl, String name) async {
     await databaseReference.child(userId).child("Friends").child(friendId).set(
@@ -387,12 +378,12 @@ class ApiCalls {
 
     Response response;
     try {
-      response = await dio.post("https://yact-need.herokuapp.com/api", data: {
+      response = await dio.post("https://yact-need.herokuapp.com/api", data:  {
         "age": myUser.age,
-        "years of experience": 3,
-        "how many children": 2,
-        "location": "tel aviv",
-        "sex": 1
+        "years of experience": myUser.yearsOfExperience,
+        "how many children": myUser.numberOfChildren,
+        "location": myLocation,
+        "sex":  myUser.getGender
       });
       if (response.data.toString().contains("1")) {
         return (/*"the river in Camargue"*/ 1);

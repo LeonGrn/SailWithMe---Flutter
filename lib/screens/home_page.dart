@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:SailWithMe/Keys/configMaps.dart';
 import 'package:SailWithMe/config/ApiCalls.dart';
 import 'package:SailWithMe/config/palette.dart';
 import 'package:SailWithMe/screens/sub-screens/friendsList_screen.dart';
@@ -15,6 +16,8 @@ import 'dart:convert';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:SailWithMe/main.dart';
 import 'package:firebase_image/firebase_image.dart';
+import 'package:geolocator/geolocator.dart' as geocoding;
+
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -27,17 +30,26 @@ class _HomePageState extends State<HomePage> {
   UserData myUser;
   String searchText = '';
   var temp;
-  //var location;
+  var locationName;
   var windSpeed;
   String main;
   String _timezone = 'Unknown';
   String assetName = 'assets/sun.svg';
   bool isSearching = false;
   File imageUrl;
+  geocoding.Position _currentPosition;
+
 
   Future getWeather() async {
-    http.Response response = await http.get(
-        "http://api.openweathermap.org/data/2.5/weather?q=Netanya&appid=a43c41d2c4008b88f98a49068edebbf1");
+     http.Response response;
+    await _getCurrentLocation();
+
+    if(_currentPosition!=null){
+          response = await http.get("http://api.openweathermap.org/data/2.5/weather?lat=${_currentPosition.latitude}&lon=${_currentPosition.longitude}&appid=$weatherApiKey");
+    }else{
+        response = await http.get("http://api.openweathermap.org/data/2.5/weather?q=Netanya&appid=$weatherApiKey");
+    }
+  
     var results = jsonDecode(response.body);
     if (mounted) {
       setState(() {
@@ -45,6 +57,10 @@ class _HomePageState extends State<HomePage> {
         this.temp = this.temp - 273.15;
         this.windSpeed = results['wind']['speed'];
         this.main = results['weather'][0]['main'];
+        ApiCalls.myLocation=(results["name"]);
+        this.locationName=results["name"];
+
+
       });
     }
   }
@@ -65,6 +81,23 @@ class _HomePageState extends State<HomePage> {
   //     //   assetName = 'assets/moon.svg';
   //   });
   // }
+  // Method for retrieving the current location
+  _getCurrentLocation() async {
+    await geocoding.Geolocator.getCurrentPosition(
+            desiredAccuracy: geocoding.LocationAccuracy.high)
+        .then((geocoding.Position position) async {
+        // Store the position in the variable
+        _currentPosition = position;
+
+        print('CURRENT POS: $_currentPosition');
+
+      
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+
 
   @override
   void initState() {
@@ -133,6 +166,7 @@ class _HomePageState extends State<HomePage> {
               assetName: assetName,
               temp: temp,
               main: main,
+              locationName: ApiCalls.myLocation,
               windSpeed: windSpeed)
           : searchBar(),
       drawer: HomePageDrawer(myUser: myUser),
@@ -221,12 +255,14 @@ class PostsBodyWigit extends StatelessWidget {
     @required this.temp,
     @required this.main,
     @required this.windSpeed,
+    @required this.locationName,
   }) : super(key: key);
 
   final String assetName;
   final temp;
   final String main;
   final windSpeed;
+  final String locationName;
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +279,7 @@ class PostsBodyWigit extends StatelessWidget {
             children: [
               Spacer(flex: 3),
               Text(
-                "Netanya",
+               locationName!=null? locationName:"loading",
                 style: TextStyle(fontSize: 20.0),
               ),
               Spacer(flex: 3),

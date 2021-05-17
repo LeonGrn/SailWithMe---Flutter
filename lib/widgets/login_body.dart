@@ -1,4 +1,4 @@
-import 'package:SailWithMe/login/signup_screen.dart';
+import 'package:SailWithMe/screens/login/signup_screen.dart';
 import 'package:SailWithMe/screens/navigation_screens.dart';
 import 'package:SailWithMe/widgets/already_have_account.dart';
 import 'package:SailWithMe/widgets/rounded_button.dart';

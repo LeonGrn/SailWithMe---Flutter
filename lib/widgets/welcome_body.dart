@@ -1,6 +1,6 @@
 import 'package:SailWithMe/config/palette.dart';
-import 'package:SailWithMe/login/login_screen.dart';
-import 'package:SailWithMe/login/signup_screen.dart';
+import 'package:SailWithMe/screens/login/login_screen.dart';
+import 'package:SailWithMe/screens/login/signup_screen.dart';
 import 'package:SailWithMe/widgets/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
