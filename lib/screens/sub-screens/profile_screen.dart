@@ -13,6 +13,7 @@ import 'chat_page.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String id;
+  
 
   const ProfileScreen({Key key, this.id}) : super(key: key);
 
@@ -21,6 +22,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  int myFriend;
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -53,11 +55,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   builder: (context, snapshot) {
                     inspect(snapshot.data);
                     Friends friend = snapshot.data;
-                    int myFriend;
-
-
+                
                     if (friend==null){
-                      myFriend =FriendStatus.notFriends;
+                      myFriend=FriendStatus.notFriends;
                       
                       if(widget.id==ApiCalls.userId){
                       myFriend=FriendStatus.myUser;
@@ -175,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Expanded(
                 child: FutureBuilder(
                   future:
-                      ApiCalls.getListOfPostByUserId(widget.id), // async work
+                       ApiCalls.getListOfPostIfFraindByUserId(widget.id,myFriend), // async work
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.none:

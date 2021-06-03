@@ -70,7 +70,6 @@ class ApiCalls {
 
   static Future<void> createJobOfferPost(JobPost myJob) async {
     await databaseReference
-        .child(userId)
         .child("JobOffer")
         .push()
         .set(myJob.toJson());
@@ -106,6 +105,7 @@ class ApiCalls {
       return UserData.fromJson(data);
     });
   }
+  
 
   static Future<UserData> getUserData() async {
     return await databaseReference
@@ -285,6 +285,14 @@ class ApiCalls {
     return posts;
   }
 
+   static Future getListOfPostIfFraindByUserId (String id, int myFriend) async{
+
+     if(myFriend==FriendStatus.friends||myFriend==FriendStatus.myUser)
+        return getListOfPostByUserId(id);
+
+     return [];
+  }
+
   //Get only the post
   static Future getListOfPost() async {
     List<Post> posts = [];
@@ -308,7 +316,6 @@ class ApiCalls {
   static Future getListOfJobsByUserId() async {
     List<JobPost> jobPosts = [];
     await databaseReference
-        .child(userId)
         .child('JobOffer')
         .once()
         .then((DataSnapshot dataSnapshot) {
