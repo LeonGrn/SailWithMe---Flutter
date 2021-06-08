@@ -286,11 +286,18 @@ class ApiCalls {
   }
 
    static Future getListOfPostIfFraindByUserId (String id, int myFriend) async{
-
-     if(myFriend==FriendStatus.friends||myFriend==FriendStatus.myUser)
-        return getListOfPostByUserId(id);
-
-     return [];
+      if(id==userId){
+                return getListOfPostByUserId(id);
+      }
+     
+     List <Friends> myFrirends=await getAllFriends();
+     for (var friend in myFrirends) {
+       if(friend.id==id&&friend.isFriend==FriendStatus.friends)
+          return await getListOfPostByUserId(id);
+       
+     }
+     List <Friends> emptyList=[];
+     return emptyList;
   }
 
   //Get only the post
